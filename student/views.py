@@ -10,7 +10,17 @@ def signin(request):
     return render(request, 'student/signin.html', context)
 
 def signup(request):
-    return render(request, 'student/signup.html')
+    page_title = "Sign up"
+    context = {
+        'page_title': page_title
+    }
+    return render(request, 'student/signup.html', context)
 
-def forgot_password(request):
-    return render(request, 'student/forgot_password.html')
+def forgot_password(request, reset=None):
+    page_title = "Forgot Password"
+    reset = True
+    context = {
+        'page_title': page_title,
+        'reset': reset
+    }
+    return render(request, 'student/forgot_password.html', context)

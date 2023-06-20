@@ -10,7 +10,7 @@
             <span class="mx-3 shortcut">Are you a shiftee or transferee? <a href="{% url 'signup' %}?student=old" class="green text-decoration-none">Sign up here</a></span>
         {% elif request.GET.student == 'old' %}
             <span class="mx-3 shortcut">Are you an incoming college student? <a href="{% url 'signup' %}?student=new" class="green text-decoration-none">Sign up here</a></span>
-        {% elif request.GET.reset == 'yes' %}
+        {% elif reset %}
             <span class="mx-3 shortcut">Don't have an account? <a href="{% url 'signup' %}" class="green text-decoration-none">Sign up</a></span>
         {% endif %}
     </div>
