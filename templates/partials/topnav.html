@@ -12,7 +12,7 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav me-auto mb-2 mb-md-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="{% url 'home' %}" id="home">Home</a>
+              <a class="nav-link active" aria-current="page" href="#home" id="home">Home</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#academics" id="academics">Academics</a>
@@ -25,12 +25,12 @@
             </li>
             {% if not request.session.logged_id %}
             <li class="nav-item d-md-none">
-                <a class="nav-link" href="" id="signin">Sign in</a>
+                <a class="nav-link" href="{% url 'signin' %}" id="signin">Sign in</a>
             </li>
             {% endif %}
           </ul>
           {% if not request.session.logged_id %}
-          <a href="" class="d-none d-md-block"><button class="btn btn-outline-success btn-login">Sign in</button></a>
+          <a href="{% url 'signin' %}" class="d-none d-md-block"><button class="btn btn-outline-success btn-login">Sign in</button></a>
           {% endif %}          
         </div>
         {% if request.session.logged_id %}

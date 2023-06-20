@@ -18,4 +18,4 @@ def home(request):
             'page_title': page_title,
             'page_year': current_year
         }
-        return render(request, 'home.html', context)
+        return render(request, 'base/home.html', context)
