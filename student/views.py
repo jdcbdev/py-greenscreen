@@ -1,6 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import get_user_model
+from .forms import SignUpForm
+from django.contrib import messages
 
 # Create your views here.
+
+User = get_user_model()
 
 def signin(request):
     page_title = "Sign in"
@@ -9,24 +14,45 @@ def signin(request):
     }
     return render(request, 'student/signin.html', context)
 
-def signup(request):
+def signup_choose(request):
     page_title = "Sign up"
-    
-    student_param = request.GET.get('student')
-
-    if student_param == 'new':
-        template_name = 'student/partials/signup-new.html'
-    elif student_param == 'old':
-        template_name = 'student/partials/signup-old.html'
-    else:
-        template_name = 'student/partials/signup-choose.html'
-
     context = {
-        'page_title': page_title,
-        'template_name': template_name
+        'page_title': page_title
+    }
+    return render(request, 'student/signup-choose.html', context)
+
+def signup_new(request):
+    page_title = "Sign up"
+    context = {
+        'page_title': page_title
     }
     
-    return render(request, 'student/signup.html', context)
+    form = SignUpForm(request.POST or None)
+
+    if request.method == 'POST':
+        
+        if form.is_valid():
+            password = form.cleaned_data['password']
+            user = form.save(commit=False)
+            user.set_password(password)
+            user.type = 'student'
+            user.save()
+            messages.success(request, 'Account successfully created.')
+            return redirect('signup-new')
+                
+    context = {
+        'page_title': page_title,
+        'form': form,
+    }
+    
+    return render(request, 'student/signup-new.html', context)
+
+def signup_old(request):
+    page_title = "Sign up"
+    context = {
+        'page_title': page_title
+    }
+    return render(request, 'student/signup-old.html', context)
 
 def forgot_password(request, reset=None):
     page_title = "Forgot Password"

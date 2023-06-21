@@ -30,6 +30,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(blank=True, default='', unique=True)
     first_name = models.CharField(max_length=255, blank=True, default='')
     last_name = models.CharField(max_length=255, blank=True, default='')
+    type = models.CharField(max_length=255, blank=True, default='admin')
 
     avatar = models.ImageField(null=True, default="avatar.svg")
 

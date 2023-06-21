@@ -1,0 +1,181 @@
+{% extends 'student/main.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<main class="py-md-4">
+    <div class="container-fluid d-flex align-items-md-center justify-content-md-center">
+        <div class="container-fluid sign-up p-sm-5">
+            {% if messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {% for message in messages %}
+                        {{ message }} <a class="green" href="{% url 'signin' %}">Sign in here.</a>
+                    {% endfor %}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endif %}
+            <div class="row">
+                <div class="col">
+                    <h2 class="fw-bold text-center green">Sign up as an Incoming College Student</h2>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <p class="text-center continue-google">
+                    <a class="btn btn-lg btn-success background-color-green btn-continue btn-font" href="#">
+                        <i class="fa-brands fa-google"></i>
+                        Continue with Google
+                    </a>
+                </p>
+            </div>
+            <div class="row">
+                <div class="col-md">
+                    <div class="text-center">
+                        <hr class="mt-4 mb-1">
+                        <span class="p-2 or">or</span>
+                    </div>
+                    <form class="needs-validation" method="POST" action="{% url 'signup-new' %}">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control {% if form.first_name.errors %}is-invalid{% endif %}" id="firstName" name="first_name" placeholder="" value="{{ form.first_name.value|default_if_none:'' }}" required>
+                                {% if form.first_name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.first_name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control {% if form.last_name.errors %}is-invalid{% endif %}" id="lastName" name="last_name" placeholder="" value="{{ form.last_name.value|default_if_none:'' }}" required>
+                                {% if form.last_name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.last_name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12">
+                                <label for="email" class="form-label">School or Personal Email <span class="text-muted"></span></label>
+                                <input type="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" id="email" name="email" placeholder="you@example.com" value="{{ form.email.value|default_if_none:'' }}" required>
+                                {% if form.email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.email.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>                            
+                            <div class="col-12">
+                                <label for="password" class="form-label">Password</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}" id="password" name="password" placeholder="" value="{{ form.password.value|default_if_none:'' }}" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="showPasswordBtn">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                {% if form.password.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.password.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12">
+                                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control {% if form.confirm_password.errors %}is-invalid{% endif %}" id="confirmPassword" name="confirm_password" placeholder="" value="{{ form.confirm_password.value|default_if_none:'' }}" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="showConfirmPasswordBtn">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                {% if form.confirm_password.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.confirm_password.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12 pt-2 mb-3">
+                                <button class="btn btn-lg btn-success background-color-green btn-continue btn-font" type="submit">Create my account</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <p class="text-center">
+                    Already have an account? <a class="green" href="{% url 'signin' %}">Sign in</a>
+                </p>
+            </div>
+        </div>
+    </div>    
+</main>
+
+<script>
+
+    $(document).ready(function() {
+        // Show/hide password functionality
+        var passwordField = $("#password");
+        var confirmPasswordField = $("#confirmPassword");
+        var showPasswordBtn = $("#showPasswordBtn");
+        var showConfirmPasswordBtn = $("#showConfirmPasswordBtn");
+
+        function togglePasswordVisibility(passwordField, showPasswordBtn) {
+            var passwordFieldType = passwordField.attr("type");
+            if (passwordFieldType === "password") {
+                passwordField.attr("type", "text");
+                showPasswordBtn.html('<i class="fa fa-eye-slash"></i>');
+            } else {
+                passwordField.attr("type", "password");
+                showPasswordBtn.html('<i class="fa fa-eye"></i>');
+            }
+        }
+
+        function handleShowPassword(passwordField, showPasswordBtn) {
+            togglePasswordVisibility(passwordField, showPasswordBtn);
+        }
+
+        function checkPasswordField(passwordField, showPasswordBtn) {
+            var password = passwordField.val();
+
+            if (password.length > 0) {
+                showPasswordBtn.show(); // Show the button if there is text
+            } else {
+                showPasswordBtn.hide(); // Hide the button if there is no text
+            }
+        }
+
+        passwordField.on("input change", function() {
+            checkPasswordField(passwordField, showPasswordBtn);
+        });
+
+        showPasswordBtn.on("click", function() {
+            handleShowPassword(passwordField, showPasswordBtn);
+            checkPasswordField(passwordField, showPasswordBtn);
+        });
+
+        confirmPasswordField.on("input change", function() {
+            checkPasswordField(confirmPasswordField, showConfirmPasswordBtn);
+        });
+
+        showConfirmPasswordBtn.on("click", function() {
+            handleShowPassword(confirmPasswordField, showConfirmPasswordBtn);
+            checkPasswordField(confirmPasswordField, showConfirmPasswordBtn);
+        });
+
+        checkPasswordField(passwordField, showPasswordBtn);
+        checkPasswordField(confirmPasswordField, showConfirmPasswordBtn);
+    });
+</script>
+
+
+{% endblock content %}
+
+
