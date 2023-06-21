@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'student.apps.StudentConfig',
 ]
 
+AUTH_USER_MODEL = 'base.User'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -79,8 +81,12 @@ WSGI_APPLICATION = 'greenscreen.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'py-greenscreen',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',  # Replace with your MySQL server host if necessary
+        'PORT': '3306',  # Replace with your MySQL server port if necessary
     }
 }
 
