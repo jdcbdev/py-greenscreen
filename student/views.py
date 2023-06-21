@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from .forms import SignUpForm
 from django.contrib import messages
+from django.contrib.auth import logout
 
 # Create your views here.
 
@@ -62,3 +63,11 @@ def forgot_password(request, reset=None):
         'reset': reset
     }
     return render(request, 'student/forgot_password.html', context)
+
+def signout(request):
+    page_title = "Sign in"
+    context = {
+        'page_title': page_title
+    }
+    logout(request)
+    return render(request, 'base/home.html', context)

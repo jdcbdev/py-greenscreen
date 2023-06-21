@@ -20,9 +20,10 @@
                     <h2 class="fw-bold text-center green">Sign up as an Incoming College Student</h2>
                 </div>
             </div>
+            {% load socialaccount %}
             <div class="row mt-4">
                 <p class="text-center continue-google">
-                    <a class="btn btn-lg btn-success background-color-green btn-continue btn-font" href="#">
+                    <a class="btn btn-lg btn-success background-color-green btn-continue btn-font" href="{% provider_login_url 'google' %}?next=/">
                         <i class="fa-brands fa-google"></i>
                         Continue with Google
                     </a>

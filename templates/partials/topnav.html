@@ -1,4 +1,5 @@
 {% load static %}
+{% load socialaccount %}
 <header>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top background-color-green">
       <div class="container-fluid">
@@ -23,17 +24,17 @@
             <li class="nav-item">
               <a class="nav-link" href="#faculty" id="faculty">Faculty</a>
             </li>
-            {% if not request.session.logged_id %}
+            {% if not user.is_authenticated %}
             <li class="nav-item d-md-none">
                 <a class="nav-link" href="{% url 'signin' %}" id="signin">Sign in</a>
             </li>
             {% endif %}
           </ul>
-          {% if not request.session.logged_id %}
+          {% if not user.is_authenticated %}
           <a href="{% url 'signin' %}" class="d-none d-md-block"><button class="btn btn-outline-success btn-login">Sign in</button></a>
           {% endif %}          
         </div>
-        {% if request.session.logged_id %}
+        {% if user.is_authenticated %}
         <div class="dropdown text-end me-3 d-none d-md-block">
             <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle text-white" data-bs-toggle="dropdown" aria-expanded="false">
                 <img src="https://avatars.githubusercontent.com/u/60727139?s=40&v=4" alt="mdo" width="32" height="32" class="rounded-circle">
@@ -42,7 +43,7 @@
                 <li><a class="dropdown-item" href="../student/myapplication.php">My Application</a></li>
                 <li><a class="dropdown-item" href="#">Profile</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="../account/logout.php">Sign out</a></li>
+                <li><a class="dropdown-item" href="{% url 'signout' %}">Sign out</a></li>
             </ul>
         </div>
         {% endif %}
