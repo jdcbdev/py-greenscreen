@@ -30,9 +30,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(blank=True, default='', unique=True)
     first_name = models.CharField(max_length=255, blank=True, default='')
     last_name = models.CharField(max_length=255, blank=True, default='')
-    type = models.CharField(max_length=255, blank=True, default='student')
 
-    avatar = models.ImageField(null=True, default="avatar.svg")
+    # avatar = models.ImageField(null=True, default="avatar.svg")
 
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
