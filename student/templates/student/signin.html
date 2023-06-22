@@ -4,42 +4,15 @@
 
 {% block content %}
 
-{% comment %} <?php
-  $page_title = 'GreenScreen - Sign In';
-  require_once '../includes/header.php';
-  require_once '../classes/account.class.php';
-
-  session_start();
-
-  $account_obj = new Account();
-  if(isset($_POST['email']) && isset($_POST['password'])){
-    //Sanitizing the inputs of the users. Mandatory to prevent injections!
-    $account_obj->email = htmlentities($_POST['email']);
-    $account_obj->password = htmlentities($_POST['password']);
-    if($account_obj->sign_in()){
-        $account = $account_obj->get_account_info();
-        foreach($account as $row){
-            $_SESSION['logged_id'] = $row['id'];
-            $_SESSION['fullname'] = 'Temporary';
-            $_SESSION['user_type'] = $row['type'];
-            //display the appropriate dashboard page for user
-            if($row['type'] == 'admin'){
-                header('location: ../admin/dashboard.php');
-            }else if($row['type'] == 'faculty'){
-                header('location: ../faculty/dashboard.php');
-            }else if($row['type'] == 'student'){
-                header('location: ../student/index.php');
-            }
-        }
-    }else{
-        //set the error message if account is invalid
-        $error = 'Invalid email/password. Try again.';
-    }
-  }
-?> {% endcomment %}
     <main class="py-md-4">
         <div class="container-fluid d-flex align-items-md-center justify-content-md-center">
             <div class="container-fluid sign-in p-sm-5">
+                {% if error_message %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ error_message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
                 <div class="row">
                     <div class="col">
                         <h2 class="fw-bold text-center green">Sign in to apply</h2>
@@ -60,21 +33,35 @@
                             <hr class="mt-4 mb-1">
                             <span class="p-2 or">or</span>
                         </div>
-                        <form class="needs-validation" action="signin.php" method="post">
+                        <form class="needs-validation" action="{% url 'signin' %}" method="post">
+                            {% csrf_token %}
                             <div class="row g-3">
                                 <div class="col-12">
                                     <label for="email" class="form-label">Email Address<span class="text-muted"></span></label>
-                                    <input type="text" class="form-control" id="email" placeholder="" name="email" required>
-                                    <div class="invalid-feedback">
-                                        Please enter a valid email address.
-                                    </div>
+                                    <input type="text" class="form-control {% if form.email.errors %}is-invalid{% endif %}" id="email" name="email" placeholder="" value="{{ form.email.value|default_if_none:'' }}" required>
+                                    {% if form.email.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.email.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 <div class="col-12">
                                     <label for="password" class="form-label">Password</label>
-                                    <input type="password" class="form-control" id="password" name="password" placeholder="" required>
-                                    <div class="invalid-feedback">
-                                        Please enter valid password.
+                                    <div class="input-group">
+                                        <input type="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}" id="password" name="password" placeholder="" value="{{ form.password.value|default_if_none:'' }}" required>
+                                        <button class="btn btn-outline-secondary" type="button" id="showPasswordBtn">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
                                     </div>
+                                    {% if form.password.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.password.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 <div class="col-12">
                                     <div class="form-check form-check-inline me-0">
@@ -88,13 +75,6 @@
                                 <div class="col-12 pt-2 mb-3">
                                     <input class="btn btn-lg btn-success background-color-green btn-continue btn-font" type="submit" value="Continue with Email" name="login">
                                 </div>
-                                {% comment %} <?php
-                                    //Display the error message if there is any.
-                                    if(isset($error)){
-                                        echo '<div><p class="error">'.$error.'</p></div>';
-                                    }
-                                    
-                                ?> {% endcomment %}
                             </div>
                         </form>
                     </div>
@@ -107,6 +87,51 @@
             </div>
         </div>
     </main>
+
+    <script>
+
+        $(document).ready(function() {
+            // Show/hide password functionality
+            var passwordField = $("#password");
+            var showPasswordBtn = $("#showPasswordBtn");
+    
+            function togglePasswordVisibility(passwordField, showPasswordBtn) {
+                var passwordFieldType = passwordField.attr("type");
+                if (passwordFieldType === "password") {
+                    passwordField.attr("type", "text");
+                    showPasswordBtn.html('<i class="fa fa-eye-slash"></i>');
+                } else {
+                    passwordField.attr("type", "password");
+                    showPasswordBtn.html('<i class="fa fa-eye"></i>');
+                }
+            }
+    
+            function handleShowPassword(passwordField, showPasswordBtn) {
+                togglePasswordVisibility(passwordField, showPasswordBtn);
+            }
+    
+            function checkPasswordField(passwordField, showPasswordBtn) {
+                var password = passwordField.val();
+    
+                if (password.length > 0) {
+                    showPasswordBtn.show(); // Show the button if there is text
+                } else {
+                    showPasswordBtn.hide(); // Hide the button if there is no text
+                }
+            }
+    
+            passwordField.on("input change", function() {
+                checkPasswordField(passwordField, showPasswordBtn);
+            });
+    
+            showPasswordBtn.on("click", function() {
+                handleShowPassword(passwordField, showPasswordBtn);
+                checkPasswordField(passwordField, showPasswordBtn);
+            });
+    
+            checkPasswordField(passwordField, showPasswordBtn);
+        });
+    </script>
 
 {% endblock content %}
 

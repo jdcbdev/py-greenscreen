@@ -6,10 +6,11 @@ import re
 User = get_user_model()
 
 class SignUpForm(forms.ModelForm):
-    first_name = forms.CharField(max_length=50, validators=[validators.RegexValidator(r'^[a-zA-Z0-9\s_\'-]*$', 'Enter a valid first name.')])
-    last_name = forms.CharField(max_length=50, validators=[validators.RegexValidator(r'^[a-zA-Z0-9\s_\'-]*$', 'Enter a valid last name.')])
-    password = forms.CharField(widget=forms.PasswordInput)
-    confirm_password = forms.CharField(widget=forms.PasswordInput)
+    first_name = forms.CharField(max_length=100, required = True, widget=forms.TextInput)
+    last_name = forms.CharField(max_length=100, required = True, widget=forms.TextInput)
+    email = forms.EmailField(max_length=100, required = True)
+    password = forms.CharField(required = True, widget=forms.PasswordInput)
+    confirm_password = forms.CharField(required = True, widget=forms.PasswordInput)
 
     class Meta:
         model = User
@@ -46,3 +47,7 @@ class SignUpForm(forms.ModelForm):
         # Add your custom password strength validation logic here
         # For example, check for minimum length, presence of uppercase/lowercase letters, and numbers
         return len(password) >= 8 and re.search(r'[A-Z]', password) and re.search(r'[a-z]', password) and re.search(r'\d', password)
+
+class SignInForm(forms.Form):
+    email = forms.EmailField(max_length=100, required = True)
+    password = forms.CharField(required = True, widget=forms.PasswordInput)

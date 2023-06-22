@@ -6,9 +6,9 @@
         <a class="navbar-brand" href="{% url 'home' %}">
             <img class="logo-icon" src="{% static 'img/greenscreen_logo_green.png' %}" alt="">
         </a>
-        {% if request.GET.student == 'new' %}
+        {% if new %}
             <span class="mx-3 shortcut">Are you a shiftee or transferee? <a href="{% url 'signup-old' %}" class="green text-decoration-none">Sign up here</a></span>
-        {% elif request.GET.student == 'old' %}
+        {% elif old %}
             <span class="mx-3 shortcut">Are you an incoming college student? <a href="{% url 'signup-new' %}" class="green text-decoration-none">Sign up here</a></span>
         {% elif reset %}
             <span class="mx-3 shortcut">Don't have an account? <a href="{% url 'signup-choose' %}" class="green text-decoration-none">Sign up</a></span>
