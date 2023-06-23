@@ -7,7 +7,7 @@ from django.conf import settings
 # Create your views here.
 
 CustomAPI = apps.get_model('base', 'CustomAPI')
-custom_api = CustomAPI.objects.get(name='sandbox.smtp.mailtrap.io')
+custom_api = CustomAPI.objects.get(name='google-email')
 
 settings.EMAIL_HOST_USER = custom_api.username
 settings.EMAIL_HOST_PASSWORD = custom_api.password

@@ -5,6 +5,15 @@ from django.contrib.auth import authenticate, login, logout
 from .models import Student, SchoolBackground
 from django.db import transaction
 from django.conf import settings
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from .tokens import account_activation_token
+from django.core.mail import EmailMessage
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.contrib import messages
+from django.utils.safestring import mark_safe
+from django.utils.html import strip_tags
 
 # Create your views here.
 
@@ -16,11 +25,13 @@ def signin(request):
         return redirect('home')
         
     page_title = "Sign in"
-    error_message = None
-    
+    success_message = None
     if 'google_error' in request.session:
         google_error = request.session['google_error']
-        error_message = google_error.get('message')
+        success_message = {
+            'level': google_error.get('level'),
+            'message': google_error.get('message')
+        }
         del request.session['google_error']
 
     request.session['link'] = 'signin'
@@ -39,14 +50,17 @@ def signin(request):
                 login(request, user)
                 return redirect('home')
             else:
-                error_message = 'Invalid email or password.'
+                success_message = {
+                    'level': 'danger',
+                    'message': 'Invalid email or password.'
+                }
     else:
         form = SignInForm()
     
     context = {
         'page_title': page_title,
         'form': form,
-        'error_message': error_message,
+        'success_message': success_message,
     }
     return render(request, 'student/signin.html', context)
 
@@ -87,7 +101,9 @@ def signup_new(request):
                 password = form.cleaned_data['password']
                 user = form.save(commit=False)
                 user.set_password(password)
+                user.is_active=False
                 user.save()
+                success_message = activate_email(request, user, form.cleaned_data.get('email'))
 
                 # Create and save the Student model
                 Student.objects.create(
@@ -96,10 +112,6 @@ def signup_new(request):
                     last_name=user.last_name,
                 )
                 
-                success_message = {
-                    'level': 'success',
-                    'message': 'Account successfully created.'
-                }
                 form = SignUpForm()  # clear form
 
             except Exception as e:
@@ -149,7 +161,9 @@ def signup_old(request):
                 password = form.cleaned_data['password']
                 user = form.save(commit=False)
                 user.set_password(password)
+                user.is_active=False
                 user.save()
+                success_message = activate_email(request, user, form.cleaned_data.get('email'))
 
                 # Create and save the Student model
                 student = Student.objects.create(
@@ -166,10 +180,6 @@ def signup_old(request):
                     last_course_attended=form.cleaned_data['last_course_attended'],
                 )
 
-                success_message = {
-                    'level': 'success',
-                    'message': 'Account successfully created.'
-                }
                 form = SignUpOldForm()  # clear form
 
             except Exception as e:
@@ -213,6 +223,63 @@ def forgot_password(request, reset=None):
         'settings': settings
     }
     return render(request, 'student/forgot_password.html', context)
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except:
+        user = None
+
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+
+        request.session['google_error'] = {
+            'level': 'success',
+            'message': 'Thank you for your email confirmation. Now you can sign in to your account.'
+        }
+    
+    else:
+        request.session['google_error'] = {
+            'level': 'danger',
+            'message': 'Activation link is invalid or the email is already verified.'
+        }
+
+    return redirect('signin')
+
+def activate_email(request, user, to_email):
+    mail_subject = "Email Verification - GreenScreen Admission System"
+    domain = get_current_site(request).domain
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = account_activation_token.make_token(user)
+    protocol = 'https' if request.is_secure() else 'http'
+
+    html_message  = mark_safe(render_to_string("email_activate_account.html", {
+        'user': user.first_name,
+        'domain': domain,
+        'uid': uid,
+        'token': token,
+        "protocol": protocol
+    }))
+    
+    email = EmailMessage(mail_subject, html_message, to=[to_email])
+    email.content_subtype = 'html'
+    
+    if email.send():
+        msg = mark_safe(f'Hi <b>{user.first_name}</b>, please go to your email <b>{to_email}</b> inbox and click on \
+                Verify Email button to confirm and complete the sign up. <b>Note:</b> Check your spam folder.')
+        success_message = {
+            'level': 'success',
+            'message': msg
+        }
+    else:
+        success_message = {
+            'level': 'danger',
+            'message': f'Problem sending email to {to_email}, check if you typed it correctly.'
+        }
+        
+    return success_message
 
 def signout(request):
     logout(request)
