@@ -17,6 +17,13 @@ def signin(request):
     page_title = "Sign in"
     error_message = None
     
+    if 'google_error' in request.session:
+        google_error = request.session['google_error']
+        error_message = google_error.get('message')
+        del request.session['google_error']
+
+    request.session['link'] = 'signin'
+    
     if request.method == 'POST':
         form = SignInForm(request.POST)
         email = request.POST.get('email')
@@ -61,6 +68,16 @@ def signup_new(request):
     page_title = "Sign up"
     new = True
     success_message = None
+
+    if 'google_error' in request.session:
+        google_error = request.session['google_error']
+        success_message = {
+            'level': 'danger',
+            'message': google_error.get('message')
+        }
+        del request.session['google_error']
+        
+    request.session['link'] = 'signup-new'
 
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -113,6 +130,16 @@ def signup_old(request):
     old = True
     success_message = None
 
+    if 'google_error' in request.session:
+        google_error = request.session['google_error']
+        success_message = {
+            'level': 'danger',
+            'message': google_error.get('message')
+        }
+        del request.session['google_error']
+        
+    request.session['link'] = 'signup-old'
+    
     if request.method == 'POST':
         form = SignUpOldForm(request.POST)
         if form.is_valid():
@@ -163,6 +190,17 @@ def signup_old(request):
 
     return render(request, 'student/signup-old.html', context)
 
+def social_signup(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
+    request.session['google_error'] = {
+        'level': 'danger',
+        'message': 'Something wrong here, it may be that you already have an account. Sign in using your registered email and password.'
+    }
+    
+    return redirect(request.session['link'])
+
 def forgot_password(request, reset=None):
     page_title = "Forgot Password"
     reset = True
@@ -173,9 +211,5 @@ def forgot_password(request, reset=None):
     return render(request, 'student/forgot_password.html', context)
 
 def signout(request):
-    page_title = "Home"
-    context = {
-        'page_title': page_title
-    }
     logout(request)
-    return render(request, 'base/home.html', context)
+    return redirect('signin')
