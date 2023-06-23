@@ -4,6 +4,7 @@ from .forms import SignUpForm, SignInForm, SignUpOldForm
 from django.contrib.auth import authenticate, login, logout
 from .models import Student, SchoolBackground
 from django.db import transaction
+from django.conf import settings
 
 # Create your views here.
 
@@ -116,7 +117,8 @@ def signup_new(request):
         'page_title': page_title,
         'form': form,
         'new': new,
-        'success_message': success_message
+        'success_message': success_message,
+        'settings': settings
     }
 
     return render(request, 'student/signup-new.html', context)
@@ -185,7 +187,8 @@ def signup_old(request):
         'page_title': page_title,
         'form': form,
         'old': old,
-        'success_message': success_message
+        'success_message': success_message,
+        'settings': settings
     }
 
     return render(request, 'student/signup-old.html', context)
@@ -206,7 +209,8 @@ def forgot_password(request, reset=None):
     reset = True
     context = {
         'page_title': page_title,
-        'reset': reset
+        'reset': reset,
+        'settings': settings
     }
     return render(request, 'student/forgot_password.html', context)
 

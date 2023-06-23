@@ -1,16 +1,23 @@
 from django.shortcuts import render
 import datetime
 from django.shortcuts import redirect
+from django.apps import apps
+from django.conf import settings
 
 # Create your views here.
 
+CustomAPI = apps.get_model('base', 'CustomAPI')
+custom_api = CustomAPI.objects.get(name='sandbox.smtp.mailtrap.io')
+
+settings.EMAIL_HOST_USER = custom_api.username
+settings.EMAIL_HOST_PASSWORD = custom_api.password
+
+custom_api = CustomAPI.objects.get(name='g-recaptcha')
+settings.G_RECAPTCHA = custom_api.key
+
 def home(request):
-    if 'logged_id' in request.session and request.session['user_type'] == 'admin':
-        return redirect('admin:dashboard')  # Redirect to admin dashboard URL
-    elif 'logged_id' in request.session and request.session['user_type'] == 'faculty':
-        return redirect('faculty:dashboard')  # Redirect to faculty dashboard URL
-    elif 'logged_id' in request.session and request.session['user_type'] == 'student':
-        return redirect('student:index')  # Redirect to student index URL
+    if request.user.is_authenticated and request.user.is_superuser:
+        return redirect('admin/')
     else:
         page_title = "Home"
         current_year = datetime.datetime.now().year

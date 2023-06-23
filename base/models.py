@@ -56,3 +56,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     def get_short_name(self):
         return self.first_name
+
+class CustomAPI(models.Model):
+    name = models.CharField(max_length=255, blank=True, default='')
+    client_id = models.CharField(max_length=255, blank=True, default='')
+    key = models.CharField(max_length=255, blank=True, default='')
+    username = models.CharField(max_length=255, blank=True, default='')
+    password = models.CharField(max_length=255, blank=True, default='')
