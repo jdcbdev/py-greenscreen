@@ -4,8 +4,6 @@ from django.shortcuts import redirect
 from django.apps import apps
 from django.conf import settings
 
-# Create your views here.
-
 CustomAPI = apps.get_model('base', 'CustomAPI')
 custom_api = CustomAPI.objects.get(name='google-email')
 
@@ -13,7 +11,8 @@ settings.EMAIL_HOST_USER = custom_api.username
 settings.EMAIL_HOST_PASSWORD = custom_api.password
 
 custom_api = CustomAPI.objects.get(name='g-recaptcha')
-settings.G_RECAPTCHA = custom_api.key
+settings.RECAPTCHA_PUBLIC_KEY = custom_api.key
+settings.RECAPTCHA_PRIVATE_KEY = custom_api.password
 
 def home(request):
     if request.user.is_authenticated and request.user.is_superuser:

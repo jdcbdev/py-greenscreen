@@ -9,7 +9,7 @@
         <div class="container-fluid sign-up p-sm-5">
             {% if success_message %}
                 <div class="alert alert-{{ success_message.level }} alert-dismissible fade show" role="alert">
-                    {{ success_message.message }} <a class="green" href="{% url 'signin' %}">Sign in here.</a>
+                    {{ success_message.message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             {% endif %}
@@ -144,7 +144,8 @@
                                 {% endif %}
                             </div>
                             <div class="col-12 text-center">
-                                <div class="col-12 g-recaptcha text-center" data-sitekey="{{ settings.G_RECAPTCHA }}">
+                                <script src='https://www.google.com/recaptcha/api.js'></script>
+                                <div class="col-12 g-recaptcha text-center" data-sitekey="{{ settings.RECAPTCHA_PUBLIC_KEY }}">
                                 </div>
                             </div>
                             <div class="col-12 pt-2 mb-3">
