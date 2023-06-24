@@ -7,7 +7,7 @@ from django.db import transaction
 from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
-from .tokens import account_activation_token
+from .tokens import account_activation_token, reset_password_token
 from django.core.mail import EmailMessage
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
@@ -263,7 +263,7 @@ def forgot_password(request, reset=None):
                         mail_subject = "Password Reset Request - GreenScreen Admission System"
                         domain = get_current_site(request).domain
                         uid = urlsafe_base64_encode(force_bytes(associated_user.pk))
-                        token = account_activation_token.make_token(associated_user)
+                        token = reset_password_token.make_token(associated_user)
                         protocol = 'https' if request.is_secure() else 'http'
 
                         html_message  = mark_safe(render_to_string("email_forgot_password.html", {
@@ -274,7 +274,8 @@ def forgot_password(request, reset=None):
                             "protocol": protocol
                         }))
                         
-                        email = EmailMessage(mail_subject, html_message, to=[user_email])
+                        from_email = settings.DEFAULT_FROM_EMAIL
+                        email = EmailMessage(mail_subject, html_message, from_email, to=[user_email])
                         email.content_subtype = 'html'
                         
                         if email.send():
@@ -334,7 +335,7 @@ def password_reset(request, uidb64, token):
 
     form = SetPasswordForm()
     
-    if user is not None and account_activation_token.check_token(user, token):
+    if user is not None and reset_password_token.check_token(user, token):
         if request.method == 'POST':
             form = SetPasswordForm(request.POST)
             if form.is_valid():
@@ -347,8 +348,6 @@ def password_reset(request, uidb64, token):
                         user.save()
                         
                         form = SetPasswordForm()  # clear form
-                        
-                        account_activation_token.make_token(user)
                         
                         success_message = {
                             'level': 'success',
@@ -423,7 +422,8 @@ def activate_email(request, user, to_email):
         "protocol": protocol
     }))
     
-    email = EmailMessage(mail_subject, html_message, to=[to_email])
+    from_email = settings.DEFAULT_FROM_EMAIL
+    email = EmailMessage(mail_subject, html_message, from_email, to=[to_email])
     email.content_subtype = 'html'
     
     if email.send():

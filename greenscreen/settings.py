@@ -173,6 +173,8 @@ EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
+DEFAULT_FROM_EMAIL = 'GreenScreen Admission System<greenscreen@wmsu.edu.ph>'
+
 PASSWORD_RESET_TIMEOUT = 14400
 
 RECAPTCHA_PUBLIC_KEY = ''
