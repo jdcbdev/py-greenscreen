@@ -1,0 +1,22 @@
+{% load static %}
+
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top background-color-green">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img class="logo-icon" src="{% static 'img/greenscreen_logo.png' %}" alt="">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                    <li class="nav-item d-md-none">
+                        <a class="nav-link" href="{% url 'signout' %}" id="signin">Sign Out</a>
+                    </li>
+                </ul>
+                <a class="nav-link d-none d-md-flex logout-link" href="{% url 'signout' %}">Sign Out<i class='ps-1 bx bx-log-out'></i></a>
+            </div>
+        </div>
+    </nav>
+</header>

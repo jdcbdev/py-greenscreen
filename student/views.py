@@ -476,9 +476,12 @@ def add_student_partial(email):
         
     return False
 
-def load_student(email):
-    user = User.objects.filter(email=email).first()
-    if user:
-        student = Student.objects.filter(account=user).first()
-        
-    return student
+def complete_profile(request):
+    if request.user.is_authenticated and not request.user.is_staff and request.GET.get('status') == 'no':
+        return redirect('home')
+    
+    page_title = "Complete Profile"
+    context = {
+        'page_title': page_title,
+    }
+    return render(request, 'profile/main.html', context)

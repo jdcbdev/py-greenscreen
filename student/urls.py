@@ -10,5 +10,6 @@ urlpatterns = [
     path('student/sign-out/', views.signout, name="signout"),
     path('student/social/signup/', views.social_signup, name="social_signup"),
     path('student/activate/<uidb64>/<token>', views.activate, name='student_activate'),
-    path('student/password-reset/<uidb64>/<token>', views.password_reset, name='password_reset')
+    path('student/password-reset/<uidb64>/<token>', views.password_reset, name='password_reset'),
+    path('student/complete-profile/', views.complete_profile, name='complete_profile')
 ]

@@ -4,8 +4,9 @@ from django.shortcuts import redirect
 from django.apps import apps
 from django.conf import settings
 from allauth.socialaccount.models import SocialAccount
-from student.views import check_student_exists, add_student_partial, load_student
+from student.views import check_student_exists, add_student_partial
 from student.models import Student
+from urllib.parse import urlencode
 
 CustomAPI = apps.get_model('base', 'CustomAPI')
 custom_api = CustomAPI.objects.get(name='google-email')
@@ -40,14 +41,16 @@ def home(request):
             
             student = Student.objects.filter(account=request.user).first()
             if not student.is_profile_complete:
-                pass
+                return redirect('complete_profile')
                             
         except:
             # Login not using Google
             print('not google')
             student = Student.objects.filter(account=request.user).first()
             if not student.is_profile_complete:
-                pass
+                params = urlencode({'status': 'no'})
+                redirect_url = f'student/complete-profile/?{params}'
+                return redirect(redirect_url)
         
     context = {
         'page_title': page_title,
