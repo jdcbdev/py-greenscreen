@@ -18,8 +18,6 @@ from django.urls import reverse
 from django.apps import apps
 import requests
 
-from django.conf import settings
-
 CustomAPI = apps.get_model('base', 'CustomAPI')
 custom_api = CustomAPI.objects.get(name='google-email')
 
@@ -455,3 +453,32 @@ def grecaptcha_verify(request):
     result = r.json()
     
     return result
+
+def check_student_exists(email):
+    user = User.objects.filter(email=email).first()
+    if user:
+        student = Student.objects.filter(account=user).first()
+        if student:
+            return True
+    return False
+
+def add_student_partial(email):
+    user = User.objects.filter(email=email).first()
+    if user:
+        student = Student.objects.filter(account=user).first()
+        if not student:
+            Student.objects.create(
+                        account=user,
+                        first_name=user.first_name,
+                        last_name=user.last_name,
+                    )
+            return True
+        
+    return False
+
+def load_student(email):
+    user = User.objects.filter(email=email).first()
+    if user:
+        student = Student.objects.filter(account=user).first()
+        
+    return student

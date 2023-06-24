@@ -37,7 +37,11 @@
         {% if user.is_authenticated %}
         <div class="dropdown text-end me-3 d-none d-md-block">
             <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle text-white" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="https://avatars.githubusercontent.com/u/60727139?s=40&v=4" alt="mdo" width="32" height="32" class="rounded-circle">
+              {% if profile.picture %}
+                  <img src="{{ profile.picture }}" alt="photo" width="32" height="32" class="rounded-circle">
+              {% else %}
+              <i class="fa-solid fa-circle-user"></i>
+              {% endif %}
             </a>
             <ul class="dropdown-menu text-small dropdown-user">
                 <li><a class="dropdown-item" href="../student/myapplication.php">My Application</a></li>
