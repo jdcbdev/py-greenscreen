@@ -57,24 +57,16 @@
                         </div>
                         <h5 class="col-12 fw-bold my-4 mb-1">Home Address</h5>
                         <div class="col-12 col-md-6">
-                            <label for="region" class="form-label">Region<span class="text-muted"></span></label>
-                            <select type="text" class="form-control form-select" id="region" placeholder="" name="region" required="">
-                                <option value="none">--Select--</option>
-                                <?php
-                                    require_once '../classes/reference.class.php';
-                                    $ref_obj = new Reference();
-                                    $ref = $ref_obj->get_region();
-                                    foreach($ref as $row){
-                                ?>
-                                        <option value="<?=$row['regCode']?>"><?=$row['regDesc']?></option>
-                                <?php
-                                    }
-                                ?>
-                            </select>
+                            <label for="house_no" class="form-label">Building/House No.<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="house_no" placeholder="Optional" name="house_no">
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="province" class="form-label">Province<span class="text-muted"></span></label>
-                            <select class="form-control form-select" id="province" placeholder="" name="province" required="">
+                            <label for="drive" class="form-label">Street Name<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="drive" placeholder="Optional" name="drive" required="">
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="barangay" class="form-label">Barangay<span class="text-muted"></span></label>
+                            <select class="form-control form-select" id="barangay" placeholder="" name="barangay" required="">
                                 <option value="none">--Select--</option>
                             </select>
                         </div>
@@ -85,18 +77,16 @@
                             </select>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="barangay" class="form-label">Barangay<span class="text-muted"></span></label>
-                            <select class="form-control form-select" id="barangay" placeholder="" name="barangay" required="">
+                            <label for="province" class="form-label">Province<span class="text-muted"></span></label>
+                            <select class="form-control form-select" id="province" placeholder="" name="province" required="">
                                 <option value="none">--Select--</option>
                             </select>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="drive" class="form-label">Street Name<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="drive" placeholder="Optional" name="drive" required="">
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label for="house_no" class="form-label">Building/House No.<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="house_no" placeholder="Optional" name="house_no">
+                            <label for="region" class="form-label">Region<span class="text-muted"></span></label>
+                            <select type="text" class="form-control form-select" id="region" placeholder="" name="region" required="">
+                                <option value="none">--Select--</option>
+                            </select>
                         </div>
                         <div class="col-12 m-0">
                             <hr class="my-4 mx-auto w-">

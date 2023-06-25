@@ -55,7 +55,7 @@
                         <p class="text-center my-2 small">Study Habits</p>
                     </div>
                 </div>
-                
+
                 {% include "profile/personal-information.html" %}
                 {% include "profile/college-entrance-test.html" %}
                 {% include "profile/high-school.html" %}
@@ -425,66 +425,90 @@
         $('#study-habits.next-button-3').click(function(e){
             e.preventDefault();
         });
+
+        var formData = {
+            action: 'region',
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        };
+        $.ajax({
+            type: 'POST',
+            url: '/student/complete-profile/select-address/',
+            data: formData,
+            success: function(data) {
+                $('#region').empty().append('<option value="none">--Select--</option>');
+                $.each(data, function(index, region) {
+                    $('#region').append('<option value="' + region.code + '">' + region.name + '</option>');
+                });
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert('Error: ' + textStatus);
+            }
+        });
+
         $('#region').on('change', function(){
             var formData = {
                 filter: $("#region").val(),
                 action: 'province',
+                csrfmiddlewaretoken: '{{ csrf_token }}',
             };
             $.ajax({
-                type: "POST",
-                url: 'address.php',
+                type: 'POST',
+                url: '/student/complete-profile/select-address/',
                 data: formData,
-                success: function(result)
-                {
-                    console.log(formData);
-                    console.log(result);
-                    $('#province').html(result);
+                success: function(data) {
+                    $('#province').empty().append('<option value="none">--Select--</option>');
+                    $.each(data, function(index, province) {
+                        $('#province').append('<option value="' + province.code + '">' + province.name + '</option>');
+                    });
                 },
-                error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                    alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-                }  
+                error: function(xhr, textStatus, errorThrown) {
+                    alert('Error: ' + textStatus);
+                }
             });
         });
         $('#province').on('change', function(){
             var formData = {
                 filter: $("#province").val(),
                 action: 'city',
+                csrfmiddlewaretoken: '{{ csrf_token }}',
             };
             $.ajax({
-                type: "POST",
-                url: 'address.php',
+                type: 'POST',
+                url: '/student/complete-profile/select-address/',
                 data: formData,
-                success: function(result)
-                {
-                    console.log(formData);
-                    console.log(result);
-                    $('#city').html(result);
+                success: function(data) {
+                    $('#city').empty().append('<option value="none">--Select--</option>');
+                    $.each(data, function(index, city) {
+                        $('#city').append('<option value="' + city.code + '">' + city.name + '</option>');
+                    });
                 },
-                error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                    alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-                }  
+                error: function(xhr, textStatus, errorThrown) {
+                    alert('Error: ' + textStatus);
+                }
             });
         });
         $('#city').on('change', function(){
             var formData = {
                 filter: $("#city").val(),
                 action: 'barangay',
+                csrfmiddlewaretoken: '{{ csrf_token }}',
             };
             $.ajax({
-                type: "POST",
-                url: 'address.php',
+                type: 'POST',
+                url: '/student/complete-profile/select-address/',
                 data: formData,
-                success: function(result)
-                {
-                    console.log(formData);
-                    console.log(result);
-                    $('#barangay').html(result);
+                success: function(data) {
+                    $('#barangay').empty().append('<option value="none">--Select--</option>');
+                    $.each(data, function(index, barangay) {
+                        $('#barangay').append('<option value="' + barangay.code + '">' + barangay.name + '</option>');
+                    });
                 },
-                error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                    alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-                }  
+                error: function(xhr, textStatus, errorThrown) {
+                    alert('Error: ' + textStatus);
+                }
             });
         });
+
     });
 </script>
   

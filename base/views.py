@@ -7,6 +7,11 @@ from allauth.socialaccount.models import SocialAccount
 from student.views import check_student_exists, add_student_partial
 from student.models import Student
 from urllib.parse import urlencode
+from ph_geography.models import PhilippineGeography
+from ph_geography.models import Region, Province, Municipality, Barangay
+from django.http import JsonResponse
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.http import require_POST
 
 CustomAPI = apps.get_model('base', 'CustomAPI')
 custom_api = CustomAPI.objects.get(name='google-email')
@@ -69,3 +74,28 @@ def home(request):
         'profile': profile
     }
     return render(request, 'base/home.html', context)
+
+@ensure_csrf_cookie
+@require_POST
+def ph_address(request):
+    if request.method == 'POST':
+        if request.POST.get('action') == 'province':
+            filter_value = request.POST.get('filter')
+            region = Region.objects.get(code=filter_value)
+            provinces = Province.objects.filter(region=region).order_by('name').values('code', 'name')
+            return JsonResponse(list(provinces), safe=False)
+        elif request.POST.get('action') == 'city':
+            filter_value = request.POST.get('filter')
+            province = Province.objects.get(code=filter_value)
+            cities = Municipality.objects.filter(province=province).order_by('name').values('code', 'name')
+            return JsonResponse(list(cities), safe=False)
+        elif request.POST.get('action') == 'barangay':
+            filter_value = request.POST.get('filter')
+            city = Municipality.objects.get(code=filter_value)
+            brgy = Barangay.objects.filter(municipality=city).order_by('name').values('code', 'name')
+            return JsonResponse(list(brgy), safe=False)
+        else:
+            region = Region.objects.values('code', 'name').order_by('name')
+            return JsonResponse(list(region), safe=False)
+    else:
+        return redirect('home')
