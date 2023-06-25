@@ -14,13 +14,19 @@
             </div>
             <div class="row card-container">
                 <div class="col card mt-3 py-3 card-1">
-                    <i class="fa-solid fa-people-line green"></i>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <i class="fa-solid fa-people-line green"></i>
+                        <input class="form-check-input check-choose" type="radio" name="check-choose" id="check-choose-new">
+                    </div>
                     <h3 class="text-start fw-bold mt-3">I am an incoming college student</h3>
                     <p class="justify">Students who recently graduated from high school or never went to college.</p>
                 </div>
                 <div class="separator"></div>
                 <div class="col card mt-3 py-3 card-2">
-                    <i class="fa-solid fa-right-left green"></i>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <i class="fa-solid fa-right-left green"></i>
+                        <input class="form-check-input check-choose" type="radio" name="check-choose" id="check-choose-old">
+                    </div>
                     <h3 class="text-start fw-bold mt-3">I am a shiftee or transferee</h3>
                     <p class="justify">Students who are career shifters or transferring from another school.</p>
                 </div>
@@ -46,11 +52,13 @@
             $('.card-1').addClass('card-hover');
             $('.card-2').removeClass('card-hover');
             link = '/student/signup-new/';
+            $('#check-choose-new').prop('checked', true);
         });
         $('.card-2').on('click', function(){
             $('.card-2').addClass('card-hover');
             $('.card-1').removeClass('card-hover');
             link = '/student/signup-old/';
+            $('#check-choose-old').prop('checked', true);
         });
         $('a#choose').on('click', function(e){
             if(link == ''){
