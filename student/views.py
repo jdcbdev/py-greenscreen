@@ -462,7 +462,7 @@ def check_student_exists(email):
             return True
     return False
 
-def add_student_partial(email):
+def add_student_partial(request, email):
     user = User.objects.filter(email=email).first()
     if user:
         student = Student.objects.filter(account=user).first()
@@ -471,16 +471,20 @@ def add_student_partial(email):
                         account=user,
                         first_name=user.first_name,
                         last_name=user.last_name,
+                        student_type=request.session['student_type'],
+                        student_type_name=request.session['student_type_name'],
                     )
             return True
         
     return False
 
 def complete_profile(request):
-    if request.user.is_authenticated and not request.user.is_staff and request.GET.get('status') == 'no':
+    if request.user.is_authenticated and not request.user.is_staff and request.GET.get('status') == 'yes':
         return redirect('home')
     
     page_title = "Complete Profile"
+    
+    
     context = {
         'page_title': page_title,
     }

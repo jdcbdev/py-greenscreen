@@ -55,12 +55,13 @@
                         <p class="text-center my-2 small">Study Habits</p>
                     </div>
                 </div>
-                <?php require_once 'personal_info.php'; ?>
-                <?php require_once 'cet.php'; ?>
-                <?php require_once 'shs.php'; ?>
-                <?php require_once 'economic_status.php'; ?>
-                <?php require_once 'personality_test.php'; ?>
-                <?php require_once 'study_habits.php'; ?>
+                
+                {% include "profile/personal-information.html" %}
+                {% include "profile/college-entrance-test.html" %}
+                {% include "profile/high-school.html" %}
+                {% include "profile/economic-status.html" %}
+                {% include "profile/personality-test.html" %}
+                {% include "profile/study-habit.html" %}
                 
                 {% block content %}
   

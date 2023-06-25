@@ -37,20 +37,31 @@ def home(request):
                 'picture': extra_data['picture']
             }
             if not check_student_exists(extra_data['email']):
-                add_student_partial(extra_data['email'])
+                # choose type
+                if 'link' in request.session:
+                    if request.session['link'] == 'signup-new':
+                        request.session['student_type'] = 'new'
+                        request.session['student_type_name'] = 'freshman'
+                        add_student_partial(request, extra_data['email'])
+                    elif request.session['link'] == 'signup-old':
+                        request.session['student_type'] = 'old'
+                        request.session['student_type_name'] = ''
+                        add_student_partial(request, extra_data['email'])
+                    else:
+                        request.session['student_type'] = ''
+                        request.session['student_type_name'] = ''
+                        add_student_partial(request, extra_data['email'])
             
             student = Student.objects.filter(account=request.user).first()
             if not student.is_profile_complete:
-                return redirect('complete_profile')
+                return redirect('complete_profile_personal')
                             
         except:
             # Login not using Google
             print('not google')
             student = Student.objects.filter(account=request.user).first()
             if not student.is_profile_complete:
-                params = urlencode({'status': 'no'})
-                redirect_url = f'student/complete-profile/?{params}'
-                return redirect(redirect_url)
+                return redirect('complete_profile_personal')
         
     context = {
         'page_title': page_title,
