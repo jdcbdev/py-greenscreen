@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
-from .forms import SignUpForm, SignInForm, SignUpOldForm, ForgotPasswordForm, SetPasswordForm
+from .forms import SignUpForm, SignInForm, SignUpOldForm, ForgotPasswordForm, SetPasswordForm, PersonalInfoForm
 from django.contrib.auth import authenticate, login, logout
 from .models import Student, SchoolBackground
 from django.db import transaction
@@ -468,16 +468,68 @@ def add_student_partial(request, email):
                     )
             return True
         
-    return False
+    return False   
 
-def complete_profile(request):
-    if request.user.is_authenticated and not request.user.is_staff and request.GET.get('status') == 'yes':
+@transaction.atomic
+def complete_personal_information(request):
+    if request.user.is_authenticated and not request.user.is_staff and request.GET.get('is_profile_complete') == 'yes':
         return redirect('home')
+
+    page_title = 'Complete Personal Information'
+    form = None
+    success_message = None
     
-    page_title = "Complete Profile"
+    if request.method == 'POST':
+        form = PersonalInfoForm(request.POST)
+        if form.is_valid():
+            try:
+                first_name = form.cleaned_data['first_name']
+                #personal_info = form.save(commit=False)
+                # personal_info.first_name=False
+                
+                # Save Student
+                # Save Contact
+                # Save Address
+                # Save Uploaded Photo
+
+                return redirect('complete_college_entrance_test')
+
+            except Exception as e:
+                # Handle the exception and rollback the transaction
+                transaction.set_rollback(True)
+                success_message = {
+                    'level': 'danger',
+                    'message': str(e)
+                }
+    else:
+        form = PersonalInfoForm()
     
+    print(form)
+    context = {
+        'page_title': page_title,
+        'form': form,
+        'success_message': success_message,
+        'settings': settings
+    }
+    return render(request, 'student/profile/personal-information.html', context)
+
+def complete_college_entrance_test(request):
+    if request.user.is_authenticated and not request.user.is_staff and request.GET.get('is_profile_complete') == 'yes':
+        return redirect('home')
+
+    page_title = 'Complete College Entrance Test'
+    form = None
+    success_message = None
+    
+    if request.method == 'POST':
+        return redirect('complete_college_entrance_test')
+    else:
+        pass
     
     context = {
         'page_title': page_title,
+        'form': form,
+        'success_message': success_message,
+        'settings': settings
     }
-    return render(request, 'profile/main.html', context)
+    return render(request, 'student/profile/college-entrance-test.html', context)

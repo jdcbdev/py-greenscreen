@@ -48,14 +48,18 @@ def home(request):
             
             student = Student.objects.filter(account=request.user).first()
             if not student.is_profile_complete:
-                return redirect('complete_profile_personal')
-                            
+                return redirect('complete_personal_information')
+            else:
+                request.session['is_profile_complete'] = 'yes'
+                                
         except:
             # Login not using Google
             print('not google')
             student = Student.objects.filter(account=request.user).first()
             if not student.is_profile_complete:
-                return redirect('complete_profile_personal')
+                return redirect('complete_personal_information')
+            else:
+                request.session['is_profile_complete'] = 'yes'
         
     context = {
         'page_title': page_title,

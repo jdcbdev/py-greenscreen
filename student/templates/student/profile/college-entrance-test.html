@@ -1,0 +1,181 @@
+{% extends 'student/profile/main.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid main-container">
+    <div class="row">
+        <main class="col-md-10 mx-md-auto mb-md-5 p-4 pt-2 pt-md-4">
+            <div class="row g-3">
+                <div class="col-12 text-center mb-md-4 mt-4">
+                    <h4 class="fw-bold text-center green">Welcome to GreenScreen!</h4>
+                    <h5>Complete the 6 steps to get started</h5>
+                    <h4 class="fw-bold mt-3 d-md-none"><span class="progress-counter">2</span> of 6</h4>
+                </div>
+                <div class="col-md-12 text-center d-none d-md-flex progress-bar-profile">
+                    <div class="col-md profile-progress-container wrapper-green" id="step-1">
+                        <div class="profile-progress bg-pending bg-green">
+                            <i class='bx bxs-user-detail color-white'></i>
+                        </div>
+                        <p class="text-center my-2 small">Personal Information</p>
+                    </div>
+                    <div class="col-md profile-progress-container wrapper-green" id="step-2">
+                        <div class="profile-progress bg-pending bg-white">
+                            <i class="fa-solid fa-file-circle-check color-green"></i>
+                        </div>
+                        <p class="text-center my-2 small">College Entrance Test</p>
+                    </div>
+                    <div class="col-md profile-progress-container wrapper" id="step-3">
+                        <div class="profile-progress">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <p class="text-center my-2 small">Senior High School Background</p>
+                    </div>
+                    <div class="col-md profile-progress-container wrapper" id="step-4">
+                        <div class="profile-progress">
+                            <i class="fa-solid fa-house-chimney-user"></i>
+                        </div>
+                        <p class="text-center my-2 small">Economic Status</p>
+                    </div>
+                    <div class="col-md profile-progress-container wrapper" id="step-5">
+                        <div class="profile-progress">
+                            <i class="fa-solid fa-person-circle-check"></i>
+                        </div>
+                        <p class="text-center my-2 small">Personality Test</p>
+                    </div>
+                    <div class="col-md profile-progress-container wrapper" id="step-6">
+                        <div class="profile-progress">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                        </div>
+                        <p class="text-center my-2 small">Study Habits</p>
+                    </div>
+                </div>
+
+                <div id="student-profile" class="mt-0">
+                    <div id='cet' class="col-12 col-md-11 profile-screen mt-0 mt-md-3 mx-auto">
+                        <div class="mt-3 mt-md-0">
+                            <div class="card-profile p-4 mt-3">
+                                <div class="row">
+                                    <h5 class="col-12 fw-bold mb-3">College Entrance Test (CET) Rating</h5>
+                                    <form class="needs-validation" action="" method="post" name="cet" id="cet">
+                                        <div class="row g-3">
+                                            <div class="col-12 col-md-6">
+                                                <label for="cetappno" class="form-label">CET Application Number<span class="text-muted"></span></label>
+                                                <input type="text" class="form-control" id="cetappno" placeholder="" name="cetappno" required="">
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <label for="sytaken" class="form-label">Period of Rating<span class="text-muted"></span></label>
+                                                <input type="text" class="form-control" id="sytaken" placeholder="Ex: January-February 2022" name="sytaken" required="">
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <label for="oapr" class="form-label">Overall Percentile Rank (OAPR)<span class="text-muted"></span></label>
+                                                <input type="text" class="form-control" id="oapr" placeholder="" name="oapr" required="">
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <label for="english" class="form-label">English Proficiency Skills<span class="text-muted"></span></label>
+                                                <input type="text" class="form-control" id="english" placeholder="" name="english" required="">
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <label for="reading" class="form-label">Reading Comprehension Skills<span class="text-muted"></span></label>
+                                                <input type="text" class="form-control" id="reading" placeholder="" name="reading" required="">
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <label for="science" class="form-label">Science Process Skills<span class="text-muted"></span></label>
+                                                <input type="text" class="form-control" id="science" placeholder="" name="science" required="">
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <label for="math" class="form-label">Quantitative Skills<span class="text-muted"></span></label>
+                                                <input type="text" class="form-control" id="math" placeholder="" name="math" required="">
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <label for="abstract" class="form-label">Abstract Thinking Skills<span class="text-muted"></span></label>
+                                                <input type="text" class="form-control" id="abstract" placeholder="" name="abstract" required="">
+                                            </div>
+                                            <div class="col-12">
+                                                <label for="upload-cet" class="form-label">Photo of CET Report of Rating (Accepted files: jpg, jpeg, png)<span class="text-muted"></span></label>
+                                                <div class="card-profile p-4 justify-content-center upload-container">
+                                                    <input class="upload-cet custom-file-input d-none" type="file" name="upload_cet" id="upload_cet_hidden">
+                                                    <a class="btn btn-outline-secondary custom-btn" id="upload_cet">Upload CET Photo</a>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 m-0">
+                                                <hr class="my-4 mx-auto w-">
+                                            </div>
+                                            <div class="col-6 text-start m-0">
+                                                <a class="btn btn-lg btn-success btn-font w-100 back-button m-0" name="cet" id="cet">
+                                                    <i class="fa-solid fa-arrow-left-long pe-1"></i>
+                                                    Back
+                                                </a>
+                                            </div>
+                                            <div class="col-6 text-end m-0">
+                                                <button class="btn btn-lg btn-success background-color-green w-100 next-button btn-font m-0" type="submit" value="Next" name="cet" id="cet">
+                                                    Next
+                                                    <i class="ps-1 fa-solid fa-arrow-right-long"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+
+        $('a#upload_cet').on('click', function(){
+            $('input#upload_cet_hidden').trigger('click');
+        });
+
+        $('#cet.back-button').click(function(e){
+            $('div.profile-screen').hide();
+            $('div#personal-info').show();
+            $('#step-2').removeClass('wrapper-green');
+            $('#step-2').addClass('wrapper');
+            $('#step-2 div').removeClass('bg-pending');
+            $('#step-2 div').removeClass('bg-white');
+            $('#step-2 div i').removeClass('color-green');
+
+            $('#step-1').removeClass('wrapper-green');
+            $('#step-1').addClass('wrapper');
+            $('#step-1 div').removeClass('bg-green');
+            $('#step-1 div').addClass('bg-white');
+            $('#step-1 div i').removeClass('color-white');
+            $('#step-1 div i').addClass('color-green');
+
+            $('span.progress-counter').text('1');
+            $('html,body').animate({
+                scrollTop:$('div.profile-screen').offset().top -400}, 'fast');
+        });
+        $('#cet.next-button').click(function(e){
+            e.preventDefault();
+            $('div.profile-screen').hide();
+            $('div#shs').show();
+            $('#step-2').removeClass('wrapper');
+            $('#step-2').addClass('wrapper-green');
+            $('#step-2 div').removeClass('bg-white');
+            $('#step-2 div').addClass('bg-green');
+            $('#step-2 div i').removeClass('color-green');
+            $('#step-2 div i').addClass('color-white');
+            
+            $('#step-3').removeClass('wrapper');
+            $('#step-3').addClass('wrapper-green');
+            $('#step-3 div').addClass('bg-pending');
+            $('#step-3 div').addClass('bg-white');
+            $('#step-3 div i').addClass('color-green');
+
+            $('span.progress-counter').text('3');
+            $('html,body').animate({
+                scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+        });
+
+    });
+</script>
+
+{% endblock content %}

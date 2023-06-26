@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth import get_user_model
 import re
+from .models import Student, PersonalAddress, ContactPoint, UploadedPhoto
+from betterforms.multiform import MultiModelForm
 
 User = get_user_model()
 
@@ -132,3 +134,26 @@ class SetPasswordForm(forms.ModelForm):
         # Add your custom password strength validation logic here
         # For example, check for minimum length, presence of uppercase/lowercase letters, and numbers
         return len(password) >= 8 and re.search(r'[A-Z]', password) and re.search(r'[a-z]', password) and re.search(r'\d', password)
+    
+class PersonalInfoForm(forms.Form):
+    first_name = forms.CharField(max_length=100, required = True, widget=forms.TextInput)
+    middle_name = forms.CharField(max_length=100, required = False, widget=forms.TextInput)
+    last_name = forms.CharField(max_length=100, required = True, widget=forms.TextInput)
+    extension_name = forms.CharField(max_length=100, required = False, widget=forms.TextInput)
+    sex = forms.CharField(max_length=100, required = True)
+    birth_date = forms.DateField(required = True, widget=forms.DateInput)
+    
+    contact_email = forms.CharField(max_length=100, required = True, widget=forms.TextInput)
+    contact_number = forms.CharField(max_length=100, required = True, widget=forms.TextInput)
+    
+    house_no = forms.CharField(max_length=100, required = False, widget=forms.TextInput)
+    street_name = forms.CharField(max_length=255, required = False, widget=forms.TextInput)
+    
+    barangay = forms.CharField(max_length=100, required = True)
+    city = forms.CharField(max_length=100, required = True)
+    province = forms.CharField(max_length=100, required = True)
+    region = forms.CharField(max_length=100, required = True)
+    
+    def clean(self):
+        cleaned_data = super().clean()        
+        return cleaned_data

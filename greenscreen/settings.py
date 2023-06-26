@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'captcha',
     'ph_geography',
+    'formtools',
+    'betterforms',
 ]
 
 SOCIALACCOUNT_PROVIDERS = {

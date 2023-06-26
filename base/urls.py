@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from student import views as student
 
 urlpatterns = [
     path('', views.home, name="home"),
