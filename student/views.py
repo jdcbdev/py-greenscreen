@@ -15,18 +15,10 @@ from django.contrib import messages
 from django.utils.safestring import mark_safe
 from django.db.models.query_utils import Q
 from django.urls import reverse
-from django.apps import apps
 import requests
+from base.custom_apis import load_settings
 
-CustomAPI = apps.get_model('base', 'CustomAPI')
-custom_api = CustomAPI.objects.get(name='google-email')
-
-settings.EMAIL_HOST_USER = custom_api.username
-settings.EMAIL_HOST_PASSWORD = custom_api.password
-
-custom_api = CustomAPI.objects.get(name='g-recaptcha')
-settings.RECAPTCHA_PUBLIC_KEY = custom_api.key
-settings.RECAPTCHA_PRIVATE_KEY = custom_api.password
+load_settings()
 
 User = get_user_model()
 

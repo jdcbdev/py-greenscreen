@@ -1,27 +1,16 @@
 from django.shortcuts import render
 import datetime
 from django.shortcuts import redirect
-from django.apps import apps
-from django.conf import settings
 from allauth.socialaccount.models import SocialAccount
 from student.views import check_student_exists, add_student_partial
 from student.models import Student
-from urllib.parse import urlencode
-from ph_geography.models import PhilippineGeography
 from ph_geography.models import Region, Province, Municipality, Barangay
 from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
+from .custom_apis import load_settings
 
-CustomAPI = apps.get_model('base', 'CustomAPI')
-custom_api = CustomAPI.objects.get(name='google-email')
-
-settings.EMAIL_HOST_USER = custom_api.username
-settings.EMAIL_HOST_PASSWORD = custom_api.password
-
-custom_api = CustomAPI.objects.get(name='g-recaptcha')
-settings.RECAPTCHA_PUBLIC_KEY = custom_api.key
-settings.RECAPTCHA_PRIVATE_KEY = custom_api.password
+load_settings()
 
 def home(request):
     page_title = "Home"
@@ -99,3 +88,4 @@ def ph_address(request):
             return JsonResponse(list(region), safe=False)
     else:
         return redirect('home')
+
