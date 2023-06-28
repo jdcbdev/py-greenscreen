@@ -48,7 +48,7 @@ def home(request):
             
             student = Student.objects.filter(account=request.user).first()
             if not student.is_profile_complete:
-                return redirect('complete_personal_information')
+                return redirect('complete_profile')
             else:
                 request.session['is_profile_complete'] = 'yes'
                                 
@@ -57,7 +57,7 @@ def home(request):
             print('not google')
             student = Student.objects.filter(account=request.user).first()
             if not student.is_profile_complete:
-                return redirect('complete_personal_information')
+                return redirect('complete_profile')
             else:
                 request.session['is_profile_complete'] = 'yes'
         

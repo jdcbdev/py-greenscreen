@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 import re
 from .models import Student, PersonalAddress, ContactPoint, UploadedPhoto
 from betterforms.multiform import MultiModelForm
+from datetime import date, timedelta
 
 User = get_user_model()
 
@@ -143,7 +144,7 @@ class PersonalInfoForm(forms.Form):
     sex = forms.CharField(max_length=100, required = True)
     birth_date = forms.DateField(required = True, widget=forms.DateInput)
     
-    contact_email = forms.CharField(max_length=100, required = True, widget=forms.TextInput)
+    contact_email = forms.CharField(max_length=100, required = True)
     contact_number = forms.CharField(max_length=100, required = True, widget=forms.TextInput)
     
     house_no = forms.CharField(max_length=100, required = False, widget=forms.TextInput)
@@ -154,6 +155,41 @@ class PersonalInfoForm(forms.Form):
     province = forms.CharField(max_length=100, required = True)
     region = forms.CharField(max_length=100, required = True)
     
+    profile_photo = forms.FileField(required=False)
+    
+    def clean_profile_photo(self):
+        profile_photo = self.cleaned_data.get('profile_photo', False)
+
+        if not profile_photo:
+            return profile_photo
+
+        max_size = 2 * 1024 * 1024  # 2MB in bytes
+        if profile_photo.size > max_size:
+            raise forms.ValidationError('The file size exceeds the maximum allowed limit of 2MB.')
+
+        allowed_formats = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+        if profile_photo.content_type not in allowed_formats:
+            raise forms.ValidationError('The selected file format is not supported. Please choose a JPEG, PNG, or GIF image.')
+
+        return profile_photo
+    
+    def clean_contact_number(self):
+        contact_number = self.cleaned_data['contact_number']
+        if len(contact_number) != 11 or not contact_number.isdigit() or not contact_number.startswith('0'):
+            raise forms.ValidationError('Phone number must be 11 digits long and start with 0.')
+    
+        return contact_number
+    
+    def clean_birth_date(self):
+        birth_date = self.cleaned_data['birth_date']
+        
+        minimum_age = date.today() - timedelta(days=12*365)
+        if birth_date > minimum_age:
+            raise forms.ValidationError('You must be at least 12 years old.')
+        
+        return birth_date
+    
     def clean(self):
-        cleaned_data = super().clean()        
+        cleaned_data = super().clean()
+        
         return cleaned_data

@@ -11,6 +11,7 @@ urlpatterns = [
     path('student/social/signup/', views.social_signup, name="social_signup"),
     path('student/activate/<uidb64>/<token>', views.activate, name='student_activate'),
     path('student/password-reset/<uidb64>/<token>', views.password_reset, name='password_reset'),
+    path('student/complete-profile/', views.complete_profile, name='complete_profile'),
     path('student/complete-profile/personal-information/', views.complete_personal_information, name='complete_personal_information'),
     path('student/complete-profile/college-entrance-test/', views.complete_college_entrance_test, name='complete_college_entrance_test')
 ]

@@ -17,6 +17,9 @@ from django.db.models.query_utils import Q
 from django.urls import reverse
 import requests
 from base.custom_apis import load_settings
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
 
 load_settings()
 
@@ -470,48 +473,44 @@ def add_student_partial(request, email):
         
     return False   
 
-@transaction.atomic
-def complete_personal_information(request):
+def complete_profile(request):
     if request.user.is_authenticated and not request.user.is_staff and request.GET.get('is_profile_complete') == 'yes':
         return redirect('home')
-
-    page_title = 'Complete Personal Information'
-    form = None
+    
+    page_title = 'Complete Profile'
     success_message = None
-    
-    if request.method == 'POST':
-        form = PersonalInfoForm(request.POST)
-        if form.is_valid():
-            try:
-                first_name = form.cleaned_data['first_name']
-                #personal_info = form.save(commit=False)
-                # personal_info.first_name=False
-                
-                # Save Student
-                # Save Contact
-                # Save Address
-                # Save Uploaded Photo
-
-                return redirect('complete_college_entrance_test')
-
-            except Exception as e:
-                # Handle the exception and rollback the transaction
-                transaction.set_rollback(True)
-                success_message = {
-                    'level': 'danger',
-                    'message': str(e)
-                }
-    else:
-        form = PersonalInfoForm()
-    
-    print(form)
+    form = {
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+        'contact_email': request.user.email,
+    }
     context = {
         'page_title': page_title,
         'form': form,
         'success_message': success_message,
         'settings': settings
     }
-    return render(request, 'student/profile/personal-information.html', context)
+    return render(request, 'student/profile/main.html', context)
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def complete_personal_information(request):
+    if request.user.is_authenticated and not request.user.is_staff and request.GET.get('is_profile_complete') == 'yes':
+        return redirect('home')
+    
+    if request.method == 'POST':
+        form = PersonalInfoForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                errors = form.errors.as_json()
+                return JsonResponse(errors, safe=False)
+            except Exception as e:
+                errors = form.errors.as_json()
+                return JsonResponse(errors, safe=False)
+        else:
+            errors = form.errors.as_json()
+            return JsonResponse(errors, safe=False)
 
 def complete_college_entrance_test(request):
     if request.user.is_authenticated and not request.user.is_staff and request.GET.get('is_profile_complete') == 'yes':

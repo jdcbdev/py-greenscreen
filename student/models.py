@@ -42,7 +42,7 @@ class PersonalAddress(models.Model):
 
 class UploadedPhoto(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
-    photo = models.ImageField(upload_to="cars")
+    photo = models.ImageField(upload_to="students/", null=True)
     photo_name = models.CharField(max_length=255, blank=True)
     photo_path = models.CharField(max_length=255, blank=True)
     photo_used = models.CharField(max_length=255, blank=True)
