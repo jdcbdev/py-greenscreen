@@ -5,8 +5,8 @@
         <div class="card-profile p-4 d-block">
             <div class="card-profile w-100 border-0">
                 <div class="upload-photo-container">
-                    {% if photo.photo %}
-                        <img id="preview_image" src="{{ photo.photo.url }}" alt="">
+                    {% if student.profile_photo %}
+                        <img id="preview_image" src="{{ student.profile_photo.url }}" alt="">
                     {% else %}
                         <img id="preview_image" src="{% static 'img/faculty/male.png' %}" alt="">
                     {% endif %}

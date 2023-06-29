@@ -25,6 +25,8 @@ class Student(models.Model):
     is_economic_complete = models.BooleanField(default=False)
     is_personality_complete = models.BooleanField(default=False)
     is_study_complete = models.BooleanField(default=False)
+    
+    profile_photo = models.ImageField(upload_to="students/", null=True)
 
 class ContactPoint(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
@@ -39,12 +41,8 @@ class PersonalAddress(models.Model):
     city = models.CharField(max_length=255, blank=True)
     province = models.CharField(max_length=255, blank=True)
     region = models.CharField(max_length=255, blank=True)
+    
 
-class UploadedPhoto(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
-    photo = models.ImageField(upload_to="students/", null=True)
-    photo_name = models.CharField(max_length=255, blank=True)
-    photo_used = models.CharField(max_length=255, blank=True)
 
 class SchoolBackground(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)

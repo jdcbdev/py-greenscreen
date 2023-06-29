@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from .forms import SignUpForm, SignInForm, SignUpOldForm, ForgotPasswordForm, SetPasswordForm, PersonalInfoForm
 from django.contrib.auth import authenticate, login, logout
-from .models import Student, SchoolBackground, ContactPoint, PersonalAddress, UploadedPhoto
+from .models import Student, SchoolBackground, ContactPoint, PersonalAddress
 from django.db import transaction
 from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -487,7 +487,6 @@ def complete_profile(request):
         student.birth_date = formatted_date
     contact = ContactPoint.objects.filter(student=student).first()
     address = PersonalAddress.objects.filter(student=student).first()
-    photo = UploadedPhoto.objects.filter(student=student, photo_used='profile-photo').first()
     
     page_title = 'Complete Profile'
     context = {
@@ -495,7 +494,6 @@ def complete_profile(request):
         'student': student,
         'contact': contact,
         'address': address,
-        'photo': photo,
         'settings': settings
     }
     return render(request, 'student/profile/main.html', context)
@@ -524,6 +522,9 @@ def complete_personal_information(request):
         student.sex = form.cleaned_data['sex']
         student.birth_date = form.cleaned_data['birth_date']
         student.is_personal_info_complete = True
+        # Update or create uploaded photo
+        if 'profile_photo' in request.FILES:
+            student.profile_photo = form.cleaned_data['profile_photo']
         student.save()
 
         # Update or create contact information
@@ -541,14 +542,6 @@ def complete_personal_information(request):
         address.province = form.cleaned_data['province']
         address.region = form.cleaned_data['region']
         address.save()
-
-        # Update or create uploaded photo
-        photo, _ = UploadedPhoto.objects.get_or_create(student=student)
-        if 'profile_photo' in request.FILES:
-            photo.photo_name = form.cleaned_data['profile_photo'].name
-            photo.photo_used = 'profile-photo'
-            photo.photo = form.cleaned_data['profile_photo']
-            photo.save()
 
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)

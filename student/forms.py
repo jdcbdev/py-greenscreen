@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 import re
-from .models import Student, PersonalAddress, ContactPoint, UploadedPhoto
+from .models import Student, PersonalAddress, ContactPoint
 from betterforms.multiform import MultiModelForm
 from datetime import date, timedelta
 
