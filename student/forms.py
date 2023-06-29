@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 import re
-from .models import Student, PersonalAddress, ContactPoint
-from betterforms.multiform import MultiModelForm
+from .models import Student, PersonalAddress, ContactPoint, CollegeEntranceTest
 from datetime import date, timedelta
 
 User = get_user_model()
@@ -202,6 +201,42 @@ class PersonalInfoForm(forms.Form):
         #     raise forms.ValidationError('This email is already in use.')
         
         return contact_email
+    
+    def clean(self):
+        cleaned_data = super().clean()
+           
+        return cleaned_data
+
+class CollegeEntranceTestForm(forms.ModelForm):
+    report_of_rating = forms.FileField(required=False)
+    class Meta:
+        model = CollegeEntranceTest
+        fields = [
+            'rating_period',
+            'application_number',
+            'overall_percentile_rank',
+            'english_proficiency_skills',
+            'reading_comprehension_skills',
+            'science_process_skills',
+            'quantitative_skills',
+            'abstract_thinking_skills',
+        ]
+    
+    def clean_report_of_rating(self):
+        report_of_rating = self.cleaned_data.get('report_of_rating', False)
+
+        if not report_of_rating:
+            return report_of_rating
+
+        max_size = 5 * 1024 * 1024  # 2MB in bytes
+        if report_of_rating.size > max_size:
+            raise forms.ValidationError('The file size exceeds the maximum allowed limit of 5MB.')
+
+        allowed_formats = ['image/jpeg', 'image/jpg', 'image/png']
+        if report_of_rating.content_type not in allowed_formats:
+            raise forms.ValidationError('The selected file format is not supported. Please choose a JPEG, or PNG.')
+
+        return report_of_rating
     
     def clean(self):
         cleaned_data = super().clean()

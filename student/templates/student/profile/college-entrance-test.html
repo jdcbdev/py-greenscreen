@@ -5,45 +5,67 @@
         <div class="card-profile p-4 mt-3">
             <div class="row">
                 <h5 class="col-12 fw-bold mb-3">College Entrance Test (CET) Rating</h5>
-                <form class="needs-validation" action="" method="post" name="cet" id="cet">
+                <form class="needs-validation" action="{% url 'complete_college_entrance_test' %}" method="post" name="cet" id="cet" enctype="multipart/form-data">
+                    {% csrf_token %}
                     <div class="row g-3">
                         <div class="col-12 col-md-6">
-                            <label for="cetappno" class="form-label">CET Application Number<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="cetappno" placeholder="" name="cetappno" required="">
+                            <label for="application_number" class="form-label">CET Application Number<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="application_number" placeholder="" name="application_number" value="{{ cet.application_number|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none application_number">
+                            </div>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="sytaken" class="form-label">Period of Rating<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="sytaken" placeholder="Ex: January-February 2022" name="sytaken" required="">
+                            <label for="rating_period" class="form-label">Period of Rating<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="rating_period" placeholder="Ex: January-February 2022" name="rating_period" value="{{ cet.rating_period|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none rating_period">
+                            </div>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="oapr" class="form-label">Overall Percentile Rank (OAPR)<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="oapr" placeholder="" name="oapr" required="">
+                            <label for="overall_percentile_rank" class="form-label">Overall Percentile Rank (OAPR)<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="overall_percentile_rank" placeholder="" name="overall_percentile_rank" value="{{ cet.overall_percentile_rank|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none overall_percentile_rank">
+                            </div>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="english" class="form-label">English Proficiency Skills<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="english" placeholder="" name="english" required="">
+                            <label for="english_proficiency_skills" class="form-label">English Proficiency Skills<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="english_proficiency_skills" placeholder="" name="english_proficiency_skills" value="{{ cet.english_proficiency_skills|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none english_proficiency_skills">
+                            </div>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="reading" class="form-label">Reading Comprehension Skills<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="reading" placeholder="" name="reading" required="">
+                            <label for="reading_comprehension_skills" class="form-label">Reading Comprehension Skills<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="reading_comprehension_skills" placeholder="" name="reading_comprehension_skills" value="{{ cet.reading_comprehension_skills|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none reading_comprehension_skills">
+                            </div>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="science" class="form-label">Science Process Skills<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="science" placeholder="" name="science" required="">
+                            <label for="science_process_skills" class="form-label">Science Process Skills<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="science_process_skills" placeholder="" name="science_process_skills" value="{{ cet.science_process_skills|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none science_process_skills">
+                            </div>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="math" class="form-label">Quantitative Skills<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="math" placeholder="" name="math" required="">
+                            <label for="quantitative_skills" class="form-label">Quantitative Skills<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="quantitative_skills" placeholder="" name="quantitative_skills" value="{{ cet.quantitative_skills|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none quantitative_skills">
+                            </div>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="abstract" class="form-label">Abstract Thinking Skills<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="abstract" placeholder="" name="abstract" required="">
+                            <label for="abstract_thinking_skills" class="form-label">Abstract Thinking Skills<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="abstract_thinking_skills" placeholder="" name="abstract_thinking_skills" value="{{ cet.abstract_thinking_skills|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none abstract_thinking_skills">
+                            </div>
                         </div>
                         <div class="col-12">
                             <label for="upload-cet" class="form-label">Photo of CET Report of Rating (Accepted files: jpg, jpeg, png)<span class="text-muted"></span></label>
                             <div class="card-profile p-4 justify-content-center upload-container">
-                                <input class="upload-cet custom-file-input d-none" type="file" name="upload_cet" id="upload_cet_hidden">
+                                {% if cet.report_of_rating %}
+                                    <img id="preview_cet" src="{{ cet.report_of_rating.url }}" alt="">
+                                {% endif %}
+                                <input class="upload-cet custom-file-input d-none" type="file" name="report_of_rating" id="report_of_rating" accept="image/*">
                                 <a class="btn btn-outline-secondary custom-btn" id="upload_cet">Upload CET Photo</a>
+                            </div>
+                            <div class="invalid-feedback d-none report_of_rating text-center">
                             </div>
                         </div>
                         <div class="col-12 m-0">
@@ -56,7 +78,7 @@
                             </a>
                         </div>
                         <div class="col-6 text-end m-0">
-                            <button class="btn btn-lg btn-success background-color-green w-100 next-button btn-font m-0" type="submit" value="Next" name="cet" id="cet">
+                            <button class="btn btn-lg btn-success background-color-green w-100 next-button btn-font m-0" type="submit" value="Next" name="cet">
                                 Next
                                 <i class="ps-1 fa-solid fa-arrow-right-long"></i>
                             </button>
@@ -67,3 +89,200 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function(){
+        var file = '{{ cet.report_of_rating.url|default_if_none:'' }}';
+        $('a#upload_cet').on('click', function(){
+            $('input#report_of_rating').trigger('click');
+        });
+        $('input#report_of_rating').on('change', function() {
+            file = this.files[0];
+            var reader = new FileReader();
+          
+            reader.onload = function(e) {
+              $('#preview_cet').attr('src', e.target.result);
+            };
+          
+            reader.readAsDataURL(file);
+        });
+        $('#cet.back-button').click(function(e){
+            $('div.profile-screen').hide();
+            $('div#personal-info').show();
+            $('#step-2').removeClass('wrapper-green');
+            $('#step-2').addClass('wrapper');
+            $('#step-2 div').removeClass('bg-pending');
+            $('#step-2 div').removeClass('bg-white');
+            $('#step-2 div i').removeClass('color-green');
+  
+            $('#step-1').removeClass('wrapper-green');
+            $('#step-1').addClass('wrapper');
+            $('#step-1 div').removeClass('bg-green');
+            $('#step-1 div').addClass('bg-white');
+            $('#step-1 div i').removeClass('color-white');
+            $('#step-1 div i').addClass('color-green');
+  
+            $('span.progress-counter').text('1');
+            $('html,body').animate({
+                scrollTop:$('div.profile-screen').offset().top -400}, 'fast');
+        });
+
+        $('form#cet').submit(function(e){
+            e.preventDefault();
+  
+            var formData = new FormData(this);
+            formData.append('report_of_rating', file);
+            $.ajax({
+                type: 'POST',
+                url: $("form#cet").attr('action'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                
+                success: function(data) {
+                  var errors = JSON.parse(data);
+                  has_error = false;
+  
+                  $('div.application_number').empty().removeClass('d-block');
+                  $('#application_number').removeClass('is-invalid');
+                  $('div.rating_period').empty().removeClass('d-block');
+                  $('#rating_period').removeClass('is-invalid');
+                  $('div.overall_percentile_rank').empty().removeClass('d-block');
+                  $('#overall_percentile_rank').removeClass('is-invalid');
+                  $('div.english_proficiency_skills').empty().removeClass('d-block');
+                  $('#english_proficiency_skills').removeClass('is-invalid');
+                  $('div.reading_comprehension_skills').empty().removeClass('d-block');
+                  $('#reading_comprehension_skills').removeClass('is-invalid');
+                  $('div.science_process_skills').empty().removeClass('d-block');
+                  $('#science_process_skills').removeClass('is-invalid');
+                  $('div.quantitative_skills').empty().removeClass('d-block');
+                  $('#quantitative_skills').removeClass('is-invalid');
+                  $('div.abstract_thinking_skills').empty().removeClass('d-block');
+                  $('#abstract_thinking_skills').removeClass('is-invalid');
+                  $('div.report_of_rating').empty().removeClass('d-block');
+  
+                  if (errors.application_number) {
+                    $('#application_number').addClass('is-invalid');
+                    $('div.application_number').removeClass('d-none');
+                    $('div.application_number').addClass('d-block');
+                    $.each(errors.application_number, function(index, error) {
+                      $('div.application_number').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+  
+                  if (errors.rating_period) {
+                    $('#rating_period').addClass('is-invalid');
+                    $('div.rating_period').removeClass('d-none');
+                    $('div.rating_period').addClass('d-block');
+                    $.each(errors.rating_period, function(index, error) {
+                      $('div.rating_period').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+  
+                  if (errors.overall_percentile_rank) {
+                    $('#overall_percentile_rank').addClass('is-invalid');
+                    $('div.overall_percentile_rank').removeClass('d-none');
+                    $('div.overall_percentile_rank').addClass('d-block');
+                    $.each(errors.overall_percentile_rank, function(index, error) {
+                      $('div.overall_percentile_rank').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+  
+                  if (errors.english_proficiency_skills) {
+                    $('#english_proficiency_skills').addClass('is-invalid');
+                    $('div.english_proficiency_skills').removeClass('d-none');
+                    $('div.english_proficiency_skills').addClass('d-block');
+                    $.each(errors.english_proficiency_skills, function(index, error) {
+                      $('div.english_proficiency_skills').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+  
+                  if (errors.reading_comprehension_skills) {
+                    $('#reading_comprehension_skills').addClass('is-invalid');
+                    $('div.reading_comprehension_skills').removeClass('d-none');
+                    $('div.reading_comprehension_skills').addClass('d-block');
+                    $.each(errors.reading_comprehension_skills, function(index, error) {
+                      $('div.reading_comprehension_skills').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+  
+                  if (errors.science_process_skills) {
+                    $('#science_process_skills').addClass('is-invalid');
+                    $('div.science_process_skills').removeClass('d-none');
+                    $('div.science_process_skills').addClass('d-block');
+                    $.each(errors.science_process_skills, function(index, error) {
+                      $('div.science_process_skills').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+  
+                  if (errors.quantitative_skills) {
+                    $('#quantitative_skills').addClass('is-invalid');
+                    $('div.quantitative_skills').removeClass('d-none');
+                    $('div.quantitative_skills').addClass('d-block');
+                    $.each(errors.quantitative_skills, function(index, error) {
+                      $('div.quantitative_skills').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+                  
+                  if (errors.abstract_thinking_skills) {
+                    $('#abstract_thinking_skills').addClass('is-invalid');
+                    $('div.abstract_thinking_skills').removeClass('d-none');
+                    $('div.abstract_thinking_skills').addClass('d-block');
+                    $.each(errors.abstract_thinking_skills, function(index, error) {
+                      $('div.abstract_thinking_skills').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+
+                  if (errors.report_of_rating) {
+                    $('div.report_of_rating').removeClass('d-none');
+                    $('div.report_of_rating').addClass('d-block');
+                    $.each(errors.report_of_rating, function(index, error) {
+                      $('div.report_of_rating').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+
+                  if (!file) {
+                    $('div.report_of_rating').removeClass('d-none');
+                    $('div.report_of_rating').addClass('d-block');
+                    $('div.report_of_rating').append('<span>' + 'Please upload a photo of your CET.' + '</span>');
+                    has_error = true
+                  }
+  
+                  if (!has_error) {
+                    $('div.profile-screen').hide();
+                    $('div#shs').show();
+                    $('#step-2').removeClass('wrapper');
+                    $('#step-2').addClass('wrapper-green');
+                    $('#step-2 div').removeClass('bg-white');
+                    $('#step-2 div').addClass('bg-green');
+                    $('#step-2 div i').removeClass('color-green');
+                    $('#step-2 div i').addClass('color-white');
+                    
+                    $('#step-3').removeClass('wrapper');
+                    $('#step-3').addClass('wrapper-green');
+                    $('#step-3 div').addClass('bg-pending');
+                    $('#step-3 div').addClass('bg-white');
+                    $('#step-3 div i').addClass('color-green');
+
+                    $('span.progress-counter').text('3');
+                    $('html,body').animate({
+                        scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+                  }else{
+                    $('html,body').animate({
+                      scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+                  }
+              },
+            });
+  
+        });
+
+    });
+</script>

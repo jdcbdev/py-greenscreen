@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
-from .forms import SignUpForm, SignInForm, SignUpOldForm, ForgotPasswordForm, SetPasswordForm, PersonalInfoForm
+from .forms import SignUpForm, SignInForm, SignUpOldForm, ForgotPasswordForm, SetPasswordForm, PersonalInfoForm, CollegeEntranceTestForm
 from django.contrib.auth import authenticate, login, logout
-from .models import Student, SchoolBackground, ContactPoint, PersonalAddress
+from .models import Student, SchoolBackground, ContactPoint, PersonalAddress, CollegeEntranceTest
 from django.db import transaction
 from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -487,6 +487,7 @@ def complete_profile(request):
         student.birth_date = formatted_date
     contact = ContactPoint.objects.filter(student=student).first()
     address = PersonalAddress.objects.filter(student=student).first()
+    cet = CollegeEntranceTest.objects.filter(student=student).first()
     
     page_title = 'Complete Profile'
     context = {
@@ -494,6 +495,7 @@ def complete_profile(request):
         'student': student,
         'contact': contact,
         'address': address,
+        'cet': cet,
         'settings': settings
     }
     return render(request, 'student/profile/main.html', context)
@@ -546,23 +548,27 @@ def complete_personal_information(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@ensure_csrf_cookie
+@require_POST
 def complete_college_entrance_test(request):
     if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
         return redirect('home')
+    
+    student = Student.objects.get(account=request.user)
+    try:
+        cet = CollegeEntranceTest.objects.get(student=student)
+    except CollegeEntranceTest.DoesNotExist:
+        cet = None
 
-    page_title = 'Complete College Entrance Test'
-    form = None
-    success_message = None
+    form = CollegeEntranceTestForm(request.POST, request.FILES, instance=cet)
     
-    if request.method == 'POST':
-        return redirect('complete_college_entrance_test')
-    else:
-        pass
-    
-    context = {
-        'page_title': page_title,
-        'form': form,
-        'success_message': success_message,
-        'settings': settings
-    }
-    return render(request, 'student/profile/college-entrance-test.html', context)
+    if form.is_valid():
+        cet = form.save(commit=False)
+        cet.student = student
+        #Update or create uploaded photo
+        if 'report_of_rating' in request.FILES:
+            cet.report_of_rating = form.cleaned_data['report_of_rating']
+        cet.save()
+
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)

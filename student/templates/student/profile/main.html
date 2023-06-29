@@ -74,55 +74,10 @@
 <script>
     $(document).ready(function(){
         
-      
-      $('a#upload_cet').on('click', function(){
-          $('input#upload_cet_hidden').trigger('click');
-      });
       $('a#upload_shs_card').on('click', function(){
           $('input#upload_shs_card_hidden').trigger('click');
       });
       
-      $('#cet.back-button').click(function(e){
-          $('div.profile-screen').hide();
-          $('div#personal-info').show();
-          $('#step-2').removeClass('wrapper-green');
-          $('#step-2').addClass('wrapper');
-          $('#step-2 div').removeClass('bg-pending');
-          $('#step-2 div').removeClass('bg-white');
-          $('#step-2 div i').removeClass('color-green');
-
-          $('#step-1').removeClass('wrapper-green');
-          $('#step-1').addClass('wrapper');
-          $('#step-1 div').removeClass('bg-green');
-          $('#step-1 div').addClass('bg-white');
-          $('#step-1 div i').removeClass('color-white');
-          $('#step-1 div i').addClass('color-green');
-
-          $('span.progress-counter').text('1');
-          $('html,body').animate({
-              scrollTop:$('div.profile-screen').offset().top -400}, 'fast');
-      });
-      $('#cet.next-button').click(function(e){
-          e.preventDefault();
-          $('div.profile-screen').hide();
-          $('div#shs').show();
-          $('#step-2').removeClass('wrapper');
-          $('#step-2').addClass('wrapper-green');
-          $('#step-2 div').removeClass('bg-white');
-          $('#step-2 div').addClass('bg-green');
-          $('#step-2 div i').removeClass('color-green');
-          $('#step-2 div i').addClass('color-white');
-          
-          $('#step-3').removeClass('wrapper');
-          $('#step-3').addClass('wrapper-green');
-          $('#step-3 div').addClass('bg-pending');
-          $('#step-3 div').addClass('bg-white');
-          $('#step-3 div i').addClass('color-green');
-
-          $('span.progress-counter').text('3');
-          $('html,body').animate({
-              scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
-      });
       $('#shs.back-button').click(function(e){
           $('div.profile-screen').hide();
           $('div#cet').show();
