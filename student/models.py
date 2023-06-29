@@ -28,8 +28,8 @@ class Student(models.Model):
 
 class ContactPoint(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
-    contact_email = models.EmailField(max_length=255, unique=True)
-    contact_number = models.CharField(max_length=255, unique=True)
+    contact_email = models.EmailField(max_length=255)
+    contact_number = models.CharField(max_length=255)
 
 class PersonalAddress(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
@@ -44,7 +44,6 @@ class UploadedPhoto(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
     photo = models.ImageField(upload_to="students/", null=True)
     photo_name = models.CharField(max_length=255, blank=True)
-    photo_path = models.CharField(max_length=255, blank=True)
     photo_used = models.CharField(max_length=255, blank=True)
 
 class SchoolBackground(models.Model):

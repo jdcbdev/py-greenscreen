@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from .forms import SignUpForm, SignInForm, SignUpOldForm, ForgotPasswordForm, SetPasswordForm, PersonalInfoForm
 from django.contrib.auth import authenticate, login, logout
-from .models import Student, SchoolBackground
+from .models import Student, SchoolBackground, ContactPoint, PersonalAddress, UploadedPhoto
 from django.db import transaction
 from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -19,7 +19,9 @@ import requests
 from base.custom_apis import load_settings
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from datetime import datetime
 
 load_settings()
 
@@ -435,6 +437,7 @@ def activate_email(request, user, to_email):
     return success_message
 
 def signout(request):
+    request.session.flush()
     logout(request)
     return redirect('signin')
 
@@ -463,31 +466,36 @@ def add_student_partial(request, email):
         student = Student.objects.filter(account=user).first()
         if not student:
             Student.objects.create(
-                        account=user,
-                        first_name=user.first_name,
-                        last_name=user.last_name,
-                        student_type=request.session['student_type'],
-                        student_type_name=request.session['student_type_name'],
-                    )
+                account=user,
+                first_name=user.first_name,
+                last_name=user.last_name,
+                student_type=request.session['student_type'],
+                student_type_name=request.session['student_type_name'],
+            )
             return True
         
     return False   
 
 def complete_profile(request):
-    if request.user.is_authenticated and not request.user.is_staff and request.GET.get('is_profile_complete') == 'yes':
+    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
         return redirect('home')
     
+    student = Student.objects.filter(account=request.user).first()
+    if student.birth_date:
+        student_birth_date = student.birth_date
+        formatted_date = student_birth_date.strftime('%Y-%m-%d')
+        student.birth_date = formatted_date
+    contact = ContactPoint.objects.filter(student=student).first()
+    address = PersonalAddress.objects.filter(student=student).first()
+    photo = UploadedPhoto.objects.filter(student=student, photo_used='profile-photo').first()
+    
     page_title = 'Complete Profile'
-    success_message = None
-    form = {
-        'first_name': request.user.first_name,
-        'last_name': request.user.last_name,
-        'contact_email': request.user.email,
-    }
     context = {
         'page_title': page_title,
-        'form': form,
-        'success_message': success_message,
+        'student': student,
+        'contact': contact,
+        'address': address,
+        'photo': photo,
         'settings': settings
     }
     return render(request, 'student/profile/main.html', context)
@@ -496,24 +504,57 @@ def complete_profile(request):
 @require_POST
 @transaction.atomic
 def complete_personal_information(request):
-    if request.user.is_authenticated and not request.user.is_staff and request.GET.get('is_profile_complete') == 'yes':
+    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
         return redirect('home')
-    
-    if request.method == 'POST':
-        form = PersonalInfoForm(request.POST, request.FILES)
-        if form.is_valid():
-            try:
-                errors = form.errors.as_json()
-                return JsonResponse(errors, safe=False)
-            except Exception as e:
-                errors = form.errors.as_json()
-                return JsonResponse(errors, safe=False)
-        else:
-            errors = form.errors.as_json()
-            return JsonResponse(errors, safe=False)
+
+    form = PersonalInfoForm(request.POST, request.FILES)
+    if form.is_valid():
+        # Update user's first name and last name
+        user = request.user
+        user.first_name = form.cleaned_data['first_name']
+        user.last_name = form.cleaned_data['last_name']
+        user.save()
+
+        # Update student's personal information
+        student, _ = Student.objects.get_or_create(account=user)
+        student.first_name = form.cleaned_data['first_name']
+        student.middle_name = form.cleaned_data['middle_name']
+        student.last_name = form.cleaned_data['last_name']
+        student.extension_name = form.cleaned_data['extension_name']
+        student.sex = form.cleaned_data['sex']
+        student.birth_date = form.cleaned_data['birth_date']
+        student.is_personal_info_complete = True
+        student.save()
+
+        # Update or create contact information
+        contact, _ = ContactPoint.objects.get_or_create(student=student)
+        contact.contact_email = form.cleaned_data['contact_email']
+        contact.contact_number = form.cleaned_data['contact_number']
+        contact.save()
+
+        # Update or create address information
+        address, _ = PersonalAddress.objects.get_or_create(student=student)
+        address.house_no = form.cleaned_data['house_no']
+        address.street_name = form.cleaned_data['street_name']
+        address.barangay = form.cleaned_data['barangay']
+        address.city = form.cleaned_data['city']
+        address.province = form.cleaned_data['province']
+        address.region = form.cleaned_data['region']
+        address.save()
+
+        # Update or create uploaded photo
+        photo, _ = UploadedPhoto.objects.get_or_create(student=student)
+        if 'profile_photo' in request.FILES:
+            photo.photo_name = form.cleaned_data['profile_photo'].name
+            photo.photo_used = 'profile-photo'
+            photo.photo = form.cleaned_data['profile_photo']
+            photo.save()
+
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
 
 def complete_college_entrance_test(request):
-    if request.user.is_authenticated and not request.user.is_staff and request.GET.get('is_profile_complete') == 'yes':
+    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
         return redirect('home')
 
     page_title = 'Complete College Entrance Test'

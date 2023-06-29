@@ -157,6 +157,10 @@ class PersonalInfoForm(forms.Form):
     
     profile_photo = forms.FileField(required=False)
     
+    def __init__(self, *args, **kwargs):
+        self.instance = kwargs.pop('instance', None)
+        super().__init__(*args, **kwargs)
+    
     def clean_profile_photo(self):
         profile_photo = self.cleaned_data.get('profile_photo', False)
 
@@ -177,7 +181,10 @@ class PersonalInfoForm(forms.Form):
         contact_number = self.cleaned_data['contact_number']
         if len(contact_number) != 11 or not contact_number.isdigit() or not contact_number.startswith('0'):
             raise forms.ValidationError('Phone number must be 11 digits long and start with 0.')
-    
+
+        # if contact_number and ContactPoint.objects.filter(contact_number=contact_number).exclude(pk=self.instance.pk).exists():
+        #     raise forms.ValidationError('This number is already in use.')
+        
         return contact_number
     
     def clean_birth_date(self):
@@ -189,7 +196,14 @@ class PersonalInfoForm(forms.Form):
         
         return birth_date
     
+    def clean_contact_email(self):
+        contact_email = self.cleaned_data['contact_email']
+        # if contact_email and ContactPoint.objects.filter(contact_email=contact_email).exclude(pk=self.instance.pk).exists():
+        #     raise forms.ValidationError('This email is already in use.')
+        
+        return contact_email
+    
     def clean(self):
         cleaned_data = super().clean()
-        
+           
         return cleaned_data

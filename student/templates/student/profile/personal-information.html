@@ -5,7 +5,11 @@
         <div class="card-profile p-4 d-block">
             <div class="card-profile w-100 border-0">
                 <div class="upload-photo-container">
-                    <img src="{% static 'img/faculty/male.png' %}" alt="">
+                    {% if photo.photo %}
+                        <img id="preview_image" src="{{ photo.photo.url }}" alt="">
+                    {% else %}
+                        <img id="preview_image" src="{% static 'img/faculty/male.png' %}" alt="">
+                    {% endif %}
                     <h6 class="ms-3 card-title fw-bold d-none d-sm-block">Profile Picture</h6>
                 </div>
                 <a class="btn btn-outline-secondary custom-btn upload-photo">Update Photo</a>
@@ -25,61 +29,61 @@
                         </div>
                         <div class="col-12 col-md-6">
                             <label for="first_name" class="form-label">First Name<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="" value="{{ form.first_name|default_if_none:'' }}">
+                            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="" value="{{ student.first_name|default_if_none:'' }}">
                             <div class="invalid-feedback d-none first_name">
                             </div>
                         </div>
                         <div class="col-12 col-md-6">
                             <label for="middle_name" class="form-label">Middle Name<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="middle_name" name="middle_name" placeholder="" value="">
+                            <input type="text" class="form-control" id="middle_name" name="middle_name" placeholder="" value="{{ student.middle_name|default_if_none:'' }}">
                         </div>
                         <div class="col-12 col-md-6">
                             <label for="last_name" class="form-label">Last Name<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="last_name" placeholder="" name="last_name" value="{{ form.last_name|default_if_none:'' }}">
+                            <input type="text" class="form-control" id="last_name" placeholder="" name="last_name" value="{{ student.last_name|default_if_none:'' }}">
                             <div class="invalid-feedback d-none last_name">
                             </div>
                         </div>
                         <div class="col-12 col-md-6">
                             <label for="extension_name" class="form-label">Extension Name<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="extension_name" placeholder="Optional (Jr, Sr, I, III)" name="extension_name">
+                            <input type="text" class="form-control" id="extension_name" placeholder="Optional (Jr, Sr, I, III)" name="extension_name" value="{{ student.extension_name|default_if_none:'' }}">
                         </div>
                         <div class="col-12 col-md-6">
                             <label for="sex" class="form-label">Sex<span class="text-muted"></span></label>
                             <select class="form-control form-select" id="sex" placeholder="" name="sex">
                                 <option value="">--Select--</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
+                                <option value="Male" {% if student.sex == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if student.sex == 'Female' %}selected{% endif %}>Female</option>
                             </select>
                             <div class="invalid-feedback d-none sex">
                             </div>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label for="birth_date" class="form-label">Birth Date<span class="text-muted"></span></label>
-                            <input type="date" class="form-control" id="birth_date" placeholder="" name="birth_date">
+                            <label for="birth_date" class="form-label">Birth Date<span class="text-muted"> (DD-MM-YYYY)</span></label>
+                            <input type="date" class="form-control" id="birth_date" placeholder="" name="birth_date" value="{{ student.birth_date|default_if_none:'' }}">
                             <div class="invalid-feedback d-none birth_date">
                             </div>
                         </div>
                         <h5 class="col-12 fw-bold my-4 mb-1">Contact Points</h5>
                         <div class="col-12 col-md-6">
                             <label for="contact_email" class="form-label">School or Personal Email<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="contact_email" placeholder="" name="contact_email" value="{{ form.contact_email|default_if_none:'' }}" disabled>
+                            <input type="text" class="form-control" id="contact_email" placeholder="" name="contact_email" value="{{ request.user.email|default_if_none:'' }}" disabled>
                             <div class="invalid-feedback d-none contact_email">
                             </div>
                         </div>
                         <div class="col-12 col-md-6">
                             <label for="contact_number" class="form-label">Phone Number<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="contact_number" placeholder="11-digit mobile number" name="contact_number">
+                            <input type="text" class="form-control" id="contact_number" placeholder="11-digit mobile number" name="contact_number" value="{{ contact.contact_number|default_if_none:'' }}">
                             <div class="invalid-feedback d-none contact_number">
                             </div>
                         </div>
                         <h5 class="col-12 fw-bold my-4 mb-1">Home Address</h5>
                         <div class="col-12 col-md-6">
                             <label for="house_no" class="form-label">Building/House No.<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="house_no" placeholder="Optional" name="house_no">
+                            <input type="text" class="form-control" id="house_no" placeholder="Optional" name="house_no" value="{{ address.house_no|default_if_none:'' }}">
                         </div>
                         <div class="col-12 col-md-6">
                             <label for="street_name" class="form-label">Street Name<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="street_name" placeholder="Optional" name="street_name">
+                            <input type="text" class="form-control" id="street_name" placeholder="Optional" name="street_name" value="{{ address.street_name|default_if_none:'' }}">
                         </div>
                         <div class="col-12 col-md-6">
                             <label for="barangay" class="form-label">Barangay<span class="text-muted"></span></label>
@@ -148,14 +152,91 @@
             success: function(data) {
                 $('#region').empty().append('<option value="">--Select--</option>');
                 $.each(data, function(index, region) {
-                    $('#region').append('<option value="' + region.code + '">' + region.name + '</option>');
+                  var option = $('<option value="' + region.code + '">' + region.name + '</option>');
+                  if (region.code === '{{ address.region|default_if_none:"090000000"|default:"090000000" }}') {
+                    option.prop('selected', true);
+                  }
+                  $('#region').append(option);
                 });
             },
             error: function(xhr, textStatus, errorThrown) {
                 alert('Error: ' + textStatus);
             }
         });
+        var formData = {
+            filter: '{{ address.region|default_if_none:"090000000"|default:"090000000" }}',
+            action: 'province',
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        };
+        $.ajax({
+            type: 'POST',
+            url: '/student/complete-profile/select-address/',
+            data: formData,
+            success: function(data) {
+                $('#province').empty().append('<option value="">--Select--</option>');
+                $.each(data, function(index, province) {
+                    var option = $('<option value="' + province.code + '">' + province.name + '</option>');
+                    if (province.code === '{{ address.province|default_if_none:"097300000"|default:"097300000" }}') {
+                        option.prop('selected', true);
+                    }
+                    $('#province').append(option);
+                });
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert('Error: ' + textStatus);
+            }
+        });
+        var formData = {
+            filter: '{{ address.province|default_if_none:"097300000"|default:"097300000" }}',
+            action: 'city',
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        };
+        $.ajax({
+            type: 'POST',
+            url: '/student/complete-profile/select-address/',
+            data: formData,
+            success: function(data) {
+                $('#city').empty().append('<option value="">--Select--</option>');
+                $.each(data, function(index, city) {
+                    var option = $('<option value="' + city.code + '">' + city.name + '</option>');
+                    if (city.code === '{{ address.city|default_if_none:"097332000"|default:"097332000" }}') {
+                        option.prop('selected', true);
+                    }
+                    $('#city').append(option);
+                });
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert('Error: ' + textStatus);
+            }
+        });
+        var formData = {
+            filter: '{{ address.city|default_if_none:"097332000"|default:"097332000" }}',
+            action: 'barangay',
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        };
+        $.ajax({
+            type: 'POST',
+            url: '/student/complete-profile/select-address/',
+            data: formData,
+            success: function(data) {
+                $('#barangay').empty().append('<option value="">--Select--</option>');
+                $.each(data, function(index, barangay) {
+                    var option = $('<option value="' + barangay.code + '">' + barangay.name + '</option>');
+                    if (barangay.code === '{{ address.barangay }}') {
+                        option.prop('selected', true);
+                    }
+                    $('#barangay').append(option);
+                });
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert('Error: ' + textStatus);
+            }
+        });
+
         $('#region').on('change', function(){
+            if ($('#region').val() === '') {
+                return;
+            }
             var formData = {
                 filter: $("#region").val(),
                 action: 'province',
@@ -177,6 +258,9 @@
             });
         });
         $('#province').on('change', function(){
+            if ($('#province').val() === '') {
+                return;
+            }
             var formData = {
                 filter: $("#province").val(),
                 action: 'city',
@@ -198,6 +282,9 @@
             });
         });
         $('#city').on('change', function(){
+            if ($('#city').val() === '') {
+                return;
+            }
             var formData = {
                 filter: $("#city").val(),
                 action: 'barangay',
@@ -221,9 +308,16 @@
         $('a.upload-photo').on('click', function(){
             $('input#profile_photo').trigger('click');
         });
-        $('input#profile_photo').on('change', function(){
-            file = this.files[0];
-        });
+        $('input#profile_photo').on('change', function() {
+            var file = this.files[0];
+            var reader = new FileReader();
+          
+            reader.onload = function(e) {
+              $('#preview_image').attr('src', e.target.result);
+            };
+          
+            reader.readAsDataURL(file);
+        });          
         $('form#personal-info').submit(function(e){
             e.preventDefault();
   
