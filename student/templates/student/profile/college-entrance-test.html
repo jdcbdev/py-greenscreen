@@ -8,49 +8,49 @@
                 <form class="needs-validation" action="{% url 'complete_college_entrance_test' %}" method="post" name="cet" id="cet" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="row g-3">
-                        <div class="col-12 col-md-6">
+                        <div class="col-sm-6">
                             <label for="application_number" class="form-label">CET Application Number<span class="text-muted"></span></label>
                             <input type="text" class="form-control" id="application_number" placeholder="" name="application_number" value="{{ cet.application_number|default_if_none:'' }}">
                             <div class="invalid-feedback d-none application_number">
                             </div>
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-sm-6">
                             <label for="rating_period" class="form-label">Period of Rating<span class="text-muted"></span></label>
                             <input type="text" class="form-control" id="rating_period" placeholder="Ex: January-February 2022" name="rating_period" value="{{ cet.rating_period|default_if_none:'' }}">
                             <div class="invalid-feedback d-none rating_period">
                             </div>
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-sm-6">
                             <label for="overall_percentile_rank" class="form-label">Overall Percentile Rank (OAPR)<span class="text-muted"></span></label>
                             <input type="text" class="form-control" id="overall_percentile_rank" placeholder="" name="overall_percentile_rank" value="{{ cet.overall_percentile_rank|default_if_none:'' }}">
                             <div class="invalid-feedback d-none overall_percentile_rank">
                             </div>
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-sm-6">
                             <label for="english_proficiency_skills" class="form-label">English Proficiency Skills<span class="text-muted"></span></label>
                             <input type="text" class="form-control" id="english_proficiency_skills" placeholder="" name="english_proficiency_skills" value="{{ cet.english_proficiency_skills|default_if_none:'' }}">
                             <div class="invalid-feedback d-none english_proficiency_skills">
                             </div>
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-sm-6">
                             <label for="reading_comprehension_skills" class="form-label">Reading Comprehension Skills<span class="text-muted"></span></label>
                             <input type="text" class="form-control" id="reading_comprehension_skills" placeholder="" name="reading_comprehension_skills" value="{{ cet.reading_comprehension_skills|default_if_none:'' }}">
                             <div class="invalid-feedback d-none reading_comprehension_skills">
                             </div>
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-sm-6">
                             <label for="science_process_skills" class="form-label">Science Process Skills<span class="text-muted"></span></label>
                             <input type="text" class="form-control" id="science_process_skills" placeholder="" name="science_process_skills" value="{{ cet.science_process_skills|default_if_none:'' }}">
                             <div class="invalid-feedback d-none science_process_skills">
                             </div>
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-sm-6">
                             <label for="quantitative_skills" class="form-label">Quantitative Skills<span class="text-muted"></span></label>
                             <input type="text" class="form-control" id="quantitative_skills" placeholder="" name="quantitative_skills" value="{{ cet.quantitative_skills|default_if_none:'' }}">
                             <div class="invalid-feedback d-none quantitative_skills">
                             </div>
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-sm-6">
                             <label for="abstract_thinking_skills" class="form-label">Abstract Thinking Skills<span class="text-muted"></span></label>
                             <input type="text" class="form-control" id="abstract_thinking_skills" placeholder="" name="abstract_thinking_skills" value="{{ cet.abstract_thinking_skills|default_if_none:'' }}">
                             <div class="invalid-feedback d-none abstract_thinking_skills">

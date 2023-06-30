@@ -101,8 +101,8 @@
                                 {% endif %}
                             </div>
                             <div class="col-sm-6">
-                                <label for="last-course" class="form-label">Course (Full Name)</label>
-                                <input type="text" class="form-control {% if form.last_course_attended.errors %}is-invalid{% endif %}" id="last_course_attended" name="last_course_attended" placeholder="" value="{{ form.last_course_attended.value|default_if_none:'' }}" required>
+                                <label for="last-course" class="form-label">Course (Complete Name)</label>
+                                <input type="text" class="form-control {% if form.last_course_attended.errors %}is-invalid{% endif %}" id="last_course_attended" name="last_course_attended" placeholder="e.g. BS Accountancy" value="{{ form.last_course_attended.value|default_if_none:'' }}" required>
                                 {% if form.last_course_attended.errors %}
                                     <div class="invalid-feedback d-block">
                                         {% for error in form.last_course_attended.errors %}
