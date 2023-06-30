@@ -1050,6 +1050,21 @@ span.table-struggling{
     margin-right: 5px;
 }
 
+.edit-upload-photo{
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    display: none;
+    background-color: white;
+}
+
+.upload-container-cet{
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color: white;
+}
+
 @media (min-width: 576px) {
     .shortcut{
         display: block;
@@ -1099,7 +1114,7 @@ span.table-struggling{
     }
 
     .upload-container{
-        height: 180px;
+        height: 240px;
     }
 
     button.next-button, a.back-button{
