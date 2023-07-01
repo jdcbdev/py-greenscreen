@@ -63,3 +63,19 @@ class CustomAPI(models.Model):
     key = models.CharField(max_length=255, blank=True, default='')
     username = models.CharField(max_length=255, blank=True, default='')
     password = models.CharField(max_length=255, blank=True, default='')
+
+class SHSStrand(models.Model):
+    code = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=100)
+    
+class ClassRoomOrganization(models.Model):
+    name = models.CharField(max_length=100)
+    
+class StudentSupremeGovernment(models.Model):
+    name = models.CharField(max_length=100)
+    
+class ClassRank(models.Model):
+    name = models.CharField(max_length=100)
+
+class AcademicAwards(models.Model):
+    name = models.CharField(max_length=100)

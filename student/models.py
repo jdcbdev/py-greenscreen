@@ -16,8 +16,6 @@ class Student(models.Model):
     is_profile_complete = models.BooleanField(default=False)
     student_type = models.CharField(max_length=255, blank=True, default='new')
     student_type_name = models.CharField(max_length=255, blank=True, default='freshman')
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
     
     is_personal_info_complete = models.BooleanField(default=False)
     is_cet_complete = models.BooleanField(default=False)
@@ -27,6 +25,9 @@ class Student(models.Model):
     is_study_complete = models.BooleanField(default=False)
     
     profile_photo = models.ImageField(upload_to="students/", null=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 class ContactPoint(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
@@ -56,7 +57,14 @@ class CollegeEntranceTest(models.Model):
 
 class SchoolBackground(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
-    last_school_attended = models.CharField(max_length=255, blank=True)
-    last_course_attended = models.CharField(max_length=255, blank=True)
-    
-    
+    last_school_attended = models.CharField(max_length=255, blank=True, default='')
+    last_course_attended = models.CharField(max_length=255, blank=True, default='')
+    strand = models.CharField(max_length=150, blank=True, default='')
+    high_school_name = models.CharField(max_length=255, blank=True, default='')
+    class_rank = models.CharField(max_length=100, blank=True, default='')
+    academic_awards_received = models.CharField(max_length=150, blank=True, default='')
+    classroom_organization = models.CharField(max_length=150, blank=True, default='')
+    student_supreme_government = models.CharField(max_length=150, blank=True, default='')
+    gpa_first_semester = models.FloatField(blank=True, default=0)
+    gpa_second_semester = models.FloatField(blank=True, default=0)
+    photo_grade = models.ImageField(upload_to='shs_card/', null=True)

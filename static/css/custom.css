@@ -122,7 +122,7 @@ footer p a:hover{
 }
 
 .upload-container{
-    height: 150px;
+    height: 180px;
 }
 
 .progress-bar-application p{
@@ -1059,6 +1059,13 @@ span.table-struggling{
 }
 
 .upload-container-cet{
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color: white;
+}
+
+.upload-container-shs{
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;

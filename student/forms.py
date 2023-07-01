@@ -242,3 +242,60 @@ class CollegeEntranceTestForm(forms.ModelForm):
         cleaned_data = super().clean()
            
         return cleaned_data
+
+class SchoolBackgroundForm(forms.Form):
+    student_type_name = forms.CharField(max_length=150, required=True)
+    last_school_attended = forms.CharField(max_length=255, required=False)
+    last_course_attended = forms.CharField(max_length=255, required=False)
+    strand = forms.CharField(max_length=150, required=True)
+    high_school_name = forms.CharField(max_length=255, required=True)
+    class_rank = forms.CharField(max_length=100, required=True)
+    academic_awards_received = forms.CharField(max_length=150, required=True)
+    classroom_organization = forms.CharField(max_length=150, required=True)
+    student_supreme_government = forms.CharField(max_length=150, required=True)
+    gpa_first_semester = forms.FloatField(required=False)
+    gpa_second_semester = forms.FloatField(required=False)
+    photo_grade = forms.ImageField(required=False)
+    
+    def clean_last_school_attended(self):
+        last_school_attended = self.cleaned_data.get('last_school_attended')
+        student_type_name = self.cleaned_data.get('student_type_name')
+        print(last_school_attended)
+        if student_type_name == 'shiftee' and not last_school_attended:
+            raise forms.ValidationError('This field is required.')
+        if student_type_name == 'transferee' and not last_school_attended:
+            raise forms.ValidationError('This field is required.')
+        
+        return last_school_attended
+    
+    def clean_last_course_attended(self):
+        last_course_attended = self.cleaned_data.get('last_course_attended')
+        student_type_name = self.cleaned_data.get('student_type_name')
+        
+        if student_type_name == 'shiftee' and not last_course_attended:
+            raise forms.ValidationError('This field is required.')
+        if student_type_name == 'transferee' and not last_course_attended:
+            raise forms.ValidationError('This field is required.')
+        
+        return last_course_attended
+    
+    def clean_photo_grade(self):
+        photo_grade = self.cleaned_data.get('photo_grade', False)
+
+        if not photo_grade:
+            return photo_grade
+
+        max_size = 5 * 1024 * 1024  # 2MB in bytes
+        if photo_grade.size > max_size:
+            raise forms.ValidationError('The file size exceeds the maximum allowed limit of 5MB.')
+
+        allowed_formats = ['image/jpeg', 'image/jpg', 'image/png']
+        if photo_grade.content_type not in allowed_formats:
+            raise forms.ValidationError('The selected file format is not supported. Please choose a JPEG, or PNG.')
+
+        return photo_grade
+    
+    def clean(self):
+        cleaned_data = super().clean()
+           
+        return cleaned_data

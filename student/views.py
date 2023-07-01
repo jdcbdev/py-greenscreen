@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
-from .forms import SignUpForm, SignInForm, SignUpOldForm, ForgotPasswordForm, SetPasswordForm, PersonalInfoForm, CollegeEntranceTestForm
+from .forms import SignUpForm, SignInForm, SignUpOldForm, ForgotPasswordForm, SetPasswordForm, PersonalInfoForm, CollegeEntranceTestForm, SchoolBackgroundForm
 from django.contrib.auth import authenticate, login, logout
 from .models import Student, SchoolBackground, ContactPoint, PersonalAddress, CollegeEntranceTest
+from base.models import SHSStrand, ClassRoomOrganization, StudentSupremeGovernment, ClassRank, AcademicAwards
 from django.db import transaction
 from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -488,7 +489,13 @@ def complete_profile(request):
     contact = ContactPoint.objects.filter(student=student).first()
     address = PersonalAddress.objects.filter(student=student).first()
     cet = CollegeEntranceTest.objects.filter(student=student).first()
-    
+    strands = SHSStrand.objects.all()
+    class_positions = ClassRoomOrganization.objects.all()
+    ssg = StudentSupremeGovernment.objects.all()
+    ranks = ClassRank.objects.all()
+    awards = AcademicAwards.objects.all()
+    school = SchoolBackground.objects.filter(student=student).first()
+    print(school)
     page_title = 'Complete Profile'
     context = {
         'page_title': page_title,
@@ -496,6 +503,12 @@ def complete_profile(request):
         'contact': contact,
         'address': address,
         'cet': cet,
+        'strands': strands,
+        'class_positions': class_positions,
+        'ssg': ssg,
+        'ranks': ranks,
+        'awards': awards,
+        'school': school,
         'settings': settings
     }
     return render(request, 'student/profile/main.html', context)
@@ -550,6 +563,7 @@ def complete_personal_information(request):
 
 @ensure_csrf_cookie
 @require_POST
+@transaction.atomic
 def complete_college_entrance_test(request):
     if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
         return redirect('home')
@@ -565,10 +579,56 @@ def complete_college_entrance_test(request):
     if form.is_valid():
         cet = form.save(commit=False)
         cet.student = student
+        student.is_cet_complete = True
+        student.save()
         #Update or create uploaded photo
         if 'report_of_rating' in request.FILES:
             cet.report_of_rating = form.cleaned_data['report_of_rating']
         cet.save()
+
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def complete_school_background(request):
+    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
+        return redirect('home')
+
+    form = SchoolBackgroundForm(request.POST, request.FILES)
+    if form.is_valid():
+        
+        user = request.user
+
+        # Update student's additional information
+        student = Student.objects.get(account=user)
+        if form.cleaned_data['student_type_name'] == 'shiftee' or form.cleaned_data['student_type_name'] == 'transferee':
+            student_type = 'old'
+        else:
+            student_type = 'new'
+            
+        student.student_type = student_type
+        student.student_type_name = form.cleaned_data['student_type_name']
+        student.is_personal_info_complete = True
+        student.save()
+
+        # Update or create school information
+        school, _ = SchoolBackground.objects.get_or_create(student=student)
+        school.last_school_attended = form.cleaned_data['last_school_attended']
+        school.last_course_attended = form.cleaned_data['last_course_attended']
+        school.strand = form.cleaned_data['strand']
+        school.high_school_name = form.cleaned_data['high_school_name']
+        school.class_rank = form.cleaned_data['class_rank']
+        school.academic_awards_received = form.cleaned_data['academic_awards_received']
+        school.classroom_organization = form.cleaned_data['classroom_organization']
+        school.student_supreme_government = form.cleaned_data['student_supreme_government']
+        school.gpa_first_semester = form.cleaned_data['gpa_first_semester']
+        school.gpa_second_semester = form.cleaned_data['gpa_second_semester']
+        if 'photo_grade' in request.FILES:
+            school.photo_grade = form.cleaned_data['photo_grade']
+        school.save()
+        
 
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
