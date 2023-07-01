@@ -68,3 +68,15 @@ class SchoolBackground(models.Model):
     gpa_first_semester = models.FloatField(blank=True, default=0)
     gpa_second_semester = models.FloatField(blank=True, default=0)
     photo_grade = models.ImageField(upload_to='shs_card/', null=True)
+    
+class EconomicStatus(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
+    father_highest_academic_degree = models.CharField(max_length=100)
+    father_employment_status = models.CharField(max_length=100)
+    father_current_occupation = models.CharField(max_length=255)
+    mother_highest_academic_degree = models.CharField(max_length=100)
+    mother_employment_status = models.CharField(max_length=100)
+    mother_current_occupation = models.CharField(max_length=255)
+    computer = models.CharField(max_length=100)
+    internet_connection = models.CharField(max_length=100)
+

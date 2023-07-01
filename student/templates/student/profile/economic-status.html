@@ -5,128 +5,102 @@
         <div class="card-profile p-4 mt-3">
             <div class="row">
                 <h5 class="col-12 fw-bold mb-3">Family Economic Status</h5>
-                <form class="needs-validation" action="" method="post" name="economic-status" id="economic-status">
+                <form class="needs-validation" action="{% url 'complete_economic_status' %}" method="post" name="economic-status" id="economic-status">
+                    {% csrf_token %}
                     <div class="row g-3">
                         <div class="col-12 col-md-12">
-                            <label for="father_acads" class="form-label">What is your father's highest academic degree or level of education? If he is currently enrolled, the highest degree he earned.<span class="text-muted"></span></label>
-                            <select class="form-control form-select" id="father_acads" placeholder="" name="father_acads" required="">
+                            <label for="father_highest_academic_degree" class="form-label">What is your father's highest academic degree or level of education? If he is currently enrolled, the highest degree he earned.<span class="text-muted"></span></label>
+                            <select class="form-control form-select" id="father_highest_academic_degree" placeholder="" name="father_highest_academic_degree">
                                 <option value="">--Select--</option>
-                                <?php
-                                    require_once '../classes/reference.class.php';
-                                    $ref_obj = new Reference();
-                                    $ref = $ref_obj->get_education();
-                                    foreach($ref as $row){
-                                ?>
-                                        <option value="<?=$row['education']?>"><?=$row['education']?></option>
-                                <?php
-                                    }
-                                ?>
-                                <option value="Not Applicable (no work, not known, deceased, etc.)">Not Applicable (no work, not known, deceased, etc.)</option>
+                                {% for degree in degrees %}
+                                    {% if economic.father_highest_academic_degree == degree.name %}
+                                        <option value="{{ degree.name }}" selected>{{ degree.name }}</option>
+                                    {% else %}
+                                        <option value="{{ degree.name }}">{{ degree.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
                             </select>
+                            <div class="invalid-feedback d-none father_highest_academic_degree">
+                            </div>
                         </div>
                         <div class="col-12 col-md-12">
                             <label for="father_employment_status" class="form-label">Which of the following categories best describes your father's employment status?<span class="text-muted"></span></label>
-                            <select class="form-control form-select" id="father_employment_status" placeholder="" name="father_employment_status" required="">
+                            <select class="form-control form-select" id="father_employment_status" placeholder="" name="father_employment_status">
                                 <option value="">--Select--</option>
-                                <?php
-                                    require_once '../classes/reference.class.php';
-                                    $ref_obj = new Reference();
-                                    $ref = $ref_obj->get_employment();
-                                    foreach($ref as $row){
-                                ?>
-                                        <option value="<?=$row['employment']?>"><?=$row['employment']?></option>
-                                <?php
-                                    }
-                                ?>
-                                <option value="Not Applicable (no work, not known, deceased, etc.)">Not Applicable (no work, not known, deceased, etc.)</option>
+                                {% for emp in employment %}
+                                    {% if economic.father_employment_status == emp.name %}
+                                        <option value="{{ emp.name }}" selected>{{ emp.name }}</option>
+                                    {% else %}
+                                        <option value="{{ emp.name }}">{{ emp.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
                             </select>
+                            <div class="invalid-feedback d-none father_employment_status">
+                            </div>
                         </div>
                         <div class="col-12 col-md-12">
-                            <label for="father_employment_work" class="form-label">Which of the following best describes your father's current occupation?<span class="text-muted"></span></label>
-                            <select class="form-control form-select" id="father_employment_work" placeholder="" name="father_employment_work" required="">
-                                <option value="">--Select--</option>
-                                <?php
-                                    require_once '../classes/reference.class.php';
-                                    $ref_obj = new Reference();
-                                    $ref = $ref_obj->get_work();
-                                    foreach($ref as $row){
-                                ?>
-                                        <option value="<?=$row['occupation']?>"><?=$row['occupation']?></option>
-                                <?php
-                                    }
-                                ?>
-                                <option value="Not Applicable (no work, not known, deceased, etc.)">Not Applicable (no work, not known, deceased, etc.)</option>
-                            </select>
+                            <label for="father_current_occupation" class="form-label">Describe your father's current occupation.<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="father_current_occupation" name="father_current_occupation" placeholder="" value="{{ economic.father_current_occupation|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none father_current_occupation">
+                            </div>
                         </div>
                         <div class="col-12 col-md-12">
-                            <label for="mother_acads" class="form-label">What is your mother's highest academic degree or level of education? If she is currently enrolled, the highest degree she earned.<span class="text-muted"></span></label>
-                            <select class="form-control form-select" id="mother_acads" placeholder="" name="mother_acads" required="">
+                            <label for="mother_highest_academic_degree" class="form-label">What is your mother's highest academic degree or level of education? If she is currently enrolled, the highest degree she earned.<span class="text-muted"></span></label>
+                            <select class="form-control form-select" id="mother_highest_academic_degree" placeholder="" name="mother_highest_academic_degree">
                                 <option value="">--Select--</option>
-                                <?php
-                                    require_once '../classes/reference.class.php';
-                                    $ref_obj = new Reference();
-                                    $ref = $ref_obj->get_education();
-                                    foreach($ref as $row){
-                                ?>
-                                        <option value="<?=$row['education']?>"><?=$row['education']?></option>
-                                <?php
-                                    }
-                                ?>
-                                <option value="Not Applicable (no work, not known, deceased, etc.)">Not Applicable (no work, not known, deceased, etc.)</option>
+                                {% for degree in degrees %}
+                                    {% if economic.mother_highest_academic_degree == degree.name %}
+                                        <option value="{{ degree.name }}" selected>{{ degree.name }}</option>
+                                    {% else %}
+                                        <option value="{{ degree.name }}">{{ degree.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
                             </select>
+                            <div class="invalid-feedback d-none mother_highest_academic_degree">
+                            </div>
                         </div>
                         <div class="col-12 col-md-12">
                             <label for="mother_employment_status" class="form-label">Which of the following categories best describes your mother's employment status?<span class="text-muted"></span></label>
-                            <select class="form-control form-select" id="mother_employment_status" placeholder="" name="mother_employment_status" required="">
-                                <option value="none">--Select--</option>
-                                <?php
-                                    require_once '../classes/reference.class.php';
-                                    $ref_obj = new Reference();
-                                    $ref = $ref_obj->get_employment();
-                                    foreach($ref as $row){
-                                ?>
-                                        <option value="<?=$row['employment']?>"><?=$row['employment']?></option>
-                                <?php
-                                    }
-                                ?>
-                                <option value="Not Applicable (no work, not known, deceased, etc.)">Not Applicable (no work, not known, deceased, etc.)</option>
+                            <select class="form-control form-select" id="mother_employment_status" placeholder="" name="mother_employment_status">
+                                <option value="">--Select--</option>
+                                {% for emp in employment %}
+                                    {% if economic.mother_employment_status == emp.name %}
+                                        <option value="{{ emp.name }}" selected>{{ emp.name }}</option>
+                                    {% else %}
+                                        <option value="{{ emp.name }}">{{ emp.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
                             </select>
+                            <div class="invalid-feedback d-none mother_employment_status">
+                            </div>
                         </div>
                         <div class="col-12 col-md-12">
-                            <label for="mother_employment_work" class="form-label">Which of the following best describes your mother's current occupation?<span class="text-muted"></span></label>
-                            <select class="form-control form-select" id="mother_employment_work" placeholder="" name="mother_employment_work" required="">
-                                <option value="">--Select--</option>
-                                <?php
-                                    require_once '../classes/reference.class.php';
-                                    $ref_obj = new Reference();
-                                    $ref = $ref_obj->get_work();
-                                    foreach($ref as $row){
-                                ?>
-                                        <option value="<?=$row['occupation']?>"><?=$row['occupation']?></option>
-                                <?php
-                                    }
-                                ?>
-                                <option value="Not Applicable (no work, not known, deceased, etc.)">Not Applicable (no work, not known, deceased, etc.)</option>
-                            </select>
+                            <label for="mother_current_occupation" class="form-label">Describe your mother's current occupation.<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="mother_current_occupation" name="mother_current_occupation" placeholder="" value="{{ economic.mother_current_occupation|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none mother_current_occupation">
+                            </div>
                         </div>
                         <h5 class="col-12 fw-bold my-4 mb-1">Availability of Resources</h5>
                         <div class="col-12 col-md-12">
-                            <label for="laptop" class="form-label">Do you have a personal computer or laptop?<span class="text-muted"></span></label>
-                            <select class="form-control form-select" id="laptop" placeholder="" name="laptop" required="">
-                                <option value="none">--Select--</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                                <option value="Planning to purchase">Planning to purchase</option>
+                            <label for="computer" class="form-label">Do you have a personal computer or laptop?<span class="text-muted"></span></label>
+                            <select class="form-control form-select" id="computer" placeholder="" name="computer">
+                                <option value="">--Select--</option>
+                                <option value="Yes" {% if economic.computer == 'Yes' %}selected{% endif %}>Yes</option>
+                                <option value="No" {% if economic.computer == 'No' %}selected{% endif %}>No</option>
+                                <option value="Planning to purchase" {% if economic.computer == 'Planning to purchase' %}selected{% endif %}>Planning to purchase</option>
                             </select>
+                            <div class="invalid-feedback d-none computer">
+                            </div>
                         </div>
                         <div class="col-12 col-md-12">
-                            <label for="internet" class="form-label">What type of internet connection do you have at home?<span class="text-muted"></span></label>
-                            <select class="form-control form-select" id="internet" placeholder="" name="internet" required="">
-                                <option value="none">--Select--</option>
-                                <option value="Post-paid plan(Unlimited Data Subscription to PLDT, GLOBE, SMART, Sky, etc.)">Post-paid plan(Unlimited Data Subscription to PLDT, GLOBE, SMART, Sky, etc.)</option>
-                                <option value="Pre-paid plan(Limited Data Subscription)">Pre-paid plan(Limited Data Subscription)</option>
-                                <option value="No internet subscription, including no access to internet connection at all">No internet subscription, including no access to internet connection at all</option>
+                            <label for="internet_connection" class="form-label">What type of internet connection do you have at home?<span class="text-muted"></span></label>
+                            <select class="form-control form-select" id="internet_connection" placeholder="" name="internet_connection">
+                                <option value="">--Select--</option>
+                                <option value="Post-paid plan(Unlimited Data Subscription to PLDT, GLOBE, SMART, Sky, etc.)" {% if economic.internet_connection == 'Post-paid plan(Unlimited Data Subscription to PLDT, GLOBE, SMART, Sky, etc.)' %}selected{% endif %}>Post-paid plan(Unlimited Data Subscription to PLDT, GLOBE, SMART, Sky, etc.)</option>
+                                <option value="Pre-paid plan(Limited Data Subscription)" {% if economic.internet_connection == 'Pre-paid plan(Limited Data Subscription)' %}selected{% endif %}>Pre-paid plan(Limited Data Subscription)</option>
                             </select>
+                            <div class="invalid-feedback d-none internet_connection">
+                            </div>
                         </div>
                         <div class="col-12 m-0">
                             <hr class="my-4 mx-auto w-">
@@ -149,3 +123,173 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function(){
+        $('#economic-status.back-button').click(function(e){
+            $('div.profile-screen').hide();
+            $('div#shs').show();
+            $('#step-4').removeClass('wrapper-green');
+            $('#step-4').addClass('wrapper');
+            $('#step-4 div').removeClass('bg-pending');
+            $('#step-4 div').removeClass('bg-white');
+            $('#step-4 div i').removeClass('color-green');
+  
+            $('#step-3').removeClass('wrapper');
+            $('#step-3').addClass('wrapper-green');
+            $('#step-3 div').removeClass('bg-green');
+            $('#step-3 div').addClass('bg-white');
+            $('#step-3 div i').removeClass('color-white');
+            $('#step-3 div i').addClass('color-green');
+  
+            $('span.progress-counter').text('3');
+            $('html,body').animate({
+                scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+        });
+        $('form#economic-status').submit(function(e){
+            e.preventDefault();
+
+            var formData = new FormData(this);
+            $.ajax({
+                type: 'POST',
+                url: $("form#economic-status").attr('action'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                
+                success: function(data) {
+                  var errors = JSON.parse(data);
+                  has_error = false;
+                    
+                  $('div.father_highest_academic_degree').empty().removeClass('d-block');
+                  $('#father_highest_academic_degree').removeClass('is-invalid');
+                  $('div.father_employment_status').empty().removeClass('d-block');
+                  $('#father_employment_status').removeClass('is-invalid');
+                  $('div.father_current_occupation').empty().removeClass('d-block');
+                  $('#father_current_occupation').removeClass('is-invalid');
+                  $('div.mother_highest_academic_degree').empty().removeClass('d-block');
+                  $('#mother_highest_academic_degree').removeClass('is-invalid');
+                  $('div.mother_employment_status').empty().removeClass('d-block');
+                  $('#mother_employment_status').removeClass('is-invalid');
+                  $('div.mother_current_occupation').empty().removeClass('d-block');
+                  $('#mother_current_occupation').removeClass('is-invalid');
+                  $('div.computer').empty().removeClass('d-block');
+                  $('#computer').removeClass('is-invalid');
+                  $('div.internet_connection').empty().removeClass('d-block');
+                  $('#internet_connection').removeClass('is-invalid');
+  
+                  if (errors.father_highest_academic_degree) {
+                    $('#father_highest_academic_degree').addClass('is-invalid');
+                    $('div.father_highest_academic_degree').removeClass('d-none');
+                    $('div.father_highest_academic_degree').addClass('d-block');
+                    $.each(errors.father_highest_academic_degree, function(index, error) {
+                      $('div.father_highest_academic_degree').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+  
+                  if (errors.father_employment_status) {
+                    $('#father_employment_status').addClass('is-invalid');
+                    $('div.father_employment_status').removeClass('d-none');
+                    $('div.father_employment_status').addClass('d-block');
+                    $.each(errors.father_employment_status, function(index, error) {
+                      $('div.father_employment_status').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+  
+                  if (errors.father_current_occupation) {
+                    $('#father_current_occupation').addClass('is-invalid');
+                    $('div.father_current_occupation').removeClass('d-none');
+                    $('div.father_current_occupation').addClass('d-block');
+                    $.each(errors.father_current_occupation, function(index, error) {
+                      $('div.father_current_occupation').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+  
+                  if (errors.mother_highest_academic_degree) {
+                    $('#mother_highest_academic_degree').addClass('is-invalid');
+                    $('div.mother_highest_academic_degree').removeClass('d-none');
+                    $('div.mother_highest_academic_degree').addClass('d-block');
+                    $.each(errors.mother_highest_academic_degree, function(index, error) {
+                      $('div.mother_highest_academic_degree').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+  
+                  if (errors.mother_employment_status) {
+                    $('#mother_employment_status').addClass('is-invalid');
+                    $('div.mother_employment_status').removeClass('d-none');
+                    $('div.mother_employment_status').addClass('d-block');
+                    $.each(errors.mother_employment_status, function(index, error) {
+                      $('div.mother_employment_status').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+  
+                  if (errors.mother_current_occupation) {
+                    $('#mother_current_occupation').addClass('is-invalid');
+                    $('div.mother_current_occupation').removeClass('d-none');
+                    $('div.mother_current_occupation').addClass('d-block');
+                    $.each(errors.mother_current_occupation, function(index, error) {
+                      $('div.mother_current_occupation').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+                  
+                  if (errors.computer) {
+                    $('#computer').addClass('is-invalid');
+                    $('div.computer').removeClass('d-none');
+                    $('div.computer').addClass('d-block');
+                    $.each(errors.computer, function(index, error) {
+                      $('div.computer').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+
+                  if (errors.internet_connection) {
+                    $('#internet_connection').addClass('is-invalid');
+                    $('div.internet_connection').removeClass('d-none');
+                    $('div.internet_connection').addClass('d-block');
+                    $.each(errors.internet_connection, function(index, error) {
+                      $('div.internet_connection').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+  
+                  if (!has_error) {
+                    $('div.profile-screen').hide();
+                    $('div#personality-test').show();
+                    $('#step-4').removeClass('wrapper');
+                    $('#step-4').addClass('wrapper-green');
+                    $('#step-4 div').removeClass('bg-white');
+                    $('#step-4 div').addClass('bg-green');
+                    $('#step-4 div i').removeClass('color-green');
+                    $('#step-4 div i').addClass('color-white');
+                    
+                    $('#step-5').removeClass('wrapper');
+                    $('#step-5').addClass('wrapper-green');
+                    $('#step-5 div').addClass('bg-pending');
+                    $('#step-5 div').addClass('bg-white');
+                    $('#step-5 div i').addClass('color-green');
+        
+                    $('span.progress-counter').text('5');
+                    $('html,body').animate({
+                        scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+        
+                    $('.question-group').hide();
+                    $('.question-group-1').show();
+                    $('.question-group-2').show();
+                    $('#personality-test div.back-button').hide();
+                    $('#personality-test div.next-button').hide();
+                    $('#personality-test div.back-button-1').show();
+                    $('#personality-test div.next-button-1').show();
+                  }else{
+                    $('html,body').animate({
+                      scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+                  }
+              },
+            });
+        });
+    });
+</script>

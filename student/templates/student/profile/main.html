@@ -74,55 +74,6 @@
 <script>
     $(document).ready(function(){
         
-      $('#economic-status.back-button').click(function(e){
-          $('div.profile-screen').hide();
-          $('div#shs').show();
-          $('#step-4').removeClass('wrapper-green');
-          $('#step-4').addClass('wrapper');
-          $('#step-4 div').removeClass('bg-pending');
-          $('#step-4 div').removeClass('bg-white');
-          $('#step-4 div i').removeClass('color-green');
-
-          $('#step-3').removeClass('wrapper');
-          $('#step-3').addClass('wrapper-green');
-          $('#step-3 div').removeClass('bg-green');
-          $('#step-3 div').addClass('bg-white');
-          $('#step-3 div i').removeClass('color-white');
-          $('#step-3 div i').addClass('color-green');
-
-          $('span.progress-counter').text('3');
-          $('html,body').animate({
-              scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
-      });
-      $('#economic-status.next-button').click(function(e){
-          e.preventDefault();
-          $('div.profile-screen').hide();
-          $('div#personality-test').show();
-          $('#step-4').removeClass('wrapper');
-          $('#step-4').addClass('wrapper-green');
-          $('#step-4 div').removeClass('bg-white');
-          $('#step-4 div').addClass('bg-green');
-          $('#step-4 div i').removeClass('color-green');
-          $('#step-4 div i').addClass('color-white');
-          
-          $('#step-5').removeClass('wrapper');
-          $('#step-5').addClass('wrapper-green');
-          $('#step-5 div').addClass('bg-pending');
-          $('#step-5 div').addClass('bg-white');
-          $('#step-5 div i').addClass('color-green');
-
-          $('span.progress-counter').text('5');
-          $('html,body').animate({
-              scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
-
-          $('.question-group').hide();
-          $('.question-group-1').show();
-          $('.question-group-2').show();
-          $('#personality-test div.back-button').hide();
-          $('#personality-test div.next-button').hide();
-          $('#personality-test div.back-button-1').show();
-          $('#personality-test div.next-button-1').show();
-      });
       $('#personality-test.back-button-1').click(function(e){
           $('div.profile-screen').hide();
           $('div#economic-status').show();

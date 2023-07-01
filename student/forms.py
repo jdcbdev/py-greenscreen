@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 import re
-from .models import Student, PersonalAddress, ContactPoint, CollegeEntranceTest
+from .models import Student, PersonalAddress, ContactPoint, CollegeEntranceTest, EconomicStatus
 from datetime import date, timedelta
 
 User = get_user_model()
@@ -244,7 +244,7 @@ class CollegeEntranceTestForm(forms.ModelForm):
         return cleaned_data
 
 class SchoolBackgroundForm(forms.Form):
-    student_type_name = forms.CharField(max_length=150, required=True)
+    student_type_name = forms.CharField(max_length=150, required=False)
     last_school_attended = forms.CharField(max_length=255, required=False)
     last_course_attended = forms.CharField(max_length=255, required=False)
     strand = forms.CharField(max_length=150, required=True)
@@ -257,10 +257,18 @@ class SchoolBackgroundForm(forms.Form):
     gpa_second_semester = forms.FloatField(required=False)
     photo_grade = forms.ImageField(required=False)
     
+    def clean_student_type_name(self):
+        student_type_name = self.cleaned_data.get('student_type_name')
+        
+        if not student_type_name:
+            raise forms.ValidationError('Choose student type.')
+        
+        return student_type_name
+    
     def clean_last_school_attended(self):
         last_school_attended = self.cleaned_data.get('last_school_attended')
         student_type_name = self.cleaned_data.get('student_type_name')
-        print(last_school_attended)
+        
         if student_type_name == 'shiftee' and not last_school_attended:
             raise forms.ValidationError('This field is required.')
         if student_type_name == 'transferee' and not last_school_attended:
@@ -294,6 +302,25 @@ class SchoolBackgroundForm(forms.Form):
             raise forms.ValidationError('The selected file format is not supported. Please choose a JPEG, or PNG.')
 
         return photo_grade
+    
+    def clean(self):
+        cleaned_data = super().clean()
+           
+        return cleaned_data
+
+class EconomicStatusForm(forms.ModelForm):
+    class Meta:
+        model = EconomicStatus
+        fields = [
+            'father_highest_academic_degree',
+            'father_employment_status',
+            'father_current_occupation',
+            'mother_highest_academic_degree',
+            'mother_employment_status',
+            'mother_current_occupation',
+            'computer',
+            'internet_connection',
+        ]
     
     def clean(self):
         cleaned_data = super().clean()

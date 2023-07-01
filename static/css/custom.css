@@ -1072,6 +1072,10 @@ span.table-struggling{
     background-color: white;
 }
 
+.rb-invalid{
+    border-color: #dc3545;
+}
+
 @media (min-width: 576px) {
     .shortcut{
         display: block;

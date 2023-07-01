@@ -8,7 +8,7 @@
                     <div class="row g-3">
                         <div class="col-12">
                             <label class="form-label">Student Type</label>
-                            <div class="col-12">
+                            <div class="col-12 rb-container">
                                 <div class="form-check d-sm-inline-block me-sm-3">
                                     <input class="form-check-input" type="radio" id="freshman" name="student_type_name" value="freshman" {% if school.student_type_name == 'freshman' %}checked{% endif %}>
                                     <label class="form-check-label" for="freshman">Incoming College Student</label>
@@ -296,7 +296,7 @@
                   has_error = false;
   
                   $('div.student_type_name').empty().removeClass('d-block');
-                  $('#student_type_name').removeClass('is-invalid');
+                  $('.rb-container .form-check-input').removeClass('rb-invalid');
                   $('div.last_school_attended').empty().removeClass('d-block');
                   $('#last_school_attended').removeClass('is-invalid');
                   $('div.last_course_attended').empty().removeClass('d-block');
@@ -321,7 +321,7 @@
                   $('div.photo_grade').empty().removeClass('d-block');
   
                   if (errors.student_type_name) {
-                    $('#student_type_name').addClass('is-invalid');
+                    $('.rb-container .form-check-input').addClass('rb-invalid');
                     $('div.student_type_name').removeClass('d-none');
                     $('div.student_type_name').addClass('d-block');
                     $.each(errors.student_type_name, function(index, error) {

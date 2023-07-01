@@ -79,3 +79,9 @@ class ClassRank(models.Model):
 
 class AcademicAwards(models.Model):
     name = models.CharField(max_length=100)
+
+class AcademicDegree(models.Model):
+    name = models.CharField(max_length=200)
+
+class EmploymentStatus(models.Model):
+    name = models.CharField(max_length=200)

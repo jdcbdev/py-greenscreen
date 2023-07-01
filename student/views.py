@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
-from .forms import SignUpForm, SignInForm, SignUpOldForm, ForgotPasswordForm, SetPasswordForm, PersonalInfoForm, CollegeEntranceTestForm, SchoolBackgroundForm
+from .forms import SignUpForm, SignInForm, SignUpOldForm, ForgotPasswordForm, SetPasswordForm, PersonalInfoForm, CollegeEntranceTestForm, SchoolBackgroundForm, EconomicStatusForm
 from django.contrib.auth import authenticate, login, logout
-from .models import Student, SchoolBackground, ContactPoint, PersonalAddress, CollegeEntranceTest
-from base.models import SHSStrand, ClassRoomOrganization, StudentSupremeGovernment, ClassRank, AcademicAwards
+from .models import Student, SchoolBackground, ContactPoint, PersonalAddress, CollegeEntranceTest, EconomicStatus
+from base.models import SHSStrand, ClassRoomOrganization, StudentSupremeGovernment, ClassRank, AcademicAwards, AcademicDegree, EmploymentStatus
 from django.db import transaction
 from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -495,7 +495,10 @@ def complete_profile(request):
     ranks = ClassRank.objects.all()
     awards = AcademicAwards.objects.all()
     school = SchoolBackground.objects.filter(student=student).first()
-    print(school)
+    degrees = AcademicDegree.objects.all()
+    employment = EmploymentStatus.objects.all()
+    economic = EconomicStatus.objects.filter(student=student).first()
+    
     page_title = 'Complete Profile'
     context = {
         'page_title': page_title,
@@ -509,6 +512,9 @@ def complete_profile(request):
         'ranks': ranks,
         'awards': awards,
         'school': school,
+        'degrees': degrees,
+        'employment': employment,
+        'economic': economic,
         'settings': settings
     }
     return render(request, 'student/profile/main.html', context)
@@ -611,6 +617,7 @@ def complete_school_background(request):
         student.student_type = student_type
         student.student_type_name = form.cleaned_data['student_type_name']
         student.is_personal_info_complete = True
+        student.is_shs_complete = True
         student.save()
 
         # Update or create school information
@@ -629,6 +636,32 @@ def complete_school_background(request):
             school.photo_grade = form.cleaned_data['photo_grade']
         school.save()
         
+
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def complete_economic_status(request):
+    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
+        return redirect('home')
+    
+    student = Student.objects.get(account=request.user)
+    try:
+        economic = EconomicStatus.objects.get(student=student)
+    except EconomicStatus.DoesNotExist:
+        economic = None
+
+    form = EconomicStatusForm(request.POST, instance=economic)
+    
+    if form.is_valid():
+        economic = form.save(commit=False)
+        economic.student = student
+        economic.save()
+        
+        student.is_economic_complete = True
+        student.save()
 
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
