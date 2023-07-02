@@ -77,6 +77,7 @@ class EconomicStatus(models.Model):
     mother_highest_academic_degree = models.CharField(max_length=100)
     mother_employment_status = models.CharField(max_length=100)
     mother_current_occupation = models.CharField(max_length=255)
+    family_income = models.CharField(max_length=100, default='')
     computer = models.CharField(max_length=100)
     internet_connection = models.CharField(max_length=100)
 

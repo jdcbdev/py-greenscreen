@@ -318,6 +318,7 @@ class EconomicStatusForm(forms.ModelForm):
             'mother_highest_academic_degree',
             'mother_employment_status',
             'mother_current_occupation',
+            'family_income',
             'computer',
             'internet_connection',
         ]

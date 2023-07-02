@@ -80,6 +80,20 @@
                             <div class="invalid-feedback d-none mother_current_occupation">
                             </div>
                         </div>
+                        <div class="col-12 col-md-12">
+                            <label for="family_income" class="form-label">Which of the following best describes your parent's combined family income in an average monthly?<span class="text-muted"></span></label>
+                            <select class="form-control form-select" id="family_income" placeholder="" name="family_income">
+                                <option value="">--Select--</option>
+                                <option value="Below P10,000" {% if economic.family_income == 'Below P10,000' %}selected{% endif %}>Below P10,000</option>
+                                <option value="P10,000 to P20,000" {% if economic.family_income == 'P10,000 to P20,000' %}selected{% endif %}>P10,000 to P20,000</option>
+                                <option value="P20,000 to P50,000" {% if economic.family_income == 'P20,000 to P50,000' %}selected{% endif %}>P20,000 to P50,000</option>
+                                <option value="P50,000 to P100,000" {% if economic.family_income == 'P50,000 to P100,000' %}selected{% endif %}>P50,000 to P100,000</option>
+                                <option value="More than P100,000" {% if economic.family_income == 'More than P100,000' %}selected{% endif %}>More than P100,000</option>
+                                <option value="Prefer not to say" {% if economic.family_income == 'Prefer not to say' %}selected{% endif %}>Prefer not to say</option>
+                            </select>
+                            <div class="invalid-feedback d-none family_income">
+                            </div>
+                        </div>
                         <h5 class="col-12 fw-bold my-4 mb-1">Availability of Resources</h5>
                         <div class="col-12 col-md-12">
                             <label for="computer" class="form-label">Do you have a personal computer or laptop?<span class="text-muted"></span></label>
@@ -233,6 +247,16 @@
                     $('div.mother_current_occupation').addClass('d-block');
                     $.each(errors.mother_current_occupation, function(index, error) {
                       $('div.mother_current_occupation').append('<span>' + error.message + '</span>');
+                    });
+                    has_error = true
+                  }
+
+                  if (errors.family_income) {
+                    $('#family_income').addClass('is-invalid');
+                    $('div.family_income').removeClass('d-none');
+                    $('div.family_income').addClass('d-block');
+                    $.each(errors.family_income, function(index, error) {
+                      $('div.family_income').append('<span>' + error.message + '</span>');
                     });
                     has_error = true
                   }
