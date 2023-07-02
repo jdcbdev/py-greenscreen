@@ -15,5 +15,9 @@ urlpatterns = [
     path('student/complete-profile/personal-information/', views.complete_personal_information, name='complete_personal_information'),
     path('student/complete-profile/college-entrance-test/', views.complete_college_entrance_test, name='complete_college_entrance_test'),
     path('student/complete-profile/school-background/', views.complete_school_background, name='complete_school_background'),
-    path('student/complete-profile/economic-status/', views.complete_economic_status, name='complete_economic_status')
+    path('student/complete-profile/economic-status/', views.complete_economic_status, name='complete_economic_status'),
+    path('student/complete-profile/personality-test-1/', views.complete_personality_test_1, name='complete_personality_test_1'),
+    path('student/complete-profile/personality-test-2/', views.complete_personality_test_2, name='complete_personality_test_2'),
+    path('student/complete-profile/personality-test-3/', views.complete_personality_test_3, name='complete_personality_test_3'),
+    path('student/complete-profile/personality-test-4/', views.complete_personality_test_4, name='complete_personality_test_4')
 ]

@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 import re
-from .models import Student, PersonalAddress, ContactPoint, CollegeEntranceTest, EconomicStatus
+from .models import Student, PersonalAddress, ContactPoint, CollegeEntranceTest, EconomicStatus, PersonalityTest
 from datetime import date, timedelta
 
 User = get_user_model()
@@ -327,3 +327,388 @@ class EconomicStatusForm(forms.ModelForm):
         cleaned_data = super().clean()
            
         return cleaned_data
+
+class PersonalityTestForm1(forms.Form):
+    p1 = forms.CharField(required=False)
+    p2 = forms.CharField(required=False)
+    p3 = forms.CharField(required=False)
+    p4 = forms.CharField(required=False)
+    p5 = forms.CharField(required=False)
+    p6 = forms.CharField(required=False)
+    p7 = forms.CharField(required=False)
+    p8 = forms.CharField(required=False)
+    p9 = forms.CharField(required=False)
+    p10 = forms.CharField(required=False)
+
+    def clean_p1(self):
+        p1 = self.cleaned_data.get('p1')
+        if not p1:
+            raise forms.ValidationError('Select an answer.')
+        return p1
+    
+    def clean_p2(self):
+        p2 = self.cleaned_data.get('p2')
+        if not p2:
+            raise forms.ValidationError('Select an answer.')
+        return p2
+    
+    def clean_p3(self):
+        p3 = self.cleaned_data.get('p3')
+
+        if not p3:
+            raise forms.ValidationError('Select an answer.')
+
+        return p3
+
+    def clean_p4(self):
+        p4 = self.cleaned_data.get('p4')
+
+        if not p4:
+            raise forms.ValidationError('Select an answer.')
+
+        return p4
+
+    def clean_p5(self):
+        p5 = self.cleaned_data.get('p5')
+
+        if not p5:
+            raise forms.ValidationError('Select an answer.')
+
+        return p5
+
+    def clean_p6(self):
+        p6 = self.cleaned_data.get('p6')
+
+        if not p6:
+            raise forms.ValidationError('Select an answer.')
+
+        return p6
+
+    def clean_p7(self):
+        p7 = self.cleaned_data.get('p7')
+
+        if not p7:
+            raise forms.ValidationError('Select an answer.')
+
+        return p7
+
+    def clean_p8(self):
+        p8 = self.cleaned_data.get('p8')
+
+        if not p8:
+            raise forms.ValidationError('Select an answer.')
+
+        return p8
+
+    def clean_p9(self):
+        p9 = self.cleaned_data.get('p9')
+
+        if not p9:
+            raise forms.ValidationError('Select an answer.')
+
+        return p9
+
+    def clean_p10(self):
+        p10 = self.cleaned_data.get('p10')
+
+        if not p10:
+            raise forms.ValidationError('Select an answer.')
+
+        return p10
+
+    def clean(self):
+        cleaned_data = super().clean()
+           
+        return cleaned_data
+
+class PersonalityTestForm2(forms.Form):
+    p11 = forms.CharField(required=False)
+    p12 = forms.CharField(required=False)
+    p13 = forms.CharField(required=False)
+    p14 = forms.CharField(required=False)
+    p15 = forms.CharField(required=False)
+    p16 = forms.CharField(required=False)
+    p17 = forms.CharField(required=False)
+    p18 = forms.CharField(required=False)
+    p19 = forms.CharField(required=False)
+    p20 = forms.CharField(required=False)
+
+    def clean_p11(self):
+        p11 = self.cleaned_data.get('p11')
+
+        if not p11:
+            raise forms.ValidationError('Select an answer.')
+
+        return p11
+
+    def clean_p12(self):
+        p12 = self.cleaned_data.get('p12')
+
+        if not p12:
+            raise forms.ValidationError('Select an answer.')
+
+        return p12
+
+    def clean_p13(self):
+        p13 = self.cleaned_data.get('p13')
+
+        if not p13:
+            raise forms.ValidationError('Select an answer.')
+
+        return p13
+
+    def clean_p14(self):
+        p14 = self.cleaned_data.get('p14')
+
+        if not p14:
+            raise forms.ValidationError('Select an answer.')
+
+        return p14
+
+    def clean_p15(self):
+        p15 = self.cleaned_data.get('p15')
+
+        if not p15:
+            raise forms.ValidationError('Select an answer.')
+
+        return p15
+
+    def clean_p16(self):
+        p16 = self.cleaned_data.get('p16')
+
+        if not p16:
+            raise forms.ValidationError('Select an answer.')
+
+        return p16
+
+    def clean_p17(self):
+        p17 = self.cleaned_data.get('p17')
+
+        if not p17:
+            raise forms.ValidationError('Select an answer.')
+
+        return p17
+
+    def clean_p18(self):
+        p18 = self.cleaned_data.get('p18')
+
+        if not p18:
+            raise forms.ValidationError('Select an answer.')
+
+        return p18
+
+    def clean_p19(self):
+        p19 = self.cleaned_data.get('p19')
+
+        if not p19:
+            raise forms.ValidationError('Select an answer.')
+
+        return p19
+
+    def clean_p20(self):
+        p20 = self.cleaned_data.get('p20')
+
+        if not p20:
+            raise forms.ValidationError('Select an answer.')
+
+        return p20
+
+    def clean(self):
+        cleaned_data = super().clean()
+           
+        return cleaned_data
+
+class PersonalityTestForm3(forms.Form):
+    p21 = forms.CharField(required=False)
+    p22 = forms.CharField(required=False)
+    p23 = forms.CharField(required=False)
+    p24 = forms.CharField(required=False)
+    p25 = forms.CharField(required=False)
+    p26 = forms.CharField(required=False)
+    p27 = forms.CharField(required=False)
+    p28 = forms.CharField(required=False)
+    p29 = forms.CharField(required=False)
+    p30 = forms.CharField(required=False)
+
+    def clean_p21(self):
+        p21 = self.cleaned_data.get('p21')
+
+        if not p21:
+            raise forms.ValidationError('Select an answer.')
+
+        return p21
+
+    def clean_p22(self):
+        p22 = self.cleaned_data.get('p22')
+
+        if not p22:
+            raise forms.ValidationError('Select an answer.')
+
+        return p22
+
+    def clean_p23(self):
+        p23 = self.cleaned_data.get('p23')
+
+        if not p23:
+            raise forms.ValidationError('Select an answer.')
+
+        return p23
+
+    def clean_p24(self):
+        p24 = self.cleaned_data.get('p24')
+
+        if not p24:
+            raise forms.ValidationError('Select an answer.')
+
+        return p24
+
+    def clean_p25(self):
+        p25 = self.cleaned_data.get('p25')
+
+        if not p25:
+            raise forms.ValidationError('Select an answer.')
+
+        return p25
+
+    def clean_p26(self):
+        p26 = self.cleaned_data.get('p26')
+
+        if not p26:
+            raise forms.ValidationError('Select an answer.')
+
+        return p26
+
+    def clean_p27(self):
+        p27 = self.cleaned_data.get('p27')
+
+        if not p27:
+            raise forms.ValidationError('Select an answer.')
+
+        return p27
+
+    def clean_p28(self):
+        p28 = self.cleaned_data.get('p28')
+
+        if not p28:
+            raise forms.ValidationError('Select an answer.')
+
+        return p28
+
+    def clean_p29(self):
+        p29 = self.cleaned_data.get('p29')
+
+        if not p29:
+            raise forms.ValidationError('Select an answer.')
+
+        return p29
+
+    def clean_p30(self):
+        p30 = self.cleaned_data.get('p30')
+
+        if not p30:
+            raise forms.ValidationError('Select an answer.')
+
+        return p30
+    
+    def clean(self):
+        cleaned_data = super().clean()
+           
+        return cleaned_data
+
+class PersonalityTestForm4(forms.Form):
+    p31 = forms.CharField(required=False)
+    p32 = forms.CharField(required=False)
+    p33 = forms.CharField(required=False)
+    p34 = forms.CharField(required=False)
+    p35 = forms.CharField(required=False)
+    p36 = forms.CharField(required=False)
+    p37 = forms.CharField(required=False)
+    p38 = forms.CharField(required=False)
+    p39 = forms.CharField(required=False)
+    p40 = forms.CharField(required=False)
+
+    def clean_p31(self):
+        p31 = self.cleaned_data.get('p31')
+
+        if not p31:
+            raise forms.ValidationError('Select an answer.')
+
+        return p31
+
+    def clean_p32(self):
+        p32 = self.cleaned_data.get('p32')
+
+        if not p32:
+            raise forms.ValidationError('Select an answer.')
+
+        return p32
+
+    def clean_p33(self):
+        p33 = self.cleaned_data.get('p33')
+
+        if not p33:
+            raise forms.ValidationError('Select an answer.')
+
+        return p33
+
+    def clean_p34(self):
+        p34 = self.cleaned_data.get('p34')
+
+        if not p34:
+            raise forms.ValidationError('Select an answer.')
+
+        return p34
+
+    def clean_p35(self):
+        p35 = self.cleaned_data.get('p35')
+
+        if not p35:
+            raise forms.ValidationError('Select an answer.')
+
+        return p35
+
+    def clean_p36(self):
+        p36 = self.cleaned_data.get('p36')
+
+        if not p36:
+            raise forms.ValidationError('Select an answer.')
+
+        return p36
+
+    def clean_p37(self):
+        p37 = self.cleaned_data.get('p37')
+
+        if not p37:
+            raise forms.ValidationError('Select an answer.')
+
+        return p37
+
+    def clean_p38(self):
+        p38 = self.cleaned_data.get('p38')
+
+        if not p38:
+            raise forms.ValidationError('Select an answer.')
+
+        return p38
+
+    def clean_p39(self):
+        p39 = self.cleaned_data.get('p39')
+
+        if not p39:
+            raise forms.ValidationError('Select an answer.')
+
+        return p39
+
+    def clean_p40(self):
+        p40 = self.cleaned_data.get('p40')
+
+        if not p40:
+            raise forms.ValidationError('Select an answer.')
+
+        return p40
+    
+    def clean(self):
+        cleaned_data = super().clean()
+           
+        return cleaned_data
+

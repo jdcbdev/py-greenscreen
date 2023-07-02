@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
-from .forms import SignUpForm, SignInForm, SignUpOldForm, ForgotPasswordForm, SetPasswordForm, PersonalInfoForm, CollegeEntranceTestForm, SchoolBackgroundForm, EconomicStatusForm
+from .forms import SignUpForm, SignInForm, SignUpOldForm, ForgotPasswordForm, SetPasswordForm, PersonalInfoForm, CollegeEntranceTestForm, SchoolBackgroundForm, EconomicStatusForm, PersonalityTestForm1, PersonalityTestForm2, PersonalityTestForm3, PersonalityTestForm4
 from django.contrib.auth import authenticate, login, logout
-from .models import Student, SchoolBackground, ContactPoint, PersonalAddress, CollegeEntranceTest, EconomicStatus
+from .models import Student, SchoolBackground, ContactPoint, PersonalAddress, CollegeEntranceTest, EconomicStatus, PersonalityTest
 from base.models import SHSStrand, ClassRoomOrganization, StudentSupremeGovernment, ClassRank, AcademicAwards, AcademicDegree, EmploymentStatus
 from django.db import transaction
 from django.conf import settings
@@ -498,6 +498,7 @@ def complete_profile(request):
     degrees = AcademicDegree.objects.all()
     employment = EmploymentStatus.objects.all()
     economic = EconomicStatus.objects.filter(student=student).first()
+    pt = PersonalityTest.objects.filter(student=student).first()
     
     page_title = 'Complete Profile'
     context = {
@@ -515,6 +516,7 @@ def complete_profile(request):
         'degrees': degrees,
         'employment': employment,
         'economic': economic,
+        'pt': pt,
         'settings': settings
     }
     return render(request, 'student/profile/main.html', context)
@@ -661,6 +663,93 @@ def complete_economic_status(request):
         economic.save()
         
         student.is_economic_complete = True
+        student.save()
+
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def complete_personality_test_1(request):
+    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
+        return redirect('home')
+    
+    form = PersonalityTestForm1(request.POST)
+    if form.is_valid():
+        student = Student.objects.get(account=request.user)
+        
+        pt, _ = PersonalityTest.objects.get_or_create(student=student)
+        for i in range(1, 11):
+            field_name = 'p{}'.format(i)
+            setattr(pt, field_name, form.cleaned_data[field_name])
+        pt.student = student
+        pt.save()
+
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def complete_personality_test_2(request):
+    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
+        return redirect('home')
+    
+    form = PersonalityTestForm2(request.POST)
+    if form.is_valid():
+        student = Student.objects.get(account=request.user)
+        
+        pt, _ = PersonalityTest.objects.get_or_create(student=student)
+        for i in range(11, 21):
+            field_name = 'p{}'.format(i)
+            setattr(pt, field_name, form.cleaned_data[field_name])
+        pt.student = student
+        pt.save()
+
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def complete_personality_test_3(request):
+    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
+        return redirect('home')
+    
+    form = PersonalityTestForm3(request.POST)
+    if form.is_valid():
+        student = Student.objects.get(account=request.user)
+        
+        pt, _ = PersonalityTest.objects.get_or_create(student=student)
+        for i in range(21, 31):
+            field_name = 'p{}'.format(i)
+            setattr(pt, field_name, form.cleaned_data[field_name])
+        pt.student = student
+        pt.save()
+
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def complete_personality_test_4(request):
+    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
+        return redirect('home')
+    
+    form = PersonalityTestForm4(request.POST)
+    if form.is_valid():
+        student = Student.objects.get(account=request.user)
+        
+        pt, _ = PersonalityTest.objects.get_or_create(student=student)
+        for i in range(31, 41):
+            field_name = 'p{}'.format(i)
+            setattr(pt, field_name, form.cleaned_data[field_name])
+        pt.student = student
+        pt.save()
+        
+        student.is_personality_complete = True
         student.save()
 
     errors = form.errors.as_json()
