@@ -1421,7 +1421,7 @@
             var formData = new FormData($('form#personality-test')[0]);
             $.ajax({
                 type: 'POST',
-                url: '{% url 'complete_personality_test_4' %}',
+                url: "{% url 'complete_personality_test_4' %}",
                 data: formData,
                 processData: false,
                 contentType: false,

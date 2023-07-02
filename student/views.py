@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from .forms import SignUpForm, SignInForm, SignUpOldForm, ForgotPasswordForm, SetPasswordForm, PersonalInfoForm, CollegeEntranceTestForm, SchoolBackgroundForm, EconomicStatusForm, PersonalityTestForm1, PersonalityTestForm2, PersonalityTestForm3, PersonalityTestForm4
+from .forms import StudyHabitForm1, StudyHabitForm2, StudyHabitForm3
 from django.contrib.auth import authenticate, login, logout
-from .models import Student, SchoolBackground, ContactPoint, PersonalAddress, CollegeEntranceTest, EconomicStatus, PersonalityTest
+from .models import Student, SchoolBackground, ContactPoint, PersonalAddress, CollegeEntranceTest, EconomicStatus, PersonalityTest, StudyHabit
 from base.models import SHSStrand, ClassRoomOrganization, StudentSupremeGovernment, ClassRank, AcademicAwards, AcademicDegree, EmploymentStatus
 from django.db import transaction
 from django.conf import settings
@@ -499,6 +500,7 @@ def complete_profile(request):
     employment = EmploymentStatus.objects.all()
     economic = EconomicStatus.objects.filter(student=student).first()
     pt = PersonalityTest.objects.filter(student=student).first()
+    sh = StudyHabit.objects.filter(student=student).first()
     
     page_title = 'Complete Profile'
     context = {
@@ -517,6 +519,7 @@ def complete_profile(request):
         'employment': employment,
         'economic': economic,
         'pt': pt,
+        'sh': sh,
         'settings': settings
     }
     return render(request, 'student/profile/main.html', context)
@@ -750,6 +753,73 @@ def complete_personality_test_4(request):
         pt.save()
         
         student.is_personality_complete = True
+        student.save()
+
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def complete_study_habit_1(request):
+    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
+        return redirect('home')
+    
+    form = StudyHabitForm1(request.POST)
+    if form.is_valid():
+        student = Student.objects.get(account=request.user)
+        
+        sh, _ = StudyHabit.objects.get_or_create(student=student)
+        for i in range(1, 11):
+            field_name = 's{}'.format(i)
+            setattr(sh, field_name, form.cleaned_data[field_name])
+        sh.student = student
+        sh.save()
+
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def complete_study_habit_2(request):
+    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
+        return redirect('home')
+    
+    form = StudyHabitForm2(request.POST)
+    if form.is_valid():
+        student = Student.objects.get(account=request.user)
+        
+        sh, _ = StudyHabit.objects.get_or_create(student=student)
+        for i in range(11, 21):
+            field_name = 's{}'.format(i)
+            setattr(sh, field_name, form.cleaned_data[field_name])
+        sh.student = student
+        sh.save()
+
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def complete_study_habit_3(request):
+    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
+        return redirect('home')
+    
+    form = StudyHabitForm3(request.POST)
+    if form.is_valid():
+        student = Student.objects.get(account=request.user)
+        
+        sh, _ = StudyHabit.objects.get_or_create(student=student)
+        for i in range(21, 26):
+            field_name = 's{}'.format(i)
+            setattr(sh, field_name, form.cleaned_data[field_name])
+        sh.student = student
+        sh.save()
+        
+        student.is_study_complete = True
+        student.is_profile_complete = True
         student.save()
 
     errors = form.errors.as_json()

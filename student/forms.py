@@ -712,3 +712,241 @@ class PersonalityTestForm4(forms.Form):
            
         return cleaned_data
 
+class StudyHabitForm1(forms.Form):
+    s1 = forms.CharField(required=False)
+    s2 = forms.CharField(required=False)
+    s3 = forms.CharField(required=False)
+    s4 = forms.CharField(required=False)
+    s5 = forms.CharField(required=False)
+    s6 = forms.CharField(required=False)
+    s7 = forms.CharField(required=False)
+    s8 = forms.CharField(required=False)
+    s9 = forms.CharField(required=False)
+    s10 = forms.CharField(required=False)
+
+    def clean_s1(self):
+        s1 = self.cleaned_data.get('s1')
+
+        if not s1:
+            raise forms.ValidationError('Select an answer.')
+
+        return s1
+
+    def clean_s2(self):
+        s2 = self.cleaned_data.get('s2')
+
+        if not s2:
+            raise forms.ValidationError('Select an answer.')
+
+        return s2
+
+    def clean_s3(self):
+        s3 = self.cleaned_data.get('s3')
+
+        if not s3:
+            raise forms.ValidationError('Select an answer.')
+
+        return s3
+
+    def clean_s4(self):
+        s4 = self.cleaned_data.get('s4')
+
+        if not s4:
+            raise forms.ValidationError('Select an answer.')
+
+        return s4
+
+    def clean_s5(self):
+        s5 = self.cleaned_data.get('s5')
+
+        if not s5:
+            raise forms.ValidationError('Select an answer.')
+
+        return s5
+
+    def clean_s6(self):
+        s6 = self.cleaned_data.get('s6')
+
+        if not s6:
+            raise forms.ValidationError('Select an answer.')
+
+        return s6
+
+    def clean_s7(self):
+        s7 = self.cleaned_data.get('s7')
+
+        if not s7:
+            raise forms.ValidationError('Select an answer.')
+
+        return s7
+
+    def clean_s8(self):
+        s8 = self.cleaned_data.get('s8')
+
+        if not s8:
+            raise forms.ValidationError('Select an answer.')
+
+        return s8
+
+    def clean_s9(self):
+        s9 = self.cleaned_data.get('s9')
+
+        if not s9:
+            raise forms.ValidationError('Select an answer.')
+
+        return s9
+
+    def clean_s10(self):
+        s10 = self.cleaned_data.get('s10')
+
+        if not s10:
+            raise forms.ValidationError('Select an answer.')
+
+        return s10
+    
+    def clean(self):
+        cleaned_data = super().clean()
+           
+        return cleaned_data
+
+class StudyHabitForm2(forms.Form):
+    s11 = forms.CharField(required=False)
+    s12 = forms.CharField(required=False)
+    s13 = forms.CharField(required=False)
+    s14 = forms.CharField(required=False)
+    s15 = forms.CharField(required=False)
+    s16 = forms.CharField(required=False)
+    s17 = forms.CharField(required=False)
+    s18 = forms.CharField(required=False)
+    s19 = forms.CharField(required=False)
+    s20 = forms.CharField(required=False)
+
+    def clean_s11(self):
+        s11 = self.cleaned_data.get('s11')
+
+        if not s11:
+            raise forms.ValidationError('Select an answer.')
+
+        return s11
+
+    def clean_s12(self):
+        s12 = self.cleaned_data.get('s12')
+
+        if not s12:
+            raise forms.ValidationError('Select an answer.')
+
+        return s12
+
+    def clean_s13(self):
+        s13 = self.cleaned_data.get('s13')
+
+        if not s13:
+            raise forms.ValidationError('Select an answer.')
+
+        return s13
+
+    def clean_s14(self):
+        s14 = self.cleaned_data.get('s14')
+
+        if not s14:
+            raise forms.ValidationError('Select an answer.')
+
+        return s14
+
+    def clean_s15(self):
+        s15 = self.cleaned_data.get('s15')
+
+        if not s15:
+            raise forms.ValidationError('Select an answer.')
+
+        return s15
+
+    def clean_s16(self):
+        s16 = self.cleaned_data.get('s16')
+
+        if not s16:
+            raise forms.ValidationError('Select an answer.')
+
+        return s16
+
+    def clean_s17(self):
+        s17 = self.cleaned_data.get('s17')
+
+        if not s17:
+            raise forms.ValidationError('Select an answer.')
+
+        return s17
+
+    def clean_s18(self):
+        s18 = self.cleaned_data.get('s18')
+
+        if not s18:
+            raise forms.ValidationError('Select an answer.')
+
+        return s18
+
+    def clean_s19(self):
+        s19 = self.cleaned_data.get('s19')
+
+        if not s19:
+            raise forms.ValidationError('Select an answer.')
+
+        return s19
+
+    def clean_s20(self):
+        s20 = self.cleaned_data.get('s20')
+
+        if not s20:
+            raise forms.ValidationError('Select an answer.')
+
+        return s20
+    
+    def clean(self):
+        cleaned_data = super().clean()
+           
+        return cleaned_data
+
+class StudyHabitForm3(forms.Form):
+    s21 = forms.CharField(required=False)
+    s22 = forms.CharField(required=False)
+    s23 = forms.CharField(required=False)
+    s24 = forms.CharField(required=False)
+    s25 = forms.CharField(required=True)
+
+    def clean_s21(self):
+        s21 = self.cleaned_data.get('s21')
+
+        if not s21:
+            raise forms.ValidationError('Select an answer.')
+
+        return s21
+
+    def clean_s22(self):
+        s22 = self.cleaned_data.get('s22')
+
+        if not s22:
+            raise forms.ValidationError('Select an answer.')
+
+        return s22
+
+    def clean_s23(self):
+        s23 = self.cleaned_data.get('s23')
+
+        if not s23:
+            raise forms.ValidationError('Select an answer.')
+
+        return s23
+
+    def clean_s24(self):
+        s24 = self.cleaned_data.get('s24')
+
+        if not s24:
+            raise forms.ValidationError('Select an answer.')
+
+        return s24
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        return cleaned_data
+

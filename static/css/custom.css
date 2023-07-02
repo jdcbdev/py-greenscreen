@@ -872,6 +872,10 @@ div.question-group .form-label{
     margin-top: .25rem;
 }
 
+div.question-group-study .form-label{
+    margin-top: .25rem;
+}
+
 #form-settings .form-switch{
     padding-left: 2.8em;
 }
@@ -1074,6 +1078,18 @@ span.table-struggling{
 
 .rb-invalid{
     border-color: #dc3545;
+}
+
+.complete-profile-modal .fa-circle-check{
+    font-size: 60px;
+}
+
+.complete-profile-modal .message{
+    font-size: 1.1rem;
+}
+
+.w-95{
+    width: 95% !important;
 }
 
 @media (min-width: 576px) {

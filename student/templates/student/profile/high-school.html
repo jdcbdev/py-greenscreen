@@ -233,7 +233,11 @@
             $('input#photo_grade').trigger('click');
           });
 
-        var shs_file = '{{ school.photo_grade.url|default_if_none:'' }}';
+        {% if school.photo_grade %}
+            var shs_file = '{{ school.photo_grade.url|default_if_none:'' }}';
+        {% else %}
+            var shs_file;
+        {% endif %}
 
         $('input#photo_grade').on('change', function() {
             shs_file = this.files[0];

@@ -93,7 +93,12 @@
           $('a#upload_cet').hide();
             $('#edit_upload_cet').show();
         {% endif %}
-        var file = '{{ cet.report_of_rating.url|default_if_none:'' }}';
+        {% if cet.report_of_rating %}
+          var file = '{{ cet.report_of_rating.url|default_if_none:'' }}';
+        {% else %}
+          var file;
+        {% endif %}
+
         $('a#upload_cet').on('click', function(){
             $('input#report_of_rating').trigger('click');
         });

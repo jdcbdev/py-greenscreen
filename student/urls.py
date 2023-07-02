@@ -19,5 +19,8 @@ urlpatterns = [
     path('student/complete-profile/personality-test-1/', views.complete_personality_test_1, name='complete_personality_test_1'),
     path('student/complete-profile/personality-test-2/', views.complete_personality_test_2, name='complete_personality_test_2'),
     path('student/complete-profile/personality-test-3/', views.complete_personality_test_3, name='complete_personality_test_3'),
-    path('student/complete-profile/personality-test-4/', views.complete_personality_test_4, name='complete_personality_test_4')
+    path('student/complete-profile/personality-test-4/', views.complete_personality_test_4, name='complete_personality_test_4'),
+    path('student/complete-profile/complete-study-habit-1/', views.complete_study_habit_1, name='complete_study_habit_1'),
+    path('student/complete-profile/complete-study-habit-2/', views.complete_study_habit_2, name='complete_study_habit_2'),
+    path('student/complete-profile/complete-study-habit-3/', views.complete_study_habit_3, name='complete_study_habit_3')
 ]

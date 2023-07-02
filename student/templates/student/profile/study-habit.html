@@ -11,485 +11,539 @@
                     <li>You can choose to go back to review your answers at any time.</li>
                 </ul>
                 <form class="needs-validation" action="" method="post" name="study-habits" id="study-habits">
+                    {% csrf_token %}
                     <div class="row g-3">
                         <div class="question-group-study question-group-study-1">
-                            <div class="col-12 col-md-12">
+                            <h5 class="col-12 fw-bold mb-3 mt-1">Questions 1 to 10</h5>
+                            <div class="col-12 col-md-12 s1-container">
                                 <label for="pqs-1" class="form-label col-12">1. I take notes properly during class.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-1" id="qs-1.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-1.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s1" id="s1.1" value="3" {% if sh.s1 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s1.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-1" id="qs-1.2" value="Agree">
-                                    <label class="form-check-label" for="qs-1.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s1" id="s1.2" value="2" {% if sh.s1 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s1.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-1" id="qs-1.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-1.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s1" id="s1.3" value="1" {% if sh.s1 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s1.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-1" id="qs-1.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-1.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s1" id="s1.4" value="0" {% if sh.s1 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s1.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s1">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s2-container">
                                 <label for="pqs-2" class="form-label col-12">2. I take naps during class.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-2" id="qs-2.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-2.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s2" id="s2.1" value="3" {% if sh.s2 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s2.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-2" id="qs-2.2" value="Agree">
-                                    <label class="form-check-label" for="qs-2.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s2" id="s2.2" value="2" {% if sh.s2 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s2.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-2" id="qs-2.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-2.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s2" id="s2.3" value="1" {% if sh.s2 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s2.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-2" id="qs-2.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-2.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s2" id="s2.4" value="0" {% if sh.s2 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s2.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s2">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s3-container">
                                 <label for="pqs-3" class="form-label col-12">3. I look at my cellphone or send text messages during class.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-3" id="qs-3.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-3.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s3" id="s3.1" value="3" {% if sh.s3 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s3.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-3" id="qs-3.2" value="Agree">
-                                    <label class="form-check-label" for="qs-3.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s3" id="s3.2" value="2" {% if sh.s3 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s3.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-3" id="qs-3.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-3.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s3" id="s3.3" value="1" {% if sh.s3 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s3.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-3" id="qs-3.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-3.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s3" id="s3.4" value="0" {% if sh.s3 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s3.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s3">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s4-container">
                                 <label for="pqs-4" class="form-label col-12">4. I read books other than textbook.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-4" id="qs-4.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-4.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s4" id="s4.1" value="3" {% if sh.s4 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s4.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-4" id="qs-4.2" value="Agree">
-                                    <label class="form-check-label" for="qs-4.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s4" id="s4.2" value="2" {% if sh.s4 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s4.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-4" id="qs-4.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-4.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s4" id="s4.3" value="1" {% if sh.s4 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s4.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-4" id="qs-4.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-4.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s4" id="s4.4" value="0" {% if sh.s4 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s4.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s4">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s5-container">
                                 <label for="pqs-5" class="form-label col-12">5. I space out during class.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-5" id="qs-5.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-5.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s5" id="s5.1" value="3" {% if sh.s5 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s5.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-5" id="qs-5.2" value="Agree">
-                                    <label class="form-check-label" for="qs-5.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s5" id="s5.2" value="2" {% if sh.s5 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s5.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-5" id="qs-5.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-5.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s5" id="s5.3" value="1" {% if sh.s5 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s5.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-5" id="qs-5.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-5.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s5" id="s5.4" value="0" {% if sh.s5 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s5.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s5">
                                 </div>
                             </div>
                         </div>
                         <div class="question-group-study question-group-study-2">
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s6-container">
                                 <label for="pqs-6" class="form-label col-12">6. I am outspoken during class.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-6" id="qs-6.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-6.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s6" id="s6.1" value="3" {% if sh.s6 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s6.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-6" id="qs-6.2" value="Agree">
-                                    <label class="form-check-label" for="qs-6.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s6" id="s6.2" value="2" {% if sh.s6 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s6.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-6" id="qs-6.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-6.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s6" id="s6.3" value="1" {% if sh.s6 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s6.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-6" id="qs-6.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-6.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s6" id="s6.4" value="0" {% if sh.s6 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s6.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s6">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s7-container">
                                 <label for="pqs-7" class="form-label col-12">7. I focus well on what the teacher is saying.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-7" id="qs-7.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-7.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s7" id="s7.1" value="3" {% if sh.s7 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s7.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-7" id="qs-7.2" value="Agree">
-                                    <label class="form-check-label" for="qs-7.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s7" id="s7.2" value="2" {% if sh.s7 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s7.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-7" id="qs-7.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-7.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s7" id="s7.3" value="1" {% if sh.s7 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s7.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-7" id="qs-7.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-7.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s7" id="s7.4" value="0" {% if sh.s7 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s7.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s7">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s8-container">
                                 <label for="pqs-8" class="form-label col-12">8. I proactively participate in group work.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-8" id="qs-8.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-8.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s8" id="s8.1" value="3" {% if sh.s8 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s8.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-8" id="qs-8.2" value="Agree">
-                                    <label class="form-check-label" for="qs-8.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s8" id="s8.2" value="2" {% if sh.s8 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s8.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-8" id="qs-8.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-8.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s8" id="s8.3" value="1" {% if sh.s8 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s8.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-8" id="qs-8.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-8.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s8" id="s8.4" value="0" {% if sh.s8 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s8.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s8">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s9-container">
                                 <label for="pqs-9" class="form-label col-12">9. I finish homework on time.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-9" id="qs-9.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-9.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s9" id="s9.1" value="3" {% if sh.s9 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s9.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-9" id="qs-9.2" value="Agree">
-                                    <label class="form-check-label" for="qs-9.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s9" id="s9.2" value="2" {% if sh.s9 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s9.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-9" id="qs-9.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-9.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s9" id="s9.3" value="1" {% if sh.s9 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s9.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-9" id="qs-9.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-9.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s9" id="s9.4" value="0" {% if sh.s9 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s9.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s9">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s10-container">
                                 <label for="pqs-10" class="form-label col-12">10. I prepare for classes beforehand and review what I’ve learned.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-10" id="qs-10.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-10.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s10" id="s10.1" value="3" {% if sh.s10 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s10.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-10" id="qs-10.2" value="Agree">
-                                    <label class="form-check-label" for="qs-10.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s10" id="s10.2" value="2" {% if sh.s10 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s10.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-10" id="qs-10.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-10.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s10" id="s10.3" value="1" {% if sh.s10 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s10.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-10" id="qs-10.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-10.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s10" id="s10.4" value="0" {% if sh.s10 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s10.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s10">
                                 </div>
                             </div>
                         </div>
                         <div class="question-group-study question-group-study-3">
-                            <div class="col-12 col-md-12">
+                            <h5 class="col-12 fw-bold mb-3 mt-1">Questions 11 to 20</h5>
+                            <div class="col-12 col-md-12 s11-container">
                                 <label for="pqs-11" class="form-label col-12">11. I proactively study without being told at home.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-11" id="qs-11.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-11.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s11" id="s11.1" value="3" {% if sh.s11 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s11.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-11" id="qs-11.2" value="Agree">
-                                    <label class="form-check-label" for="qs-11.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s11" id="s11.2" value="2" {% if sh.s11 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s11.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-11" id="qs-11.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-11.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s11" id="s11.3" value="1" {% if sh.s11 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s11.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-11" id="qs-11.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-11.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s11" id="s11.4" value="0" {% if sh.s11 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s11.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s11">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s12-container">
                                 <label for="pqs-12" class="form-label col-12">12. I study while watching TV or listening music at home.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-12" id="qs-12.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-12.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s12" id="s12.1" value="3" {% if sh.s12 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s12.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-12" id="qs-12.2" value="Agree">
-                                    <label class="form-check-label" for="qs-12.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s12" id="s12.2" value="2" {% if sh.s12 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s12.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-12" id="qs-12.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-12.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s12" id="s12.3" value="1" {% if sh.s12 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s12.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-12" id="qs-12.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-12.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s12" id="s12.4" value="0" {% if sh.s12 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s12.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s12">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s13-container">
                                 <label for="pqs-13" class="form-label col-12">13. I study while using smart phone or cellphone at home.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-13" id="qs-13.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-13.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s13" id="s13.1" value="3" {% if sh.s13 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s13.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-13" id="qs-13.2" value="Agree">
-                                    <label class="form-check-label" for="qs-13.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s13" id="s13.2" value="2" {% if sh.s13 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s13.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-13" id="qs-13.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-13.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s13" id="s13.3" value="1" {% if sh.s13 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s13.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-13" id="qs-13.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-13.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s13" id="s13.4" value="0" {% if sh.s13 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s13.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s13">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s14-container">
                                 <label for="pqs-14" class="form-label col-12">14. I study diligently every day.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-14" id="qs-14.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-14.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s14" id="s14.1" value="3" {% if sh.s14 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s14.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-14" id="qs-14.2" value="Agree">
-                                    <label class="form-check-label" for="qs-14.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s14" id="s14.2" value="2" {% if sh.s14 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s14.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-14" id="qs-14.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-14.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s14" id="s14.3" value="1" {% if sh.s14 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s14.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-14" id="qs-14.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-14.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s14" id="s14.4" value="0" {% if sh.s14 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s14.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s14">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s15-container">
                                 <label for="pqs-15" class="form-label col-12">15. I study at the last minute before tests.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-15" id="qs-15.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-15.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s15" id="s15.1" value="3" {% if sh.s15 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s15.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-15" id="qs-15.2" value="Agree">
-                                    <label class="form-check-label" for="qs-15.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s15" id="s15.2" value="2" {% if sh.s15 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s15.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-15" id="qs-15.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-15.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s15" id="s15.3" value="1" {% if sh.s15 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s15.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-15" id="qs-15.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-15.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s15" id="s15.4" value="0" {% if sh.s15 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s15.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s15">
                                 </div>
                             </div>
                         </div>
                         <div class="question-group-study question-group-study-4">
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s16-container">
                                 <label for="pqs-16" class="form-label col-12">16. I use workbooks and answer many questions.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-16" id="qs-16.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-16.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s16" id="s16.1" value="3" {% if sh.s16 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s16.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-16" id="qs-16.2" value="Agree">
-                                    <label class="form-check-label" for="qs-16.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s16" id="s16.2" value="2" {% if sh.s16 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s16.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-16" id="qs-16.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-16.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s16" id="s16.3" value="1" {% if sh.s16 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s16.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-16" id="qs-16.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-16.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s16" id="s16.4" value="0" {% if sh.s16 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s16.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s16">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s17-container">
                                 <label for="pqs-17" class="form-label col-12">17. I read many different reference books.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-17" id="qs-17.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-17.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s17" id="s17.1" value="3" {% if sh.s17 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s17.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-17" id="qs-17.2" value="Agree">
-                                    <label class="form-check-label" for="qs-17.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s17" id="s17.2" value="2" {% if sh.s17 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s17.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-17" id="qs-17.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-17.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s17" id="s17.3" value="1" {% if sh.s17 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s17.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-17" id="qs-17.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-17.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s17" id="s17.4" value="0" {% if sh.s17 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s17.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s17">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s18-container">
                                 <label for="pqs-18" class="form-label col-12">18. I study by following the teacher’s instructions.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-18" id="qs-18.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-18.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s18" id="s18.1" value="3" {% if sh.s18 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s18.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-18" id="qs-18.2" value="Agree">
-                                    <label class="form-check-label" for="qs-18.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s18" id="s18.2" value="2" {% if sh.s18 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s18.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-18" id="qs-18.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-18.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s18" id="s18.3" value="1" {% if sh.s18 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s18.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-18" id="qs-18.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-18.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s18" id="s18.4" value="0" {% if sh.s18 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s18.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s18">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s19-container">
                                 <label for="pqs-19" class="form-label col-12">19. I try to use different methods from what I learned at school to solve problems.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-19" id="qs-19.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-19.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s19" id="s19.1" value="3" {% if sh.s19 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s19.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-19" id="qs-19.2" value="Agree">
-                                    <label class="form-check-label" for="qs-19.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s19" id="s19.2" value="2" {% if sh.s19 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s19.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-19" id="qs-19.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-19.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s19" id="s19.3" value="1" {% if sh.s19 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s19.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-19" id="qs-19.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-19.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s19" id="s19.4" value="0" {% if sh.s19 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s19.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s19">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s20-container">
                                 <label for="pqs-20" class="form-label col-12">20. I try to memorize as much as possible.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-20" id="qs-20.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-20.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s20" id="s20.1" value="3" {% if sh.s20 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s20.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-20" id="qs-20.2" value="Agree">
-                                    <label class="form-check-label" for="qs-20.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s20" id="s20.2" value="2" {% if sh.s20 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s20.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-20" id="qs-20.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-20.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s20" id="s20.3" value="1" {% if sh.s20 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s20.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-20" id="qs-20.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-20.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s20" id="s20.4" value="0" {% if sh.s20 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s20.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s20">
                                 </div>
                             </div>
                         </div>
                         <div class="question-group-study question-group-study-5">
-                            <div class="col-12 col-md-12">
+                            <h5 class="col-12 fw-bold mb-3 mt-1">Questions 21 to 25</h5>
+                            <div class="col-12 col-md-12 s21-container">
                                 <label for="pqs-21" class="form-label col-12">21. I try to think on my own instead of counting on others.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-21" id="qs-21.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-21.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s21" id="s21.1" value="3" {% if sh.s21 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s21.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-21" id="qs-21.2" value="Agree">
-                                    <label class="form-check-label" for="qs-21.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s21" id="s21.2" value="2" {% if sh.s21 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s21.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-21" id="qs-21.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-21.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s21" id="s21.3" value="1" {% if sh.s21 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s21.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-21" id="qs-21.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-21.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s21" id="s21.4" value="0" {% if sh.s21 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s21.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s21">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s22-container">
                                 <label for="pqs-22" class="form-label col-12">22. I organize what I’ve learned.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-22" id="qs-22.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-22.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s22" id="s22.1" value="3" {% if sh.s22 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s22.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-22" id="qs-22.2" value="Agree">
-                                    <label class="form-check-label" for="qs-22.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s22" id="s22.2" value="2" {% if sh.s22 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s22.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-22" id="qs-22.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-22.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s22" id="s22.3" value="1" {% if sh.s22 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s22.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-22" id="qs-22.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-22.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s22" id="s22.4" value="0" {% if sh.s22 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s22.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s22">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s23-container">
                                 <label for="pqs-23" class="form-label col-12">23. I try to apply what I’ve learned.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-23" id="qs-23.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-23.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s23" id="s23.1" value="3" {% if sh.s23 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s23.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-23" id="qs-23.2" value="Agree">
-                                    <label class="form-check-label" for="qs-23.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s23" id="s23.2" value="2" {% if sh.s23 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s23.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-23" id="qs-23.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-23.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s23" id="s23.3" value="1" {% if sh.s23 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s23.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-23" id="qs-23.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-23.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s23" id="s23.4" value="0" {% if sh.s23 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s23.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s23">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-12 s24-container">
                                 <label for="pqs-24" class="form-label col-12">24. I ask many questions and research answers.<span class="text-muted"></span></label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-24" id="qs-24.1" value="Strongly Agree">
-                                    <label class="form-check-label" for="qs-24.1">Often/Always</label>
+                                    <input class="form-check-input" type="radio" name="s24" id="s24.1" value="3" {% if sh.s24 == 3 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s24.1">Often/Always</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-24" id="qs-24.2" value="Agree">
-                                    <label class="form-check-label" for="qs-24.2">Sometimes</label>
+                                    <input class="form-check-input" type="radio" name="s24" id="s24.2" value="2" {% if sh.s24 == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s24.2">Sometimes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-24" id="qs-24.3" value="Neutral">
-                                    <label class="form-check-label" for="qs-24.3">Seldom</label>
+                                    <input class="form-check-input" type="radio" name="s24" id="s24.3" value="1" {% if sh.s24 == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s24.3">Seldom</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="qs-24" id="qs-24.4" value="Disagree">
-                                    <label class="form-check-label" for="qs-24.4">Never</label>
+                                    <input class="form-check-input" type="radio" name="s24" id="s24.4" value="0" {% if sh.s24 == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="s24.4">Never</label>
+                                </div>
+                                <div class="invalid-feedback d-none s24">
                                 </div>
                             </div>
                             <div class="col-12 col-md-12">
-                                <label for="qs-25" class="form-label">25. What would you do when you don’t understand what you are learning in class?<span class="text-muted"></span></label>
-                                <select class="form-control form-select" id="qs-25" placeholder="" name="qs-25" required="">
-                                    <option value="none">--Select--</option>
-                                    <option value="Ask my teachers at school">Ask my teachers at school</option>
-                                    <option value="Ask tutors at a private tutoring school">Ask tutors at a private tutoring school</option>
-                                    <option value="Ask my friends">Ask my friends</option>
-                                    <option value="Ask my family">Ask my family</option>
-                                    <option value="Research from reference books on my own">Research from reference books on my own</option>
-                                    <option value="Research online">Research online</option>
-                                    <option value="Leave it">Leave it</option>
+                                <label for="s25" class="form-label">25. What would you do first when you don't understand what you are learning in class?<span class="text-muted"></span></label>
+                                <select class="form-control form-select" id="s25" placeholder="" name="s25">
+                                    <option value="">--Select--</option>
+                                    <option value="Ask my teachers at school" {% if sh.s25 == 'Ask my teachers at school' %}selected{% endif %}>Ask my teachers at school</option>
+                                    <option value="Ask tutors at a private tutoring school" {% if sh.s25 == 'Ask tutors at a private tutoring school' %}selected{% endif %}>Ask tutors at a private tutoring school</option>
+                                    <option value="Ask my friends" {% if sh.s25 == 'Ask my friends' %}selected{% endif %}>Ask my friends</option>
+                                    <option value="Ask my family" {% if sh.s25 == 'Ask my family' %}selected{% endif %}>Ask my family</option>
+                                    <option value="Research from reference books on my own" {% if sh.s25 == 'Research from reference books on my own' %}selected{% endif %}>Research from reference books on my own</option>
+                                    <option value="Research online" {% if sh.s25 == 'Research online' %}selected{% endif %}>Research online</option>
+                                    <option value="Leave it" {% if sh.s25 == 'Leave it' %}selected{% endif %}>Leave it</option>
                                 </select>
-                            </div>
+                                <div class="invalid-feedback d-none s25">
+                                </div>
+                            </div>                            
                         </div>
                         <div class="col-12 m-0">
                             <hr class="my-4 mx-auto w-">
@@ -536,3 +590,258 @@
         </div>
     </div>
 </div>
+    <button type="button" id="complete-button" class="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#messageModal">
+        Open Message
+    </button>
+
+    <div class="modal fade complete-profile-modal justify-content-center" id="messageModal" aria-labelledby="messageModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog m-auto w-95">
+            <div class="modal-content">
+                <div class="modal-header background-color-green">
+                    <h5 class="modal-title color-white" id="messageModalLabel">Profile Complete</h5>
+                </div>
+                <div class="modal-body">
+                    <p class="my-4 text-center"><i class="fa-regular fa-circle-check color-green"></i></p>
+                    <p class="text-center message">
+                        Congratulations on completing your profile! Start applying for BSCS or BSIT
+                        now and kickstart your academic journey. Best of luck!
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-lg btn-success background-color-green btn-apply btn-font mx-auto" href="{% url 'home' %}">Go to home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+<script>
+    $(document).ready(function(){
+        $('#messageModal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+        
+        $('#study-habits.back-button-1').click(function(e){
+            $('div.profile-screen').hide();
+            $('div#personality-test').show();
+            $('#step-6').removeClass('wrapper-green');
+            $('#step-6').addClass('wrapper');
+            $('#step-6 div').removeClass('bg-pending');
+            $('#step-6 div').removeClass('bg-white');
+            $('#step-6 div i').removeClass('color-green');
+  
+            $('#step-5').removeClass('wrapper');
+            $('#step-5').addClass('wrapper-green');
+            $('#step-5 div').removeClass('bg-green');
+            $('#step-5 div').addClass('bg-white');
+            $('#step-5 div i').removeClass('color-white');
+            $('#step-5 div i').addClass('color-green');
+  
+            $('span.progress-counter').text('5');
+            $('html,body').animate({
+                scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+        });
+        $('#study-habits.next-button-1').click(function(e){
+            e.preventDefault();
+            var formData = new FormData($('form#study-habits')[0]);
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'complete_study_habit_1' %}",
+                data: formData,
+                processData: false,
+                contentType: false,
+                
+                success: function(data) {
+                    var errors = JSON.parse(data);
+                    has_error = false;
+    
+                    for (var i = 1; i <= 10; i++) {
+                        var containerClass = '.s' + i + '-container';
+                        var inputName = 'input[name="s' + i + '"]';
+                      
+                        $('div.s' + i).empty().removeClass('d-block');
+                        $(containerClass + ' .form-check-input').removeClass('rb-invalid');
+                    }                                
+    
+                    for (var i = 1; i <= 10; i++) {
+                        var containerClass = '.s' + i + '-container';
+                        var divClass = 'div.s' + i;
+                      
+                        if (errors['s' + i]) {
+                          $(containerClass + ' .form-check-input').addClass('rb-invalid');
+                          $(divClass).removeClass('d-none').addClass('d-block');
+                      
+                          $.each(errors['s' + i], function(index, error) {
+                            $(divClass).append('<span>' + error.message + '</span>');
+                          });
+                      
+                          has_error = true;
+                        } else {
+                          $(containerClass + ' .form-check-input').removeClass('rb-invalid');
+                          $(divClass).empty().removeClass('d-block');
+                        }
+                    }                                          
+  
+                    if (!has_error) {
+                        $('.question-group-study').hide();
+                        $('.question-group-study-3').show();
+                        $('.question-group-study-4').show();
+                        $('#study-habits div.back-button').hide();
+                        $('#study-habits div.next-button').hide();
+                        $('#study-habits div.back-button-2').show();
+                        $('#study-habits div.next-button-2').show();
+                        $('html,body').animate({
+                            scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+                    }else{
+                        $('html,body').animate({
+                            scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+                    }
+              },
+            });
+        });
+        $('#study-habits.back-button-2').click(function(e){
+            e.preventDefault();
+            $('.question-group-study').hide();
+            $('.question-group-study-1').show();
+            $('.question-group-study-2').show();
+            $('#study-habits div.back-button').hide();
+            $('#study-habits div.next-button').hide();
+            $('#study-habits div.back-button-1').show();
+            $('#study-habits div.next-button-1').show();
+            $('html,body').animate({
+                scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+        });
+        $('#study-habits.next-button-2').click(function(e){
+            e.preventDefault();
+            var formData = new FormData($('form#study-habits')[0]);
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'complete_study_habit_2' %}",
+                data: formData,
+                processData: false,
+                contentType: false,
+                
+                success: function(data) {
+                    var errors = JSON.parse(data);
+                    has_error = false;
+    
+                    for (var i = 11; i <= 20; i++) {
+                        var containerClass = '.s' + i + '-container';
+                        var inputName = 'input[name="s' + i + '"]';
+                      
+                        $('div.s' + i).empty().removeClass('d-block');
+                        $(containerClass + ' .form-check-input').removeClass('rb-invalid');
+                    }                                
+    
+                    for (var i = 11; i <= 20; i++) {
+                        var containerClass = '.s' + i + '-container';
+                        var divClass = 'div.s' + i;
+                      
+                        if (errors['s' + i]) {
+                          $(containerClass + ' .form-check-input').addClass('rb-invalid');
+                          $(divClass).removeClass('d-none').addClass('d-block');
+                      
+                          $.each(errors['s' + i], function(index, error) {
+                            $(divClass).append('<span>' + error.message + '</span>');
+                          });
+                      
+                          has_error = true;
+                        } else {
+                          $(containerClass + ' .form-check-input').removeClass('rb-invalid');
+                          $(divClass).empty().removeClass('d-block');
+                        }
+                    }                                          
+  
+                    if (!has_error) {
+                        $('.question-group-study').hide();
+                        $('.question-group-study-5').show();
+                        $('#study-habits div.back-button').hide();
+                        $('#study-habits div.next-button').hide();
+                        $('#study-habits div.back-button-3').show();
+                        $('#study-habits div.next-button-3').show();
+                        $('html,body').animate({
+                            scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+                    }else{
+                        $('html,body').animate({
+                            scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+                    }
+              },
+            });
+        });
+        $('#study-habits.back-button-3').click(function(e){
+            e.preventDefault();
+            $('.question-group-study').hide();
+            $('.question-group-study-3').show();
+            $('.question-group-study-4').show();
+            $('#study-habits div.back-button').hide();
+            $('#study-habits div.next-button').hide();
+            $('#study-habits div.back-button-2').show();
+            $('#study-habits div.next-button-2').show();
+            $('html,body').animate({
+                scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+        });
+        $('#study-habits.next-button-3').click(function(e){
+            e.preventDefault();
+            var formData = new FormData($('form#study-habits')[0]);
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'complete_study_habit_3' %}",
+                data: formData,
+                processData: false,
+                contentType: false,
+                
+                success: function(data) {
+                    var errors = JSON.parse(data);
+                    has_error = false;
+    
+                    for (var i = 21; i <= 24; i++) {
+                        var containerClass = '.s' + i + '-container';
+                        var inputName = 'input[name="s' + i + '"]';
+                      
+                        $('div.s' + i).empty().removeClass('d-block');
+                        $(containerClass + ' .form-check-input').removeClass('rb-invalid');
+                    }
+                    $('div.s25').empty().removeClass('d-block');
+                    $('#s25').removeClass('is-invalid');                             
+    
+                    for (var i = 21; i <= 24; i++) {
+                        var containerClass = '.s' + i + '-container';
+                        var divClass = 'div.s' + i;
+                      
+                        if (errors['s' + i]) {
+                          $(containerClass + ' .form-check-input').addClass('rb-invalid');
+                          $(divClass).removeClass('d-none').addClass('d-block');
+                      
+                          $.each(errors['s' + i], function(index, error) {
+                            $(divClass).append('<span>' + error.message + '</span>');
+                          });
+                      
+                          has_error = true;
+                        } else {
+                          $(containerClass + ' .form-check-input').removeClass('rb-invalid');
+                          $(divClass).empty().removeClass('d-block');
+                        }
+                    }
+                    
+                    if (errors.s25) {
+                        $('#s25').addClass('is-invalid');
+                        $('div.s25').removeClass('d-none');
+                        $('div.s25').addClass('d-block');
+                        $.each(errors.s25, function(index, error) {
+                          $('div.s25').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+  
+                    if (!has_error) {
+                        $('#complete-button').trigger('click');
+                        $('.complete-profile-modal').addClass('d-flex')
+                    }else{
+                        $('html,body').animate({
+                            scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+                    }
+              },
+            });
+        });
+    })
+</script>
