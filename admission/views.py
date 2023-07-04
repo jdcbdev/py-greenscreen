@@ -225,3 +225,18 @@ def dashboard(request):
     }
     
     return render(request, 'admission/dashboard.html', context)
+
+@login_required(login_url='/admin/sign-in/')
+def settings(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
+    page_title = 'Settings'
+    page_active = 'settings'
+    
+    context = {
+        'page_title': page_title,
+        'page_active': page_active
+    }
+    
+    return render(request, 'admission/settings.html', context)
