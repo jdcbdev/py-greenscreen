@@ -254,7 +254,7 @@ def forgot_password(request, reset=None):
             if response['success']:
         
                 user_email = form.cleaned_data['email']
-                associated_user = get_user_model().objects.filter(Q(email=user_email)).first()
+                associated_user = get_user_model().objects.filter(Q(email=user_email, is_staff=False)).first()
                 if associated_user:
                     if associated_user.is_active:
                         mail_subject = "Password Reset Request - GreenScreen Admission System"
@@ -281,7 +281,7 @@ def forgot_password(request, reset=None):
                                 'level': 'success',
                                 'message': msg
                             }
-                            form = SignUpOldForm()
+                            form = ForgotPasswordForm()
                         else:
                             success_message = {
                                 'level': 'danger',
