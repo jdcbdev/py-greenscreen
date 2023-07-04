@@ -18,7 +18,7 @@ def home(request):
     profile = None
         
     if request.user.is_authenticated and request.user.is_staff:
-        return redirect('admission')
+        return redirect('dashboard')
     elif request.user.is_authenticated and not request.user.is_staff:
         try:
             extra_data = SocialAccount.objects.get(user=request.user).extra_data

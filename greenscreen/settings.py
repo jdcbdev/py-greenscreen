@@ -175,6 +175,8 @@ AUTHENTICATION_BACKENDS = (
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 8 * 60 * 60  # 8 hours in seconds
 
+LOGIN_URL = '/student/sign-in/'
+
 # Emailing settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

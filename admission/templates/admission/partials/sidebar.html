@@ -1,0 +1,57 @@
+{% load static %}
+
+<nav id="sidebarMenu" class="col-md-3 col-lg-3 col-xl-2 d-md-block background-color-green sidebar collapse">
+    <div class="position-sticky h-100">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a href="" class="nav-link" id="dashboard" title="Dashboard">
+                    <i class='bx bx-grid-alt' ></i>
+                    <span class="links-name">Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="" class="nav-link" id="applications" title="Applications">
+                    <i class='bx bx-paper-plane'></i>
+                    <span class="links-name">Applications</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="" class="nav-link" id="monitoring" title="Monitoring">
+                    <i class='bx bx-notepad'></i>
+                    <span class="links-name">Monitoring</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="" class="nav-link" id="faculty" title="Faculty">
+                    <i class='bx bx-group' ></i>
+                    <span class="links-name">Faculty</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="" class="nav-link" id="reports" title="Reports">
+                    <i class='bx bx-file'></i>
+                    <span class="links-name">Reports</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="" class="nav-link" id="archive" title="Archive">
+                    <i class='bx bx-box'></i>
+                    <span class="links-name">Archive</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="" class="nav-link" id="settings" title="Settings">
+                    <i class='bx bx-cog'></i>
+                    <span class="links-name">Settings</span>
+                </a>
+            </li>
+            <hr class="line">
+            <li id="logout-link" class="nav-item">
+                <a class="logout-link nav-link" href="{% url 'logout' %}" title="Logout">
+                    <i class='bx bx-log-out'></i>
+                    <span class="links-name">Sign out</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>

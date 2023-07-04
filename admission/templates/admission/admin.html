@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include 'partials/header.html' %}
+<body>
+  <!-- Header -->
+  {% include 'admission/partials/topnav_admin.html' %}
+
+    <div class="container-fluid">
+        <div class="row">
+            {% include 'admission/partials/sidebar.html' %}
+            {% block content %}
+    
+            {% endblock content %}
+        </div>
+    </div>
+  
+</body>
+<script>
+    $(document).ready(function(){
+        $('nav a.nav-link').removeClass('active')
+        $('nav a#{{page_active}}').addClass('active')
+    });
+</script>
+</html>

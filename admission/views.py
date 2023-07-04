@@ -16,6 +16,7 @@ from django.utils.safestring import mark_safe
 from django.db.models.query_utils import Q
 from django.urls import reverse
 from student.views import grecaptcha_verify
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -43,7 +44,7 @@ def signin(request):
             
             if user is not None and user.is_active and user.is_staff:
                 login(request, user)
-                return redirect('admission')
+                return redirect('dashboard')
             else:
                 success_message = {
                     'level': 'danger',
@@ -209,6 +210,18 @@ def password_reset(request, uidb64, token):
 
     return render(request, 'admission/password_reset_confirm.html', context)
 
-
-def admission(request):
-    return render(request, 'admission/dashboard.html')
+@login_required(login_url='/admin/sign-in/')
+def dashboard(request):
+    
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
+    page_title = 'Dashboard'
+    page_active = 'dashboard'
+    
+    context = {
+        'page_title': page_title,
+        'page_active': page_active
+    }
+    
+    return render(request, 'admission/dashboard.html', context)

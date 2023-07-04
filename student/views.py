@@ -487,6 +487,7 @@ def add_student_partial(request, email):
         
     return False   
 
+@login_required(login_url='/student/sign-in/')
 def complete_profile(request):
     if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
         return redirect('home')
@@ -814,6 +815,7 @@ def complete_study_habit_3(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/student/sign-in/')
 def my_profile(request):
     if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=False).exists():
         return redirect('complete_profile')
