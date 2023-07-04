@@ -528,8 +528,6 @@ def complete_profile(request):
 @require_POST
 @transaction.atomic
 def complete_personal_information(request):
-    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
-        return redirect('home')
 
     form = PersonalInfoForm(request.POST, request.FILES)
     if form.is_valid():
@@ -576,8 +574,6 @@ def complete_personal_information(request):
 @require_POST
 @transaction.atomic
 def complete_college_entrance_test(request):
-    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
-        return redirect('home')
     
     student = Student.objects.get(account=request.user)
     try:
@@ -604,8 +600,6 @@ def complete_college_entrance_test(request):
 @require_POST
 @transaction.atomic
 def complete_school_background(request):
-    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
-        return redirect('home')
 
     form = SchoolBackgroundForm(request.POST, request.FILES)
     if form.is_valid():
@@ -649,8 +643,6 @@ def complete_school_background(request):
 @require_POST
 @transaction.atomic
 def complete_economic_status(request):
-    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
-        return redirect('home')
     
     student = Student.objects.get(account=request.user)
     try:
@@ -675,8 +667,6 @@ def complete_economic_status(request):
 @require_POST
 @transaction.atomic
 def complete_personality_test_1(request):
-    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
-        return redirect('home')
     
     form = PersonalityTestForm1(request.POST)
     if form.is_valid():
@@ -696,8 +686,6 @@ def complete_personality_test_1(request):
 @require_POST
 @transaction.atomic
 def complete_personality_test_2(request):
-    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
-        return redirect('home')
     
     form = PersonalityTestForm2(request.POST)
     if form.is_valid():
@@ -717,8 +705,6 @@ def complete_personality_test_2(request):
 @require_POST
 @transaction.atomic
 def complete_personality_test_3(request):
-    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
-        return redirect('home')
     
     form = PersonalityTestForm3(request.POST)
     if form.is_valid():
@@ -738,8 +724,6 @@ def complete_personality_test_3(request):
 @require_POST
 @transaction.atomic
 def complete_personality_test_4(request):
-    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
-        return redirect('home')
     
     form = PersonalityTestForm4(request.POST)
     if form.is_valid():
@@ -762,8 +746,6 @@ def complete_personality_test_4(request):
 @require_POST
 @transaction.atomic
 def complete_study_habit_1(request):
-    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
-        return redirect('home')
     
     form = StudyHabitForm1(request.POST)
     if form.is_valid():
@@ -783,8 +765,6 @@ def complete_study_habit_1(request):
 @require_POST
 @transaction.atomic
 def complete_study_habit_2(request):
-    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
-        return redirect('home')
     
     form = StudyHabitForm2(request.POST)
     if form.is_valid():
@@ -804,8 +784,6 @@ def complete_study_habit_2(request):
 @require_POST
 @transaction.atomic
 def complete_study_habit_3(request):
-    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
-        return redirect('home')
     
     form = StudyHabitForm3(request.POST)
     if form.is_valid():
@@ -824,3 +802,50 @@ def complete_study_habit_3(request):
 
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
+
+def my_profile(request):
+    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=False).exists():
+        return redirect('complete_profile')
+    
+    student = Student.objects.filter(account=request.user).first()
+    if student.birth_date:
+        student_birth_date = student.birth_date
+        formatted_date = student_birth_date.strftime('%Y-%m-%d')
+        student.birth_date = formatted_date
+    contact = ContactPoint.objects.filter(student=student).first()
+    address = PersonalAddress.objects.filter(student=student).first()
+    cet = CollegeEntranceTest.objects.filter(student=student).first()
+    strands = SHSStrand.objects.all()
+    class_positions = ClassRoomOrganization.objects.all()
+    ssg = StudentSupremeGovernment.objects.all()
+    ranks = ClassRank.objects.all()
+    awards = AcademicAwards.objects.all()
+    school = SchoolBackground.objects.filter(student=student).first()
+    degrees = AcademicDegree.objects.all()
+    employment = EmploymentStatus.objects.all()
+    economic = EconomicStatus.objects.filter(student=student).first()
+    pt = PersonalityTest.objects.filter(student=student).first()
+    sh = StudyHabit.objects.filter(student=student).first()
+    
+    page_title = 'Complete Profile'
+    context = {
+        'page_title': page_title,
+        'student': student,
+        'contact': contact,
+        'address': address,
+        'cet': cet,
+        'strands': strands,
+        'class_positions': class_positions,
+        'ssg': ssg,
+        'ranks': ranks,
+        'awards': awards,
+        'school': school,
+        'degrees': degrees,
+        'employment': employment,
+        'economic': economic,
+        'pt': pt,
+        'sh': sh,
+        'settings': settings
+    }
+    return render(request, 'student/profile/main.html', context)
+

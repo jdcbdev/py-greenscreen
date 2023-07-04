@@ -295,30 +295,35 @@
   </footer>
   <script>
     $(document).ready(function(){
-      $('a#home').on('click', function(){
+      var url = window.location.href;
+      var path = url.split('/').filter(Boolean).pop();
+
+      if (path == 'home'){
         $('.nav-link').removeClass('active');
         $('a#home').addClass('active');
         $('html,body').animate({
                     scrollTop:$('main#home').offset().top -90}, 'fast');
-      });
-      $('a#academics').on('click', function(){
+      }
+      if (path == 'academics'){
         $('.nav-link').removeClass('active');
         $('a#academics').addClass('active');
         $('html,body').animate({
                     scrollTop:$('div#academics').offset().top -90}, 'fast');
-      });
-      $('a#admissions').on('click', function(){
+      }
+      
+      if (path == 'how-it-works'){
         $('.nav-link').removeClass('active');
         $('a#admissions').addClass('active');
         $('html,body').animate({
                     scrollTop:$('div#admissions').offset().top -90}, 'fast');
-      });
-      $('a#faculty').on('click', function(){
+      }
+      
+      if (path == 'faculty'){
         $('.nav-link').removeClass('active');
         $('a#faculty').addClass('active');
         $('html,body').animate({
                     scrollTop:$('div#faculty').offset().top -90}, 'fast');
-      });
+      }
     });
   </script>
 

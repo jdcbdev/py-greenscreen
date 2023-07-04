@@ -6,7 +6,11 @@
 <body>
 
   <!-- Header -->
-  {% include 'student/profile/partials/topnav.html' %}
+  {% if student.is_profile_complete %}
+    {% include 'partials/topnav.html' %}
+  {% else %}
+    {% include 'student/profile/partials/topnav.html' %}
+  {% endif %}
 
   <div class="container-fluid main-container">
     <div class="row">
@@ -14,7 +18,11 @@
             <div class="row g-3">
                 <div class="col-12 text-center mb-md-4 mt-4">
                     <h4 class="fw-bold text-center green">Welcome to GreenScreen!</h4>
-                    <h5>Complete the 6 steps to get started</h5>
+                    {% if student.is_profile_complete %}
+                        <h5>You have completed your profile. You may update them and click save.</h5>
+                    {% else %}
+                        <h5>Complete the 6 steps to get started</h5>
+                    {% endif %}
                     <h4 class="fw-bold mt-3 d-md-none"><span class="progress-counter">1</span> of 6</h4>
                 </div>
                 <div class="col-md-12 text-center d-none d-md-flex progress-bar-profile">
