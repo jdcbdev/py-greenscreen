@@ -17,10 +17,8 @@ def home(request):
     current_year = datetime.datetime.now().year
     profile = None
         
-    if request.user.is_authenticated and request.user.is_superuser:
-        return redirect('admin/')
-    elif request.user.is_authenticated and request.user.is_staff:
-        return redirect('admin/')
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('admission')
     elif request.user.is_authenticated and not request.user.is_staff:
         try:
             extra_data = SocialAccount.objects.get(user=request.user).extra_data

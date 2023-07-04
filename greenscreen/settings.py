@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'base.apps.BaseConfig',
     'student.apps.StudentConfig',
+    'admission.apps.AdmissionConfig',
     'django.contrib.sites',
     'allauth',
     'allauth.account',

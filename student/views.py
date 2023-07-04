@@ -31,7 +31,7 @@ User = get_user_model()
 
 def signin(request):
     
-    if request.user.is_authenticated and not request.user.is_staff:
+    if request.user.is_authenticated:
         return redirect('home')
         
     page_title = "Sign in"
@@ -76,7 +76,7 @@ def signin(request):
 
 def signup_choose(request):
     
-    if request.user.is_authenticated and not request.user.is_staff:
+    if request.user.is_authenticated:
         return redirect('home')
     
     page_title = "Sign up"
@@ -87,7 +87,7 @@ def signup_choose(request):
 
 @transaction.atomic
 def signup_new(request):
-    if request.user.is_authenticated and not request.user.is_staff:
+    if request.user.is_authenticated:
         return redirect('home')
 
     page_title = "Sign up"
@@ -154,7 +154,7 @@ def signup_new(request):
 
 @transaction.atomic
 def signup_old(request):
-    if request.user.is_authenticated and not request.user.is_staff:
+    if request.user.is_authenticated:
         return redirect('home')
 
     page_title = "Sign up"
@@ -228,7 +228,7 @@ def signup_old(request):
     return render(request, 'student/signup-old.html', context)
 
 def social_signup(request):
-    if request.user.is_authenticated and not request.user.is_staff:
+    if request.user.is_authenticated:
         return redirect('home')
     
     request.session['google_error'] = {
@@ -239,7 +239,7 @@ def social_signup(request):
     return redirect(request.session['link'])
 
 def forgot_password(request, reset=None):
-    if request.user.is_authenticated and not request.user.is_staff:
+    if request.user.is_authenticated:
         return redirect('home')
     
     page_title = "Forgot Password"
@@ -254,7 +254,7 @@ def forgot_password(request, reset=None):
             if response['success']:
         
                 user_email = form.cleaned_data['email']
-                associated_user = get_user_model().objects.filter(Q(email=user_email, is_staff=False)).first()
+                associated_user = get_user_model().objects.filter(Q(email=user_email)).first()
                 if associated_user:
                     if associated_user.is_active:
                         mail_subject = "Password Reset Request - GreenScreen Admission System"
@@ -321,6 +321,9 @@ def forgot_password(request, reset=None):
     return render(request, 'student/forgot_password.html', context)
 
 def password_reset(request, uidb64, token):
+    if request.user.is_authenticated:
+        return redirect('home')
+    
     page_title = "Password Reset"
     success_message = None
     
@@ -381,6 +384,9 @@ def password_reset(request, uidb64, token):
     return render(request, 'student/password_reset_confirm.html', context)
 
 def activate(request, uidb64, token):
+    if request.user.is_authenticated:
+        return redirect('home')
+    
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -405,6 +411,9 @@ def activate(request, uidb64, token):
     return redirect('signin')
 
 def activate_email(request, user, to_email):
+    if request.user.is_authenticated:
+        return redirect('home')
+    
     mail_subject = "Email Verification - GreenScreen Admission System"
     domain = get_current_site(request).domain
     uid = urlsafe_base64_encode(force_bytes(user.pk))
@@ -480,6 +489,8 @@ def add_student_partial(request, email):
 
 def complete_profile(request):
     if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=True).exists():
+        return redirect('home')
+    elif request.user.is_authenticated and request.user.is_staff:
         return redirect('home')
     
     student = Student.objects.filter(account=request.user).first()
@@ -806,6 +817,8 @@ def complete_study_habit_3(request):
 def my_profile(request):
     if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=False).exists():
         return redirect('complete_profile')
+    elif request.user.is_authenticated and request.user.is_staff:
+        return redirect('home')
     
     student = Student.objects.filter(account=request.user).first()
     if student.birth_date:
