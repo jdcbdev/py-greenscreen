@@ -15,21 +15,14 @@
                 </div>
                 <input type="text" disabled="true" class="form-control" value="{{ sy.concat_year|default_if_none:'' }}" id="active_school_year">
             </div>
-            <div class="col-2 col-md-4 col-lg-3 d-flex">
-                
-            </div>
             {% include 'admission/partials/school_year.modal.html' %}
-
-            <h5 class="col-12 fw-bold mt-4 mb-1">Admission Period Settings</h5>
-            <div class="col-12 col-md-4 col-lg-3">
-                <div class="d-flex align-items-center justify-content-between">
-                    <label for="active_admission_period" class="form-label">Admission Period<span class="text-muted"></span></label>
-                    <a class="mt-auto color-green" type="button" title="Update Admission Period" data-bs-toggle="modal" data-bs-target="#modal-admission-period"><i class="fa-regular fa-pen-to-square"></i></a>
-                </div>
-                <input type="text" disabled="true" class="form-control" value="{{ period.concat_date|default_if_none:'' }}" id="active_admission_period" placeholder="" name="active_admission_period">
+            <div class="m-0 row g-2 p-0" id="period-container">
+                {% comment %} View Quota {% endcomment %}
             </div>
-            {% include 'admission/partials/admission_period.modal.html' %}
-            
+            <div class="m-0 row g-2 p-0" id="quota-container">
+                {% comment %} View Quota {% endcomment %}
+            </div>
+
             <h5 class="col-12 fw-bold mt-4 mb-1">Automation Settings</h5>
             <div class="form-check form-switch col-12 col-md-12">
                 <input class="form-check-input form-control" type="checkbox" id="automateddecision" name="automateddecision" checked>
@@ -191,11 +184,45 @@
 
 <script>
     $(document).ready(function(){
+        view_period()
+        view_quota()
         $('div.modal').modal({
             backdrop: 'static',
             keyboard: false
         });
     });
+    function view_period(){
+        var formData = {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        };
+        $.ajax({
+            url: "{% url 'view_period' %}",
+            type: 'POST',
+            data: formData,
+            success: function(data) {
+                $('#period-container').html(data);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    }
+    function view_quota(){
+        var formData = {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        };
+        $.ajax({
+            url: "{% url 'view_quota' %}",
+            type: 'POST',
+            data: formData,
+            success: function(data) {
+                $('#quota-container').html(data);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    }
 </script>
 
 {% endblock content %}

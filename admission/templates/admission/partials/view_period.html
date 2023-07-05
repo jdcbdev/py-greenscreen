@@ -1,0 +1,9 @@
+<h5 class="col-12 fw-bold mt-4 mb-1">Admission Period Settings</h5>
+<div class="col-12 col-md-4 col-lg-3">
+    <div class="d-flex align-items-center justify-content-between">
+        <label for="active_admission_period" class="form-label">Admission Period<span class="text-muted"></span></label>
+        <a class="mt-auto color-green" type="button" title="Update Admission Period" data-bs-toggle="modal" data-bs-target="#modal-admission-period"><i class="fa-regular fa-pen-to-square"></i></a>
+    </div>
+    <input type="text" disabled="true" class="form-control" value="{{ period.concat_date|default_if_none:'' }}" id="active_admission_period" placeholder="" name="active_admission_period">
+</div>
+{% include 'admission/partials/admission_period.modal.html' %}

@@ -1,0 +1,82 @@
+<!-- Modal -->
+<div class="modal fade" id="modal-{{ program.code|upper }}-quota" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Update {{ program.code|upper }} Quota</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="needs-validation" action="" method="post" name="add-{{ program.code|upper }}-quota" id="add-{{ program.code|upper }}-quota">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <input type="hidden" value="{{ program.code }}" name="program_code">
+                        <div class="col">
+                            <label for="number" class="form-label">Quota Number<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="number" placeholder="" name="number" value="{{ program.quotas.0.number|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none number">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" value="Save {{ program.code|upper }} Quota" name="save_{{ program.code|upper }}_quota" id="save_{{ program.code|upper }}_quota" class="btn btn-primary background-color-green">Save {{ program.code|upper }} Quota</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $('div.modal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+
+        $('form#add-{{ program.code|upper }}-quota').submit(function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'add_quota' %}",
+                data: formData,
+                processData: false,
+                contentType: false,
+
+                success: function(data) {
+                    var errors = JSON.parse(data);
+                    has_error = false;
+    
+                    $('div.number').empty().removeClass('d-block');
+                    $('#number').removeClass('is-invalid');
+    
+                    if (errors.number) {
+                        $('#number').addClass('is-invalid');
+                        $('div.number').removeClass('d-none');
+                        $('div.number').addClass('d-block');
+                        $.each(errors.number, function(index, error) {
+                            $('div.number').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+    
+                    if (!has_error) {
+                        view_quota()
+                        $('#modal-{{ program.code|upper }}-quota').modal('hide');
+                    }else{
+                        console.log(data)
+                    }
+                },
+            });
+        });
+        function clearFormFields() {
+            $('#number').val('{{ program.quotas.0.number|default_if_none:'' }}');
+            $('div.number').empty().removeClass('d-block');
+            $('#number').removeClass('is-invalid');
+        }
+        $('#modal-{{ program.code|upper }}-quota').on('hidden.bs.modal', function () {
+            clearFormFields();
+        });   
+    });
+</script>

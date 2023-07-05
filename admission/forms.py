@@ -50,3 +50,19 @@ class AdmissionPeriodForm(forms.Form):
 
         return cleaned_data
 
+class QuotaForm(forms.Form):
+    program_code = forms.CharField(required=True, max_length=100)
+    number = forms.IntegerField(required=True)
+
+    def clean_number(self):
+        number = self.cleaned_data.get('number')
+
+        if number is not None and number <= 0:
+            raise forms.ValidationError('Quota number must be greater than zero.')
+        
+        return number
+    
+    def clean(self):
+        cleaned_data = super().clean()
+
+        return cleaned_data

@@ -11,14 +11,14 @@
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-sm-6">
-                            <label for="start_date" class="form-label">Start Date<span class="text-muted"></span></label>
-                            <input type="date" class="form-control" id="start_date" placeholder="" name="start_date">
+                            <label for="start_date" class="form-label">Start Date<span class="text-muted"> (DD-MM-YYYY)</span></label>
+                            <input type="date" class="form-control" id="start_date" placeholder="" name="start_date" value="{{ period.start_date|default_if_none:'' }}">
                             <div class="invalid-feedback d-none start_date">
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <label for="end_date" class="form-label">End Date<span class="text-muted"></span></label>
-                            <input type="date" class="form-control" id="end_date" placeholder="" name="end_date">
+                            <label for="end_date" class="form-label">End Date<span class="text-muted"> (DD-MM-YYYY)</span></label>
+                            <input type="date" class="form-control" id="end_date" placeholder="" name="end_date" value="{{ period.end_date|default_if_none:'' }}">
                             <div class="invalid-feedback d-none end_date">
                             </div>
                         </div>
@@ -34,6 +34,11 @@
 </div>
 <script>
     $(document).ready(function(){
+        $('div.modal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+
         $('form#add-admission-period').submit(function(e) {
             e.preventDefault();
             var formData = new FormData(this);
@@ -74,11 +79,7 @@
                     }
     
                     if (!has_error) {
-                        var startDate = new Date($('#start_date').val());
-                        var endDate = new Date($('#end_date').val());
-                        var startDateFormatted = startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).replace(/(\w+) (\d+)/, '$1. $2');
-                        var endDateFormatted = endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).replace(/(\w+) (\d+)/, '$1. $2');
-                        $('#active_admission_period').val(startDateFormatted + ' - ' + endDateFormatted);
+                        view_period()
                         $('#modal-admission-period').modal('hide');
                     }else{
                         console.log(data)
@@ -87,8 +88,8 @@
             });
         });
         function clearAdmissionPeriodFormFields() {
-            $('#start_date').val('');
-            $('#end_date').val('');
+            $('#start_date').val('{{ period.start_date|default_if_none:'' }}');
+            $('#end_date').val('{{ period.end_date|default_if_none:'' }}');
 
             $('div.start_date').empty().removeClass('d-block');
             $('#start_date').removeClass('is-invalid');

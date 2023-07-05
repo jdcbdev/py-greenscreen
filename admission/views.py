@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.contrib.auth import get_user_model
 from base.custom_apis import load_settings
 from django.contrib.auth import authenticate, login, logout
@@ -19,10 +20,11 @@ from student.views import grecaptcha_verify
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
-from .models import SchoolYear, AdmissionPeriod
-from .forms import SchoolYearForm, AdmissionPeriodForm
+from .models import SchoolYear, AdmissionPeriod, Program, Quota
+from .forms import SchoolYearForm, AdmissionPeriodForm, QuotaForm
 import datetime
 from django.http import JsonResponse
+from django.db.models import Prefetch
 
 # Create your views here.
 
@@ -242,13 +244,10 @@ def settings(request):
     current_year = datetime.datetime.now().year
     
     sy = SchoolYear.objects.filter(is_active=True).first()
-    period = AdmissionPeriod.objects.filter(school_year=sy).first()
-    
     context = {
         'page_title': page_title,
         'page_active': page_active,
         'sy': sy,
-        'period': period,
         'current_year': current_year
     }
     
@@ -300,3 +299,63 @@ def add_admission_period(request):
         
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def add_quota(request):
+    form = QuotaForm(request.POST)
+    if form.is_valid():
+        # Create or update
+        sy = SchoolYear.objects.filter(is_active=True).first()
+        program = Program.objects.filter(code=form.cleaned_data['program_code']).first()
+        quota, _ = Quota.objects.get_or_create(school_year=sy, program=program)
+        quota.school_year = sy
+        quota.program = program
+        quota.number = form.cleaned_data['number']
+        quota.save()  
+        
+        # Deactivate
+        AdmissionPeriod.objects.exclude(school_year=sy).update(is_active=False)
+
+        
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+def view_quota(request):
+    sy = SchoolYear.objects.filter(is_active=True).first()
+    programs = Program.objects.prefetch_related(
+        Prefetch(
+            'quota_set',
+            queryset=Quota.objects.select_related('school_year').filter(school_year=sy),
+            to_attr='quotas'
+        )
+    )
+    context = {
+        'programs': programs,
+    }
+    
+    rendered_html = render(request, 'admission/partials/view_quota.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')
+
+@ensure_csrf_cookie
+@require_POST
+def view_period(request):
+    sy = SchoolYear.objects.filter(is_active=True).first()
+    period = AdmissionPeriod.objects.filter(school_year=sy).first()
+    if period.start_date:
+        period_start_date = period.start_date
+        formatted_date = period_start_date.strftime('%Y-%m-%d')
+        period.start_date = formatted_date
+    if period.end_date:
+        period_end_date = period.end_date
+        formatted_date = period_end_date.strftime('%Y-%m-%d')
+        period.end_date = formatted_date
+    context = {
+        'period': period,
+    }
+    
+    rendered_html = render(request, 'admission/partials/view_period.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')

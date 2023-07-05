@@ -1,0 +1,11 @@
+<h5 class="col-12 fw-bold mt-4 mb-1">Declared Quota</h5>
+{% for program in programs %}
+    <div class="col-12 col-md-4 col-lg-3">
+        <div class="d-flex align-items-center justify-content-between">
+            <label for="active_{{ program.code|upper }}_quota" class="form-label">{{ program.code|upper }} Quota<span class="text-muted"></span></label>
+            <a class="mt-auto color-green" type="button" title="Update {{ program.code|upper }} Quota" data-bs-toggle="modal" data-bs-target="#modal-{{ program.code|upper }}-quota"><i class="fa-regular fa-pen-to-square"></i></a>
+        </div>
+        <input type="text" disabled="true" class="form-control" value="{{ program.quotas.0.number|default_if_none:'' }}" id="active_{{ program.code|upper }}_quota" placeholder="" name="active_{{ program.code|upper }}_quota">
+    </div>
+    {% include 'admission/partials/quota.modal.html' %}
+{% endfor %}
