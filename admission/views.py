@@ -17,6 +17,12 @@ from django.db.models.query_utils import Q
 from django.urls import reverse
 from student.views import grecaptcha_verify
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.http import require_POST
+from .models import SchoolYear, AdmissionPeriod
+from .forms import SchoolYearForm, AdmissionPeriodForm
+import datetime
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -233,10 +239,64 @@ def settings(request):
     
     page_title = 'Settings'
     page_active = 'settings'
+    current_year = datetime.datetime.now().year
+    
+    sy = SchoolYear.objects.filter(is_active=True).first()
+    period = AdmissionPeriod.objects.filter(school_year=sy).first()
     
     context = {
         'page_title': page_title,
-        'page_active': page_active
+        'page_active': page_active,
+        'sy': sy,
+        'period': period,
+        'current_year': current_year
     }
     
     return render(request, 'admission/settings.html', context)
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def add_school_year(request):
+    form = SchoolYearForm(request.POST)
+    if form.is_valid():
+        # Create or update the new school year
+        
+        sy, _ = SchoolYear.objects.get_or_create(start_year=form.cleaned_data['start_year'])
+        sy.start_year = form.cleaned_data['start_year']
+        sy.end_year = form.cleaned_data['end_year']
+        sy.concat_year = str(sy.start_year) + ' - ' + str(sy.end_year)
+        sy.is_active = True
+        sy.save()
+        # Deactivate the previous school year
+        old_sy = SchoolYear.objects.exclude(start_year=form.cleaned_data['start_year'])
+        if old_sy:
+            old_sy.update(is_active=False)
+        
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def add_admission_period(request):
+    form = AdmissionPeriodForm(request.POST)
+    if form.is_valid():
+        # Create or update
+        sy = SchoolYear.objects.filter(is_active=True).first()
+        period, _ = AdmissionPeriod.objects.get_or_create(school_year=sy)
+        
+        start_date = form.cleaned_data['start_date']
+        end_date = form.cleaned_data['end_date']
+        period.start_date = start_date
+        period.end_date = end_date
+        period.concat_date = start_date.strftime("%b. %d") + ' - ' + end_date.strftime("%b. %d")
+        period.is_active = True
+        period.save()  
+        
+        # Deactivate
+        AdmissionPeriod.objects.exclude(school_year=sy).update(is_active=False)
+
+        
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)

@@ -1,0 +1,97 @@
+<!-- Modal -->
+<div class="modal fade" id="modal-school-year" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Update School Year</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="needs-validation" action="" method="post" name="add-school-year" id="add-school-year">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label for="start_year" class="form-label">Start of School Year<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="start_year" placeholder="" name="start_year" value="{{ current_year }}" readonly>
+                            <div class="invalid-feedback d-none start_year">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="end_year" class="form-label">End of School Year<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="end_year" placeholder="" name="end_year" value="{{ current_year|add:1 }}" readonly>
+                            <div class="invalid-feedback d-none end_year">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" value="Save School Year" name="save_school_year" id="save_school_year" class="btn btn-primary background-color-green">Save School Year</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $('form#add-school-year').submit(function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'add_school_year' %}",
+                data: formData,
+                processData: false,
+                contentType: false,
+
+                success: function(data) {
+                    var errors = JSON.parse(data);
+                    has_error = false;
+    
+                    $('div.start_year').empty().removeClass('d-block');
+                    $('#start_year').removeClass('is-invalid');
+                    $('div.end_year').empty().removeClass('d-block');
+                    $('#end_year').removeClass('is-invalid');
+    
+                    if (errors.start_year) {
+                        $('#start_year').addClass('is-invalid');
+                        $('div.start_year').removeClass('d-none');
+                        $('div.start_year').addClass('d-block');
+                        $.each(errors.start_year, function(index, error) {
+                            $('div.start_year').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+
+                    if (errors.end_year) {
+                        $('#end_year').addClass('is-invalid');
+                        $('div.end_year').removeClass('d-none');
+                        $('div.end_year').addClass('d-block');
+                        $.each(errors.end_year, function(index, error) {
+                            $('div.end_year').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+    
+                    if (!has_error) {
+                        $('#active_school_year').val($('#start_year').val() + ' - ' + $('#end_year').val());
+                        $('#modal-school-year').modal('hide');
+                    }else{
+                        console.log(data)
+                    }
+                },
+            });
+        });
+        function clearSchoolYearFormFields() {
+            $('#start_year').val('{{ current_year }}');
+            $('#end_year').val('{{ current_year|add:1 }}');
+            $('div.start_year').empty().removeClass('d-block');
+            $('#start_year').removeClass('is-invalid');
+            $('div.end_year').empty().removeClass('d-block');
+            $('#end_year').removeClass('is-invalid');
+        }
+        $('#modal-school-year').on('hidden.bs.modal', function () {
+            clearSchoolYearFormFields();
+        });      
+    });
+</script>
