@@ -6,8 +6,8 @@
 
 <main class="col-md-9 ms-sm-auto col-lg-9 col-xl-10 p-md-4">
     <div class="w-100">
-        <h5 class="col-12 fw-bold mb-3 mt-3 mt-md-0">School Year Settings</h5>
         <div class="row g-2">
+            <h5 class="col-12 fw-bold mb-3 mt-3 mt-md-0">School Year & Admission Period</h5>
             <div class="col-12 col-md-4 col-lg-3">
                 <div class="d-flex align-items-center justify-content-between">
                     <label for="active_school_year" class="form-label">Active School Year<span class="text-muted"></span></label>
@@ -16,17 +16,28 @@
                 <input type="text" disabled="true" class="form-control" value="{{ sy.concat_year|default_if_none:'' }}" id="active_school_year">
             </div>
             {% include 'admission/partials/school_year.modal.html' %}
-            <div class="m-0 row g-2 p-0" id="period-container">
+            <div class="col-12 col-md-4 col-lg-3" id="period-container">
                 {% comment %} View Quota {% endcomment %}
             </div>
             <div class="m-0 row g-2 p-0" id="quota-container">
                 {% comment %} View Quota {% endcomment %}
             </div>
-
-            <h5 class="col-12 fw-bold mt-4 mb-1">Automation Settings</h5>
-            <div class="form-check form-switch col-12 col-md-12">
-                <input class="form-check-input form-control" type="checkbox" id="automateddecision" name="automateddecision" checked>
-                <label class="form-check-label form-label" for="automateddecision">Use Automated Admission Decision</label>
+            <div class="col-12 col-md-8 col-lg-6 mt-0" id="auto-container">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="col-auto">
+                      <h5 class="fw-bold mt-4 mb-1">Automation Settings</h5>
+                    </div>
+                    <div class="col-auto">
+                      <a class="color-green mt-4" type="button" title="Update Automation Settings" id="update_auto_settings"><i class="fa-regular fa-pen-to-square"></i></a>
+                      <a class="color-green mt-4" type="button" title="Save Automation Settings" id="save_auto_settings" style="display: none;"><i class="fa-regular fa-square-check"></i></a>
+                    </div>
+                  </div>
+                {% for auto in autos %}
+                <div class="form-check form-switch col-12 col-md-12">
+                    <input class="form-check-input form-control auto-toggle" type="checkbox" data-code="{{ auto.code }}" id="auto_{{ auto.code|upper }}" name="auto_{{ auto.code|upper }}" {% if auto.autoadmissions.0.automate %}checked{% endif %} disabled>
+                    <label class="form-check-label form-label" for="auto_{{ auto.code|upper }}">Automate Admission Decision for {{ auto.code|upper }}</label>
+                </div>
+                {% endfor %}
             </div>
             <div class="col-12 m-0">
                 <hr class="my-4 mx-auto w-">
@@ -189,6 +200,34 @@
         $('div.modal').modal({
             backdrop: 'static',
             keyboard: false
+        });
+        $('#update_auto_settings').click(function(){
+            $('#update_auto_settings').hide();
+            $('#save_auto_settings').show();
+            $('#auto-container .form-check-input').attr('disabled', false);
+        });
+        $('#save_auto_settings').click(function(){
+            $('#update_auto_settings').show();
+            $('#save_auto_settings').hide();
+            $('#auto-container .form-check-input').each(function() {
+                $(this).prop('disabled', true);
+                var automateValue = $(this).prop('checked') ? 'true' : '';
+                
+                var formData = {
+                    program_code: $(this).data('code'),
+                    automate: automateValue,
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                };
+                
+                $.ajax({
+                    url: "{% url 'add_auto' %}",
+                    type: 'POST',
+                    data: formData,
+                    success: function(data) {
+                        console.log(data);
+                    },
+                });
+            });            
         });
     });
     function view_period(){

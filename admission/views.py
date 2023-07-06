@@ -20,7 +20,7 @@ from student.views import grecaptcha_verify
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
-from .models import SchoolYear, AdmissionPeriod, Program, Quota
+from .models import SchoolYear, AdmissionPeriod, Program, Quota, AutoAdmission
 from .forms import SchoolYearForm, AdmissionPeriodForm, QuotaForm
 import datetime
 from django.http import JsonResponse
@@ -244,10 +244,18 @@ def settings(request):
     current_year = datetime.datetime.now().year
     
     sy = SchoolYear.objects.filter(is_active=True).first()
+    autos = Program.objects.prefetch_related(
+        Prefetch(
+            'autoadmission_set',
+            queryset=AutoAdmission.objects.select_related('school_year').filter(school_year=sy),
+            to_attr='autoadmissions'
+        )
+    )
     context = {
         'page_title': page_title,
         'page_active': page_active,
         'sy': sy,
+        'autos': autos,
         'current_year': current_year
     }
     
@@ -315,10 +323,6 @@ def add_quota(request):
         quota.number = form.cleaned_data['number']
         quota.save()  
         
-        # Deactivate
-        AdmissionPeriod.objects.exclude(school_year=sy).update(is_active=False)
-
-        
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
@@ -359,3 +363,26 @@ def view_period(request):
     
     rendered_html = render(request, 'admission/partials/view_period.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def add_auto(request):
+    
+    # Create or update
+    sy = SchoolYear.objects.filter(is_active=True).first()
+    program = Program.objects.filter(code=request.POST.get('program_code')).first()
+    auto, _ = AutoAdmission.objects.get_or_create(school_year=sy, program=program)
+    auto.school_year = sy
+    auto.program = program
+    if request.POST.get('automate'):
+        auto.automate = True
+    else:
+        auto.automate = False
+    auto.save()  
+    
+    response = {
+            'status': 'success',
+            'message': 'Auto admission information saved.'
+    }
+    return JsonResponse(response)

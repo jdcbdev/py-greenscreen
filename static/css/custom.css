@@ -1097,6 +1097,15 @@ span.table-struggling{
     margin-bottom: 8px;
 }
 
+.fa-square-check{
+    font-size: 21px;
+    margin-bottom: 8px;
+}
+
+.auto-toggle{
+    cursor: pointer;
+}
+
 @media (min-width: 576px) {
     .shortcut{
         display: block;
