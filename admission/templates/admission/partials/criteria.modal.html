@@ -1,0 +1,119 @@
+<!-- Modal -->
+<div class="modal fade" id="modal-{{ criterium.code|upper }}-criteria" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Update {{ criterium.code|upper }} Admission Criteria</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="needs-validation" action="" method="post" name="add-{{ criterium.code|upper }}-criteria" id="add-{{ criterium.code|upper }}-criteria">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row g-3">
+                        {% for ctr in criterium.criterias %}
+                        <input type="hidden" value="{{ ctr.id }}" id="{{ctr.code}}-id-{{ ctr.id }}" name="criteria_id[]">
+                        <div class="col-sm-6">
+                            <label for="{{ctr.code}}-score-{{ ctr.id }}" class="form-label">Min. {{ctr.name}}<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="{{ctr.code}}-score-{{ ctr.id }}" placeholder="" name="score[]" value="{{ctr.score}}">
+                            <div class="invalid-feedback d-none {{ctr.code}}-score-{{ ctr.id }}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="{{ctr.code}}-weights-{{ ctr.id }}" class="form-label">Weights<span class="text-muted"></span></label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="{{ctr.code}}-weights-{{ ctr.id }}" placeholder="" name="weights[]" value="{{ctr.weight}}">
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <div class="invalid-feedback d-none {{ctr.code}}-weights-{{ ctr.id }}">
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" value="Save {{ criterium.code|upper }} Criteria" name="save_{{ criterium.code|upper }}_criteria" id="save_{{ criterium.code|upper }}_criteria" class="btn btn-primary background-color-green">Save {{ criterium.code|upper }} Criteria</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $('div.modal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+
+        $('form#add-{{ criterium.code|upper }}-criteria').submit(function(e) {
+            e.preventDefault();
+            var has_error = false;
+            var ajaxRequests = [];
+          
+            {% for ctr in criterium.criterias %}
+                var formData = {
+                    criteria_id: $('#{{ctr.code}}-id-{{ ctr.id }}').val(),
+                    score: $('#{{ctr.code}}-score-{{ ctr.id }}').val(),
+                    weights: $('#{{ctr.code}}-weights-{{ ctr.id }}').val(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                };
+          
+                ajaxRequests.push(
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'add_criteria' %}",
+                        data: formData
+                    }).done(function(data) {
+                        var errors = JSON.parse(data);
+                
+                        $('div.{{ctr.code}}-score-{{ ctr.id }}').empty().removeClass('d-block');
+                        $('#{{ctr.code}}-score-{{ ctr.id }}').removeClass('is-invalid');
+                        $('div.{{ctr.code}}-weights-{{ ctr.id }}').empty().removeClass('d-block');
+                        $('#{{ctr.code}}-weights-{{ ctr.id }}').removeClass('is-invalid');
+                
+                        if (errors.score) {
+                            $('#{{ctr.code}}-score-{{ ctr.id }}').addClass('is-invalid');
+                            $('div.{{ctr.code}}-score-{{ ctr.id }}').removeClass('d-none');
+                            $('div.{{ctr.code}}-score-{{ ctr.id }}').addClass('d-block');
+                            $.each(errors.score, function(index, error) {
+                                $('div.{{ctr.code}}-score-{{ ctr.id }}').append('<span>' + error.message + '</span>');
+                            });
+                            has_error = true;
+                        }
+                        if (errors.weights) {
+                            $('#{{ctr.code}}-weights-{{ ctr.id }}').addClass('is-invalid');
+                            $('div.{{ctr.code}}-weights-{{ ctr.id }}').removeClass('d-none');
+                            $('div.{{ctr.code}}-weights-{{ ctr.id }}').addClass('d-block');
+                            $.each(errors.weights, function(index, error) {
+                                $('div.{{ctr.code}}-weights-{{ ctr.id }}').append('<span>' + error.message + '</span>');
+                            });
+                            has_error = true;
+                        }
+                    })
+                );
+            {% endfor %}
+          
+            $.when.apply($, ajaxRequests).done(function() {
+                if (!has_error) {
+                    view_criteria();
+                    $('#modal-{{ criterium.code|upper }}-criteria').modal('hide');
+                }
+            });
+          });
+          
+        function clearFormFields() {
+            {% for ctr in criterium.criterias  %}
+                $('#{{ctr.code}}-score-{{ ctr.id }}').val('{{ ctr.score|default_if_none:'' }}');
+                $('#{{ctr.code}}-weights-{{ ctr.id }}').val('{{ ctr.weight|default_if_none:'' }}');
+
+                $('div.{{ctr.code}}-score-{{ ctr.id }}').empty().removeClass('d-block');
+                $('#{{ctr.code}}-score-{{ ctr.id }}').removeClass('is-invalid');
+                $('div.{{ctr.code}}-weights-{{ ctr.id }}').empty().removeClass('d-block');
+                $('#{{ctr.code}}-weights-{{ ctr.id }}').removeClass('is-invalid');
+            {% endfor %}
+        }
+        $('#modal-{{ criterium.code|upper }}-criteria').on('hidden.bs.modal', function () {
+            clearFormFields();
+        });   
+    });
+</script>

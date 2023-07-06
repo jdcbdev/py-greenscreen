@@ -20,8 +20,8 @@ from student.views import grecaptcha_verify
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
-from .models import SchoolYear, AdmissionPeriod, Program, Quota, AutoAdmission
-from .forms import SchoolYearForm, AdmissionPeriodForm, QuotaForm
+from .models import SchoolYear, AdmissionPeriod, Program, Quota, AutoAdmission, Criteria
+from .forms import SchoolYearForm, AdmissionPeriodForm, QuotaForm, CriteriaForm
 import datetime
 from django.http import JsonResponse
 from django.db.models import Prefetch
@@ -244,7 +244,7 @@ def settings(request):
     current_year = datetime.datetime.now().year
     
     sy = SchoolYear.objects.filter(is_active=True).first()
-    autos = Program.objects.prefetch_related(
+    autos = Program.objects.filter(is_active=True).prefetch_related(
         Prefetch(
             'autoadmission_set',
             queryset=AutoAdmission.objects.select_related('school_year').filter(school_year=sy),
@@ -330,7 +330,7 @@ def add_quota(request):
 @require_POST
 def view_quota(request):
     sy = SchoolYear.objects.filter(is_active=True).first()
-    programs = Program.objects.prefetch_related(
+    programs = Program.objects.filter(is_active=True).prefetch_related(
         Prefetch(
             'quota_set',
             queryset=Quota.objects.select_related('school_year').filter(school_year=sy),
@@ -386,3 +386,38 @@ def add_auto(request):
             'message': 'Auto admission information saved.'
     }
     return JsonResponse(response)
+
+@ensure_csrf_cookie
+@require_POST
+def view_criteria(request):
+    sy = SchoolYear.objects.filter(is_active=True).first()
+    criteria = Program.objects.filter(is_active=True).prefetch_related(
+        Prefetch(
+            'criteria_set',
+            queryset=Criteria.objects.select_related('school_year').filter(school_year=sy),
+            to_attr='criterias'
+        )
+    )
+    context = {
+        'criteria': criteria,
+    }
+    
+    rendered_html = render(request, 'admission/partials/view_criteria.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def add_criteria(request):
+    form = CriteriaForm(request.POST)
+    
+    if form.is_valid():
+        criteria = Criteria.objects.get(pk=form.cleaned_data['criteria_id'])
+        criteria.score = form.cleaned_data['score']
+        criteria.weight = form.cleaned_data['weights']
+        criteria.save()  
+        
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
+
+

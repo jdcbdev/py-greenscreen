@@ -15,4 +15,6 @@ urlpatterns = [
     path('settings/view-program-quota/', views.view_quota, name="view_quota"),
     path('settings/view-admission-period/', views.view_period, name="view_period"),
     path('settings/add-automation/', views.add_auto, name="add_auto"),
+    path('settings/view-program-criteria/', views.view_criteria, name="view_criteria"),
+    path('settings/add-program-criteria/', views.add_criteria, name="add_criteria"),
 ]

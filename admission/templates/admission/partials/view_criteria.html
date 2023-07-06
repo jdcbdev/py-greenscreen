@@ -1,0 +1,29 @@
+{% for criterium in criteria %}
+<div class="m-0 row g-2 p-0 col-12 col-md-8 col-lg-6 mt-0">
+    <div class="d-flex align-items-center justify-content-between mt-0">
+        <div class="col-auto">
+            <h5 class="col-12 fw-bold mt-0 mb-1">{{criterium.code|upper}} Admission Criteria</h5>
+        </div>
+        <div class="col-auto">
+            <a class="color-green mt-1" type="button" title="Update {{criterium.code|upper}} Admission Criteria" id="update_{{criterium.code|upper}}_criteria" data-bs-toggle="modal" data-bs-target="#modal-{{ criterium.code|upper }}-criteria"><i class="fa-regular fa-pen-to-square"></i></a>
+        </div>
+    </div>
+    {% for ctr in criterium.criterias %}
+    <div class="col-6">
+        <label for="{{ctr.code}}-score" class="form-label">Min. {{ctr.name}}<span class="text-muted"></span></label>
+        <input type="number" class="form-control" id="{{ctr.code}}-score" placeholder="" name="{{ctr.code}}-score" required="" value="{{ctr.score}}" disabled>
+    </div>
+    <div class="col-6">
+        <label for="{{ctr.code}}-weights" class="form-label">Weights<span class="text-muted"></span></label>
+        <div class="input-group">
+            <input type="number" class="form-control" id="{{ctr.code}}-weights" placeholder="" name="{{ctr.code}}-weights" required="" value="{{ctr.weight}}" disabled>
+            <span class="input-group-text">%</span>
+        </div>
+    </div>
+    {% endfor %}
+    {% include 'admission/partials/criteria.modal.html' %}
+</div>
+<div class="col-12 m-0">
+    <hr class="my-4 mx-auto w-">
+</div>
+{% endfor %}

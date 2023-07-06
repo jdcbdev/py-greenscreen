@@ -66,3 +66,13 @@ class QuotaForm(forms.Form):
         cleaned_data = super().clean()
 
         return cleaned_data
+
+class CriteriaForm(forms.Form):
+    criteria_id = forms.IntegerField(required=True)
+    score = forms.FloatField(required=True)
+    weights = forms.FloatField(required=True)
+    
+    def clean(self):
+        cleaned_data = super().clean()
+
+        return cleaned_data
