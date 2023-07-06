@@ -420,4 +420,29 @@ def add_criteria(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/admin/sign-in/')
+def faculty(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
+    page_title = 'Faculty'
+    page_active = 'faculty'
+    current_year = datetime.datetime.now().year
+    
+    context = {
+        'page_title': page_title,
+        'page_active': page_active,
+        'current_year': current_year
+    }
+    
+    return render(request, 'admission/faculty.html', context)
 
+@ensure_csrf_cookie
+@require_POST
+def add_faculty(request):
+    context = {
+        'criteria': '',
+    }
+    
+    rendered_html = render(request, 'admission/partials/view_faculty.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')

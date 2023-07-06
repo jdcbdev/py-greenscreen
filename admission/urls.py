@@ -17,4 +17,6 @@ urlpatterns = [
     path('settings/add-automation/', views.add_auto, name="add_auto"),
     path('settings/view-program-criteria/', views.view_criteria, name="view_criteria"),
     path('settings/add-program-criteria/', views.add_criteria, name="add_criteria"),
+    path('faculty/', views.faculty, name="faculty"),
+    path('add-faculty/', views.add_faculty, name="add_faculty"),
 ]

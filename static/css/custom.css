@@ -1092,7 +1092,18 @@ span.table-struggling{
     width: 95% !important;
 }
 
-.fa-square-plus, .fa-pen-to-square{
+
+.fa-pen-to-square{
+    font-size: 20px;
+    margin-bottom: 12px;
+}
+
+#criteria-container .fa-pen-to-square{
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+#auto-container .fa-pen-to-square{
     font-size: 20px;
     margin-bottom: 8px;
 }
