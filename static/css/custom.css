@@ -1093,7 +1093,7 @@ span.table-struggling{
 }
 
 
-.fa-pen-to-square{
+.settings .fa-pen-to-square{
     font-size: 20px;
     margin-bottom: 12px;
 }
@@ -1108,7 +1108,7 @@ span.table-struggling{
     margin-bottom: 8px;
 }
 
-.fa-square-check{
+.settings .fa-square-check{
     font-size: 21px;
     margin-bottom: 8px;
 }

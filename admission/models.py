@@ -1,7 +1,10 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 
 # Create your models here.
+
+User = get_user_model()
 
 class SchoolYear(models.Model):
     start_year = models.IntegerField(null=True)
@@ -52,3 +55,33 @@ class Criteria(models.Model):
     weight = models.FloatField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+class AcademicRank(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+class Department(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+class AdmissionRole(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+class Faculty(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    email = models.EmailField()
+    academic_rank = models.ForeignKey(AcademicRank, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    admission_role = models.ForeignKey(AdmissionRole, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
