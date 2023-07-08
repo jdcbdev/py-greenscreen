@@ -20,4 +20,8 @@ urlpatterns = [
     path('faculty/', views.faculty, name="faculty"),
     path('view-faculty/', views.view_faculty, name="view_faculty"),
     path('add-faculty/', views.add_faculty, name="add_faculty"),
+    path('edit-faculty/', views.edit_faculty, name="edit_faculty"),
+    path('view-edit-faculty/', views.view_edit_faculty_modal, name="view_edit_faculty_modal"),
+    path('view-delete-faculty/', views.view_delete_faculty_modal, name="view_delete_faculty_modal"),
+    path('delete-faculty/', views.delete_faculty, name="delete_faculty"),
 ]

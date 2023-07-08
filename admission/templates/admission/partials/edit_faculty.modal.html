@@ -1,46 +1,30 @@
-{% extends 'admission/admin.html' %}
-
-{% load static %}
-
-{% block content %}
-
-<main class="col-md-9 ms-sm-auto col-lg-9 col-xl-10 p-md-4">
-    <div class="w-100">
-        <h5 class="col-12 fw-bold mb-1 mt-3 mt-md-0">Faculty</h5>
-        <div class="table-responsive py-3 table-container">
-            
-        </div>
-        <a type="button" class="fab" title="Add Faculty" data-bs-toggle="modal" data-bs-target="#add-faculty-modal" id="add-faculty">
-            <i class="fa fa-plus"></i>
-        </a>
-    </div>
-</main>
 <!-- Modal -->
-<div class="modal fade" id="add-faculty-modal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="edit-faculty-modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add Faculty</h5>
+                <h5 class="modal-title">Edit Faculty</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form class="needs-validation" action="" method="post" name="add-faculty" id="add-faculty-form">
+            <form class="needs-validation" action="" method="post" name="edit-faculty-{{faculty.id}}" id="edit-faculty-form-{{faculty.id}}">
                 <div class="modal-body">
                     <div class="row g-3">
+                        <input type="hidden" name="faculty_id" value="{{faculty.id}}">
                         <div class="col-12 col-md-6">
                             <label for="first_name" class="form-label">First Name<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="first_name" placeholder="" name="first_name">
+                            <input type="text" class="form-control" id="first_name" placeholder="" name="first_name" value="{{faculty.first_name}}">
                             <div class="invalid-feedback d-none first_name">
                             </div>
                         </div>
                         <div class="col-12 col-md-6">
                             <label for="last_name" class="form-label">Last Name<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="last_name" placeholder="" name="last_name">
+                            <input type="text" class="form-control" id="last_name" placeholder="" name="last_name" value="{{faculty.last_name}}">
                             <div class="invalid-feedback d-none last_name">
                             </div>
                         </div>
                         <div class="col-12 col-md-6">
                             <label for="email" class="form-label">School or Personal Email<span class="text-muted"></span></label>
-                            <input type="email" class="form-control" id="email" placeholder="" name="email">
+                            <input type="email" class="form-control" id="email" placeholder="" name="email" value="{{faculty.email}}">
                             <div class="invalid-feedback d-none email">
                             </div>
                         </div>
@@ -49,7 +33,7 @@
                             <select type="text" class="form-control form-select" id="academic_rank" placeholder="" name="academic_rank">
                                 <option value="">--Select--</option>
                                 {% for rank in ranks %}
-                                    {% if rank.id == faculty.academic_rank %}
+                                    {% if rank.id == faculty.academic_rank.id %}
                                         <option value="{{ rank.id }}" selected>{{ rank.name }}</option>
                                     {% else %}
                                         <option value="{{ rank.id }}">{{ rank.name }}</option>
@@ -64,7 +48,7 @@
                             <select type="text" class="form-control form-select" id="department" placeholder="" name="department">
                                 <option value="">--Select--</option>
                                 {% for dept in departments %}
-                                    {% if dept.id == faculty.department %}
+                                    {% if dept.id == faculty.department.id %}
                                         <option value="{{ dept.id }}" selected>{{ dept.name }}</option>
                                     {% else %}
                                         <option value="{{ dept.id }}">{{ dept.name }}</option>
@@ -79,7 +63,7 @@
                             <select type="text" class="form-control form-select" id="admission_role" placeholder="" name="admission_role">
                                 <option value="">--Select--</option>
                                 {% for role in roles %}
-                                    {% if role.id == faculty.admission_role %}
+                                    {% if role.id == faculty.admission_role.id %}
                                         <option value="{{ role.id }}" selected>{{ role.name }}</option>
                                     {% else %}
                                         <option value="{{ role.id }}">{{ role.name }}</option>
@@ -93,87 +77,30 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" value="Save Faculty" name="Save Faculty" class="btn btn-primary background-color-green">Save Faculty</button>
+                    <button type="submit" value="Save Faculty" name="edit_faculty-{{faculty.id}}" class="btn btn-primary background-color-green">Save Faculty</button>
                 </div>  
             </form>
         </div>
     </div>
 </div>
 <script>
-    function load(status){
-        if(status == 'pending'){
-            var formData = {
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-            };
-            $.ajax({
-                type: "POST",
-                url: "{% url 'view_faculty' %}",
-                data: formData,
-                success: function(result)
-                {
-                    $('div.table-responsive').html(result);
-                    dataTable = $("#table-faculty").DataTable({
-                        dom: 'Brtp',
-                        responsive: true,
-                        fixedHeader: true,
-                        pageLength: 10,
-                        buttons: [
-                            {
-                                extend: 'excel',
-                                text: 'Excel',
-                                className: 'border-white'
-                            },
-                            {
-                                extend: 'pdf',
-                                text: 'PDF',
-                                className: 'border-white'
-                            },
-                            {
-                                extend: 'print',
-                                text: 'Print',
-                                className: 'border-white'
-                            }
-                        ],
-                    });
-                    dataTable.buttons().container().appendTo($('#MyButtons'));
-                    
-                    $('input#keyword').on('input', function(e){
-                        var status = $(this).val();
-                        dataTable.columns([1]).search(status).draw();
-                    });
-                    $('select#department_prog').on('change', function(e){
-                        var status = $(this).val();
-                        dataTable.columns([4]).search(status).draw();
-                    });
-                    $('select#faculty_role').on('change', function(e){
-                        var status = $(this).val();
-                        dataTable.columns([5]).search(status).draw();
-                    });
-                },
-                error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                    alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-                }  
-            });
-        }
-    }
     $(document).ready(function(){
         $('div.modal').modal({
             backdrop: 'static',
             keyboard: false
         });
-
-        $('form#add-faculty-form').submit(function(e) {
-            console.log('here')
+    
+        $('form#edit-faculty-form-{{faculty.id}}').submit(function(e) {
             e.preventDefault();
             var formData = new FormData(this);
             formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
             $.ajax({
                 type: 'POST',
-                url: "{% url 'add_faculty' %}",
+                url: "{% url 'edit_faculty' %}",
                 data: formData,
                 processData: false,
                 contentType: false,
-
+    
                 success: function(data) {
                     var errors = JSON.parse(data);
                     has_error = false;
@@ -200,7 +127,7 @@
                         });
                         has_error = true
                     }
-
+    
                     if (errors.last_name) {
                         $('#last_name').addClass('is-invalid');
                         $('div.last_name').removeClass('d-none');
@@ -210,7 +137,7 @@
                         });
                         has_error = true
                     }
-
+    
                     if (errors.email) {
                         $('#email').addClass('is-invalid');
                         $('div.email').removeClass('d-none');
@@ -220,7 +147,7 @@
                         });
                         has_error = true
                     }
-
+    
                     if (errors.academic_rank) {
                         $('#academic_rank').addClass('is-invalid');
                         $('div.academic_rank').removeClass('d-none');
@@ -230,7 +157,7 @@
                         });
                         has_error = true
                     }
-
+    
                     if (errors.department) {
                         $('#department').addClass('is-invalid');
                         $('div.department').removeClass('d-none');
@@ -240,7 +167,7 @@
                         });
                         has_error = true
                     }
-
+    
                     if (errors.admission_role) {
                         $('#admission_role').addClass('is-invalid');
                         $('div.admission_role').removeClass('d-none');
@@ -253,12 +180,12 @@
     
                     if (!has_error) {
                         load('pending')
-                        $('#add-faculty-modal').modal('hide');
+                        $('#edit-faculty-modal').modal('hide');
                     }
                 },
             });
         });  
-
+    
         function clearFormFields() {
             $('div.first_name').empty().removeClass('d-block');
             $('#first_name').removeClass('is-invalid');
@@ -272,16 +199,16 @@
             $('#department').removeClass('is-invalid');
             $('div.admission_role').empty().removeClass('d-block');
             $('#admission_role').removeClass('is-invalid');
-
-            $('#add-faculty-modal input').val('');
-            $('#add-faculty-modal select').val('');
+    
+            $('#first_name').val('{{faculty.first_name}}')
+            $('#last_name').val('{{faculty.last_name}}')
+            $('#email').val('{{faculty.email}}')
+            $('#academic_rank').val('{{faculty.academic_rank.id}}')
+            $('#department').val('{{faculty.department.id}}')
+            $('#admission_role').val('{{faculty.admission_role.id}}')
         }
-        $('#add-faculty-modal').on('hidden.bs.modal', function () {
+        $('#edit-faculty-modal-{{faculty.id}}').on('hidden.bs.modal', function () {
             clearFormFields();
-        });  
-
-        load('pending');
+        });
     });
 </script>
-
-{% endblock content %}

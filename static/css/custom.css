@@ -1117,6 +1117,11 @@ span.table-struggling{
     cursor: pointer;
 }
 
+.fa-circle-exclamation{
+    font-size: 60px;
+    color: #FF6347
+}
+
 @media (min-width: 576px) {
     .shortcut{
         display: block;

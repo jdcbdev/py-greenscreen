@@ -84,14 +84,22 @@ class AddFacultyForm(forms.ModelForm):
     class Meta:
         model = Faculty
         fields = ['first_name', 'last_name', 'academic_rank', 'department', 'admission_role', 'email']
+    
+    def __init__(self, *args, **kwargs):
+        self.instance = kwargs.get('instance')
+        super().__init__(*args, **kwargs)
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        
-        if email:
-            if User.objects.filter(email=email).exists():
-                raise forms.ValidationError('This email is already in use.')
-        
+
+        if email and self.instance:
+            if email == self.instance.email:
+                return email
+
+        queryset = User.objects.filter(email=email)
+        if queryset.exists():
+            raise forms.ValidationError('This email is already in use.')
+
         return email
 
     def clean(self):

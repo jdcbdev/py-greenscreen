@@ -20,7 +20,7 @@ from student.views import grecaptcha_verify
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
-from .models import SchoolYear, AdmissionPeriod, Program, Quota, AutoAdmission, Criteria, Department, AcademicRank, AdmissionRole
+from .models import SchoolYear, AdmissionPeriod, Program, Quota, AutoAdmission, Criteria, Department, AcademicRank, AdmissionRole, Faculty
 from .forms import SchoolYearForm, AdmissionPeriodForm, QuotaForm, CriteriaForm, AddFacultyForm
 import datetime
 from django.http import JsonResponse
@@ -28,6 +28,8 @@ from django.db.models import Prefetch
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.utils.crypto import get_random_string
+from .tasks import send_faculty_email_task
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -450,9 +452,16 @@ def faculty(request):
 @ensure_csrf_cookie
 @require_POST
 def view_faculty(request):
+    faculties = Faculty.objects.all().order_by('last_name', 'first_name')
+    departments = Department.objects.all()
+    roles = AdmissionRole.objects.all()
+    ranks = AcademicRank.objects.all()
 
     context = {
-        'criteria': '',
+        'faculties': faculties,
+        'departments': departments,
+        'roles': roles,
+        'ranks': ranks,
     }
     
     rendered_html = render(request, 'admission/partials/view_faculty.html', context)
@@ -467,14 +476,12 @@ def generate_strong_password():
         return generate_strong_password()
     return password
 
-def send_faculty_email(request, user, to_email, password):
+def send_faculty_email(first_name, to_email, password, domain, protocol):
     
     mail_subject = "New Faculty Account - GreenScreen Admission System"
-    domain = get_current_site(request).domain
-    protocol = 'https' if request.is_secure() else 'http'
 
     html_message  = mark_safe(render_to_string("email_add_faculty.html", {
-        'user': user.first_name,
+        'user': first_name,
         'domain': domain,
         'email': to_email,
         'password': password,
@@ -506,7 +513,77 @@ def add_faculty(request):
         faculty = form.save(commit=False)
         faculty.user = user
         faculty.save()
-        send_faculty_email(request, user, email, password)
+        
+        domain = get_current_site(request).domain
+        protocol = 'https' if request.is_secure() else 'http'
+        
+        send_faculty_email(user.first_name, email, password, domain, protocol)
         
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+def view_edit_faculty_modal(request):
+    faculty = Faculty.objects.get(pk=request.POST.get('faculty_id'))
+    departments = Department.objects.all()
+    roles = AdmissionRole.objects.all()
+    ranks = AcademicRank.objects.all()
+
+    context = {
+        'faculty': faculty,
+        'departments': departments,
+        'roles': roles,
+        'ranks': ranks,
+    }
+    
+    rendered_html = render(request, 'admission/partials/edit_faculty.modal.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def edit_faculty(request):
+    pk=request.POST.get('faculty_id')
+    faculty = Faculty.objects.get(pk=pk)
+    form = AddFacultyForm(request.POST, instance=faculty)
+    if form.is_valid():
+        user = faculty.user
+        user.email = form.cleaned_data['email']
+        user.first_name = form.cleaned_data['first_name']
+        user.last_name = form.cleaned_data['last_name']
+        user.is_active = True
+        user.is_staff = True
+        user.save()
+        
+        faculty = form.save(commit=False)
+        faculty.save()
+        
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
+
+def view_delete_faculty_modal(request):
+    faculty = Faculty.objects.get(pk=request.POST.get('faculty_id'))
+
+    context = {
+        'faculty': faculty,
+    }
+    
+    rendered_html = render(request, 'admission/partials/delete_faculty.modal.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def delete_faculty(request):
+    if request.method == 'POST':
+        pk=request.POST.get('faculty_id')
+        faculty = Faculty.objects.get(pk=pk)
+        if faculty:
+            user = faculty.user
+            faculty.delete()
+            user.delete()
+        
+        return JsonResponse({'message': 'Object deleted successfully'})
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=400)

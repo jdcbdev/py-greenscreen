@@ -2,16 +2,18 @@
     <div id="MyButtons" class="d-flex mb-md-2 mb-lg-0 col-12 col-md-auto"></div>
     <div class="form-group col-12 col-sm-auto flex-sm-grow-1 flex-lg-grow-0 ms-lg-auto">
         <select name="department_prog" id="department_prog" class="form-select me-md-2">
-            <option value="">All Department</option>
-            <option value="Computer Science">Computer Science</option>
-            <option value="Information Technology">Information Technology</option>
+            <option value="">All</option>
+            {% for dept in departments %}
+                <option value="{{ dept.name }}">{{ dept.name }}</option>
+            {% endfor %}
         </select>
     </div>
     <div class="form-group col-12 col-sm-auto flex-sm-grow-1 flex-lg-grow-0">
         <select name="faculty_role" id="faculty_role" class="form-select me-md-2">
-            <option value="">All Admission Role</option>
-            <option value="Admission Officer">Admission Officer</option>
-            <option value="Interviewer">Interviewer</option>
+            <option value="">All</option>
+            {% for role in roles %}
+                <option value="{{ role.name }}">{{ role.name }}</option>
+            {% endfor %}
         </select>
     </div>
     <div class="input-group search-keyword col-12 flex-lg-grow-1">
@@ -32,47 +34,75 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>
-                <div class="action-button">
-                    <a href="" class="me-2 green" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
-                    <a href="" class="green" title="Delete"><i class="fa-solid fa-trash-can"></i></a>
-                </div>
-            </td>
-            <td>Ballaho, Jaydee C.</td>
-            <td>jaydee.ballaho@wmsu.edu.ph</td>
-            <td>Instructor</td>
-            <td>Computer Science</td>
-            <td>Admission Officer</td>
-            <td>Active Employee</td>
-        </tr>
-        <tr>
-            <td>
-                <div class="action-button">
-                    <a href="" class="me-2 green" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
-                    <a href="" class="green" title="Delete"><i class="fa-solid fa-trash-can"></i></a>
-                </div>
-            </td>
-            <td>Freecs, Gon</td>
-            <td>gon.freecs@wmsu.edu.ph</td>
-            <td>Asst. Professor</td>
-            <td>Computer Science</td>
-            <td>Interviewer</td>
-            <td>Active Employee</td>
-        </tr>
-        <tr>
-            <td>
-                <div class="action-button">
-                    <a href="" class="me-2 green" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
-                    <a href="" class="green" title="Delete"><i class="fa-solid fa-trash-can"></i></a>
-                </div>
-            </td>
-            <td>Zoldyc, Silva</td>
-            <td>silva.zoldyc@wmsu.edu.ph</td>
-            <td>Asso. Professor</td>
-            <td>Information Technology</td>
-            <td>Interviewer</td>
-            <td>Active Employee</td>
-        </tr>
+        {% for faculty in faculties %}
+            <tr>
+                <td>
+                    <div class="action-button">
+                        <a class="me-2 green edit-button" title="Edit" data="{{faculty.id}}"><i class="fa-solid fa-pen-to-square"></i></a>
+                        <a class="green delete-button" title="Delete" data="{{faculty.id}}"><i class="fa-solid fa-trash-can"></i></a>
+                    </div>
+                </td>
+                <td>{{ faculty.last_name }}, {{ faculty.first_name }}</td>
+                <td>{{ faculty.email }}</td>
+                <td>{{ faculty.academic_rank.name }}</td>
+                <td>{{ faculty.department.name }}</td>
+                <td>{{ faculty.admission_role.name }}</td>
+                {% if faculty.user.is_active  %}
+                <td>Active</td>
+                {% else %}
+                <td>Inactive</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
     </tbody>
 </table>
+<div class="edit-faculty-container"></div>
+<div class="delete-faculty-container"></div>
+<script>
+    $(document).ready(function(){
+        $('.edit-button').click(function(e){
+            var id = $(this).attr('data')
+            var formData = {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                faculty_id: id,
+            };
+            $.ajax({
+                url: "{% url 'view_edit_faculty_modal' %}",
+                type: 'POST',
+                data: formData,
+                success: function(data) {
+                    $('.edit-faculty-container').html(data);
+                    $('#edit-faculty-modal').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                      }).modal('show');
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        })
+        $('.delete-button').click(function(e){
+            var id = $(this).attr('data')
+            var formData = {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                faculty_id: id,
+            };
+            $.ajax({
+                url: "{% url 'view_delete_faculty_modal' %}",
+                type: 'POST',
+                data: formData,
+                success: function(data) {
+                    $('.delete-faculty-container').html(data);
+                    $('#delete-faculty-modal').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                      }).modal('show');
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        })
+    })
+</script>

@@ -1,0 +1,43 @@
+<div class="modal fade justify-content-center" id="delete-faculty-modal" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header background-color-green">
+                <h5 class="modal-title color-white" id="messageModalLabel">Delete Faculty</h5>
+            </div>
+            <form class="needs-validation" action="" method="post" name="delete-faculty-{{faculty.id}}" id="delete-faculty-form-{{faculty.id}}">
+                <div class="modal-body">
+                    <p class="my-4 text-center"><i class="fa-solid fa-circle-exclamation"></i></p>
+                    <p class="text-center message">
+                        Are you sure you want to delete faculty {{faculty.first_name}} {{faculty.last_name}} with email: <b>{{faculty.email}}</b>?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="submit" value="Delete Faculty" name="delete_faculty-{{faculty.id}}" class="btn btn-primary background-color-green">Yes</button>
+                </div>  
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $('form#delete-faculty-form-{{faculty.id}}').submit(function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            formData.append('faculty_id', '{{ faculty.id }}');
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'delete_faculty' %}",
+                data: formData,
+                processData: false,
+                contentType: false,
+    
+                success: function(data) {
+                    load('pending')
+                    $('#delete-faculty-modal').modal('hide');
+                },
+            });
+        });  
+    });
+</script>

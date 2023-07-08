@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'ph_geography',
     'formtools',
     'betterforms',
+    'django_celery_results',
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -193,3 +194,10 @@ PASSWORD_RESET_TIMEOUT = 14400
 RECAPTCHA_PUBLIC_KEY = ''
 RECAPTCHA_PRIVATE_KEY = ''
 SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
+
+#Celery
+
+BROKER_URL = 'amqp://guest:guest@localhost'
+CELERY_RESULT_BACKEND = 'db+mysql://root:@localhost/py-greenscreen'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
