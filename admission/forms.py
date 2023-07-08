@@ -1,6 +1,9 @@
 from django import forms
-from .models import SchoolYear, AdmissionPeriod
+from .models import SchoolYear, AdmissionPeriod, Faculty
 from datetime import date
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class SchoolYearForm(forms.Form):
     start_year = forms.IntegerField(required=True)
@@ -74,5 +77,26 @@ class CriteriaForm(forms.Form):
     
     def clean(self):
         cleaned_data = super().clean()
+
+        return cleaned_data
+
+class AddFacultyForm(forms.ModelForm):
+    class Meta:
+        model = Faculty
+        fields = ['first_name', 'last_name', 'academic_rank', 'department', 'admission_role', 'email']
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        
+        if email:
+            if User.objects.filter(email=email).exists():
+                raise forms.ValidationError('This email is already in use.')
+        
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # Perform any additional validation or cleaning logic
 
         return cleaned_data

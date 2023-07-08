@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from base.custom_apis import load_settings
 from django.contrib.auth import authenticate, login, logout
 from django.db import transaction
 from student.forms import SignInForm, ForgotPasswordForm, SetPasswordForm
-from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from student.tokens import reset_password_token
@@ -20,11 +20,14 @@ from student.views import grecaptcha_verify
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
-from .models import SchoolYear, AdmissionPeriod, Program, Quota, AutoAdmission, Criteria
-from .forms import SchoolYearForm, AdmissionPeriodForm, QuotaForm, CriteriaForm
+from .models import SchoolYear, AdmissionPeriod, Program, Quota, AutoAdmission, Criteria, Department, AcademicRank, AdmissionRole
+from .forms import SchoolYearForm, AdmissionPeriodForm, QuotaForm, CriteriaForm, AddFacultyForm
 import datetime
 from django.http import JsonResponse
 from django.db.models import Prefetch
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from django.utils.crypto import get_random_string
 
 # Create your views here.
 
@@ -235,7 +238,7 @@ def dashboard(request):
     return render(request, 'admission/dashboard.html', context)
 
 @login_required(login_url='/admin/sign-in/')
-def settings(request):
+def view_settings(request):
     if request.user.is_authenticated and not request.user.is_staff:
         return redirect('home')
     
@@ -429,20 +432,81 @@ def faculty(request):
     page_active = 'faculty'
     current_year = datetime.datetime.now().year
     
+    departments = Department.objects.all()
+    roles = AdmissionRole.objects.all()
+    ranks = AcademicRank.objects.all()
+
     context = {
         'page_title': page_title,
         'page_active': page_active,
-        'current_year': current_year
+        'current_year': current_year,
+        'departments': departments,
+        'roles': roles,
+        'ranks': ranks,
     }
     
     return render(request, 'admission/faculty.html', context)
 
 @ensure_csrf_cookie
 @require_POST
-def add_faculty(request):
+def view_faculty(request):
+
     context = {
         'criteria': '',
     }
     
     rendered_html = render(request, 'admission/partials/view_faculty.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
+
+def generate_strong_password():
+    password = get_random_string(length=8)  # Generates a random string of length 12
+    try:
+        validate_password(password)  # Validate the generated password
+    except ValidationError as e:
+        # If the generated password does not meet the password requirements, generate a new one
+        return generate_strong_password()
+    return password
+
+def send_faculty_email(request, user, to_email, password):
+    
+    mail_subject = "New Faculty Account - GreenScreen Admission System"
+    domain = get_current_site(request).domain
+    protocol = 'https' if request.is_secure() else 'http'
+
+    html_message  = mark_safe(render_to_string("email_add_faculty.html", {
+        'user': user.first_name,
+        'domain': domain,
+        'email': to_email,
+        'password': password,
+        "protocol": protocol
+    }))
+    
+    from_email = settings.DEFAULT_FROM_EMAIL
+    email = EmailMessage(mail_subject, html_message, from_email, to=[to_email])
+    email.content_subtype = 'html'
+    email.send()
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def add_faculty(request):
+    form = AddFacultyForm(request.POST)
+    if form.is_valid():
+        email = form.cleaned_data['email']
+        user, _ = get_user_model().objects.get_or_create(email=email)
+        password = generate_strong_password()
+        user.email = form.cleaned_data['email']
+        user.first_name = form.cleaned_data['first_name']
+        user.last_name = form.cleaned_data['last_name']
+        user.is_active = True
+        user.is_staff = True
+        user.set_password(password)
+        user.save()
+        
+        faculty = form.save(commit=False)
+        faculty.user = user
+        faculty.save()
+        send_faculty_email(request, user, email, password)
+        
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)

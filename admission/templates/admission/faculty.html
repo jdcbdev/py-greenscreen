@@ -10,89 +10,93 @@
         <div class="table-responsive py-3 table-container">
             
         </div>
-        <a type="button" class="fab" title="Add New Faculty" data-bs-toggle="modal" data-bs-target="#myModal">
+        <a type="button" class="fab" title="Add Faculty" data-bs-toggle="modal" data-bs-target="#add-faculty-modal" id="add-faculty">
             <i class="fa fa-plus"></i>
         </a>
     </div>
 </main>
 <!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="add-faculty-modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Add New Faculty</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <form class="needs-validation" action="" method="post" name="add-faculty" id="add-faculty">
-                <div class="row g-3">
-                    <div class="col-12 col-md-6">
-                        <label for="firstname" class="form-label">First Name<span class="text-muted"></span></label>
-                        <input type="text" class="form-control" id="firstname" placeholder="" name="firstname" required="">
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label for="lastname" class="form-label">Last Name<span class="text-muted"></span></label>
-                        <input type="text" class="form-control" id="lastname" placeholder="" name="lastname" required="">
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label for="email" class="form-label">School or Personal Email<span class="text-muted"></span></label>
-                        <input type="email" class="form-control" id="email" placeholder="" name="email" required="">
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label for="rank" class="form-label">Academic Rank<span class="text-muted"></span></label>
-                        <select type="text" class="form-control form-select" id="rank" placeholder="" name="rank" required="">
-                            <option value="none">--Select--</option>
-                            <?php
-                                require_once '../classes/reference.class.php';
-                                $ref_obj = new Reference();
-                                $ref = $ref_obj->get_academic_rank();
-                                foreach($ref as $row){
-                            ?>
-                                    <option value="<?=$row['rank']?>"><?=$row['rank']?></option>
-                            <?php
-                                }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label for="deptname" class="form-label">Department<span class="text-muted"></span></label>
-                        <select type="text" class="form-control form-select" id="deptname" placeholder="" name="deptname" required="">
-                            <option value="none">--Select--</option>
-                            <?php
-                                require_once '../classes/reference.class.php';
-                                $ref_obj = new Reference();
-                                $ref = $ref_obj->get_college_department();
-                                foreach($ref as $row){
-                            ?>
-                                    <option value="<?=$row['deptname']?>"><?=$row['deptname']?></option>
-                            <?php
-                                }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <label for="role" class="form-label">Admission Role<span class="text-muted"></span></label>
-                        <select type="text" class="form-control form-select" id="role" placeholder="" name="role" required="">
-                            <option value="none">--Select--</option>
-                            <?php
-                                require_once '../classes/reference.class.php';
-                                $ref_obj = new Reference();
-                                $ref = $ref_obj->get_admission_role();
-                                foreach($ref as $row){
-                            ?>
-                                    <option value="<?=$row['role']?>"><?=$row['role']?></option>
-                            <?php
-                                }
-                            ?>
-                        </select>
+            <div class="modal-header">
+                <h5 class="modal-title">Add Faculty</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="needs-validation" action="" method="post" name="add-faculty" id="add-faculty-form">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label for="first_name" class="form-label">First Name<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="first_name" placeholder="" name="first_name">
+                            <div class="invalid-feedback d-none first_name">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="last_name" class="form-label">Last Name<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="last_name" placeholder="" name="last_name">
+                            <div class="invalid-feedback d-none last_name">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="email" class="form-label">School or Personal Email<span class="text-muted"></span></label>
+                            <input type="email" class="form-control" id="email" placeholder="" name="email">
+                            <div class="invalid-feedback d-none email">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="academic_rank" class="form-label">Academic Rank<span class="text-muted"></span></label>
+                            <select type="text" class="form-control form-select" id="academic_rank" placeholder="" name="academic_rank">
+                                <option value="">--Select--</option>
+                                {% for rank in ranks %}
+                                    {% if rank.id == faculty.academic_rank %}
+                                        <option value="{{ rank.id }}" selected>{{ rank.name }}</option>
+                                    {% else %}
+                                        <option value="{{ rank.id }}">{{ rank.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback d-none academic_rank">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="department" class="form-label">Department<span class="text-muted"></span></label>
+                            <select type="text" class="form-control form-select" id="department" placeholder="" name="department">
+                                <option value="">--Select--</option>
+                                {% for dept in departments %}
+                                    {% if dept.id == faculty.department %}
+                                        <option value="{{ dept.id }}" selected>{{ dept.name }}</option>
+                                    {% else %}
+                                        <option value="{{ dept.id }}">{{ dept.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback d-none department">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="admission_role" class="form-label">Admission Role<span class="text-muted"></span></label>
+                            <select type="text" class="form-control form-select" id="admission_role" placeholder="" name="admission_role">
+                                <option value="">--Select--</option>
+                                {% for role in roles %}
+                                    {% if role.id == faculty.admission_role %}
+                                        <option value="{{ role.id }}" selected>{{ role.name }}</option>
+                                    {% else %}
+                                        <option value="{{ role.id }}">{{ role.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback d-none admission_role">
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" value="Save Faculty" name="Save Faculty" class="btn btn-primary background-color-green">Save Faculty</button>
+                </div>  
             </form>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary background-color-green">Add New Faculty</button>
-        </div>
         </div>
     </div>
 </div>
@@ -104,7 +108,7 @@
             };
             $.ajax({
                 type: "POST",
-                url: "{% url 'add_faculty' %}",
+                url: "{% url 'view_faculty' %}",
                 data: formData,
                 success: function(result)
                 {
@@ -141,7 +145,7 @@
                         var status = $(this).val();
                         dataTable.columns([4]).search(status).draw();
                     });
-                    $('select#admission_role').on('change', function(e){
+                    $('select#faculty_role').on('change', function(e){
                         var status = $(this).val();
                         dataTable.columns([5]).search(status).draw();
                     });
@@ -153,6 +157,109 @@
         }
     }
     $(document).ready(function(){
+        $('div.modal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+
+        $('form#add-faculty-form').submit(function(e) {
+            console.log('here')
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'add_faculty' %}",
+                data: formData,
+                processData: false,
+                contentType: false,
+
+                success: function(data) {
+                    var errors = JSON.parse(data);
+                    has_error = false;
+    
+                    $('div.first_name').empty().removeClass('d-block');
+                    $('#first_name').removeClass('is-invalid');
+                    $('div.last_name').empty().removeClass('d-block');
+                    $('#last_name').removeClass('is-invalid');
+                    $('div.email').empty().removeClass('d-block');
+                    $('#email').removeClass('is-invalid');
+                    $('div.academic_rank').empty().removeClass('d-block');
+                    $('#academic_rank').removeClass('is-invalid');
+                    $('div.department').empty().removeClass('d-block');
+                    $('#department').removeClass('is-invalid');
+                    $('div.admission_role').empty().removeClass('d-block');
+                    $('#admission_role').removeClass('is-invalid');
+    
+                    if (errors.first_name) {
+                        $('#first_name').addClass('is-invalid');
+                        $('div.first_name').removeClass('d-none');
+                        $('div.first_name').addClass('d-block');
+                        $.each(errors.first_name, function(index, error) {
+                            $('div.first_name').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+
+                    if (errors.last_name) {
+                        $('#last_name').addClass('is-invalid');
+                        $('div.last_name').removeClass('d-none');
+                        $('div.last_name').addClass('d-block');
+                        $.each(errors.last_name, function(index, error) {
+                            $('div.last_name').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+
+                    if (errors.email) {
+                        $('#email').addClass('is-invalid');
+                        $('div.email').removeClass('d-none');
+                        $('div.email').addClass('d-block');
+                        $.each(errors.email, function(index, error) {
+                            $('div.email').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+
+                    if (errors.academic_rank) {
+                        $('#academic_rank').addClass('is-invalid');
+                        $('div.academic_rank').removeClass('d-none');
+                        $('div.academic_rank').addClass('d-block');
+                        $.each(errors.academic_rank, function(index, error) {
+                            $('div.academic_rank').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+
+                    if (errors.department) {
+                        $('#department').addClass('is-invalid');
+                        $('div.department').removeClass('d-none');
+                        $('div.department').addClass('d-block');
+                        $.each(errors.department, function(index, error) {
+                            $('div.department').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+
+                    if (errors.admission_role) {
+                        $('#admission_role').addClass('is-invalid');
+                        $('div.admission_role').removeClass('d-none');
+                        $('div.admission_role').addClass('d-block');
+                        $.each(errors.admission_role, function(index, error) {
+                            $('div.admission_role').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+    
+                    if (!has_error) {
+                        load('pending')
+                        $('#add-faculty-modal').modal('hide');
+                    }else{
+                        console.log(data)
+                    }
+                },
+            });
+        });  
+
         load('pending');
     });
 </script>

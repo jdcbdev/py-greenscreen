@@ -78,7 +78,7 @@ class Faculty(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
     academic_rank = models.ForeignKey(AcademicRank, on_delete=models.CASCADE)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     admission_role = models.ForeignKey(AdmissionRole, on_delete=models.CASCADE)

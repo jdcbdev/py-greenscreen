@@ -1,0 +1,80 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* Define your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            max-width: 150px;
+        }
+        
+        .message {
+            margin-bottom: 30px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 18px;
+            text-decoration: none;
+            background-color: #107869;
+            color: #fff !important;
+            border-radius: 4px;
+        }
+        
+        .note {
+            color: #888;
+            margin-top: 20px;
+        }
+        
+        .signature {
+            margin-top: 30px;
+            text-align: left;
+            font-size: 14px;
+        }
+        
+        .footer {
+            text-align: left;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="message">
+            <h2>New Faculty Registration</h2>
+            <p>Hello {{ user }},</p>
+            <p>A new faculty account has been created for you. Your login details are as follows:</p>
+            <p><b>Username: </b>{{ email }}<br><b>Password: </b>{{password}}</p>
+            <p>
+                <a href="{{ domain }}{% url 'login' %}" class="cta-button">Sign in here</a>
+            </p>
+            <p class="note">If the button doesn't work, you can also copy and paste the following link into your browser:</p>
+            <p>{{ domain }}{% url 'login' %}</p>
+        </div>
+        
+        <div class="signature">
+            <p>Best Regards,</p>
+            <p>The GreenScreen Team</p>
+        </div>
+    </div>
+</body>
+</html>
