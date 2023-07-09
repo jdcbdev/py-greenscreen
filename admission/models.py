@@ -14,6 +14,9 @@ class SchoolYear(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    def __str__(self):
+        return self.concat_year
+    
 class AdmissionPeriod(models.Model):
     school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE, null=True)
     start_date = models.DateField(null=True)
@@ -23,6 +26,9 @@ class AdmissionPeriod(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    def __str__(self):
+        return self.concat_date
+    
 class Program(models.Model):
     code = models.CharField(max_length=255, default='', unique=True)
     name = models.CharField(max_length=255, default='')
@@ -31,6 +37,9 @@ class Program(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.code
 
 class Quota(models.Model):
     school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE, null=True)
@@ -38,6 +47,9 @@ class Quota(models.Model):
     number = models.IntegerField(default=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.program
 
 class AutoAdmission(models.Model):
     school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE, null=True)
@@ -45,6 +57,9 @@ class AutoAdmission(models.Model):
     automate = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.program
 
 class Criteria(models.Model):
     school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE, null=True)
@@ -55,6 +70,9 @@ class Criteria(models.Model):
     weight = models.FloatField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.name
     
 class AcademicRank(models.Model):
     name = models.CharField(max_length=255)
@@ -82,6 +100,3 @@ class Faculty(models.Model):
     academic_rank = models.ForeignKey(AcademicRank, on_delete=models.CASCADE)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     admission_role = models.ForeignKey(AdmissionRole, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.first_name} {self.last_name}"

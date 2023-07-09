@@ -562,6 +562,8 @@ def edit_faculty(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@ensure_csrf_cookie
+@require_POST
 def view_delete_faculty_modal(request):
     faculty = Faculty.objects.get(pk=request.POST.get('faculty_id'))
 

@@ -66,7 +66,27 @@
             graduates with an educational foundation for careers in computer software or computer system design, 
             including careers as software engineers, application software designers, system programmers, or system engineers.
           </p>
-          <p class="btn-apply-center"><a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="../student/apply.php?program=bscs">Apply Now</a></p>
+          {% if request.user.is_authenticated %}
+            {% if application %}
+            <p class="btn-apply-center">
+              <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'my_application' %}">
+                View Application
+              </a>
+            </p>
+            {% else %}
+            <p class="btn-apply-center">
+              <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" data="bscs" id="bscs-apply">
+                Apply Now
+              </a>
+            </p>
+            {% endif %}
+          {% else %}
+          <p class="btn-apply-center">
+            <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'signin' %}">
+              Apply Now
+            </a>
+          </p>
+          {% endif %}
         </div>
         <div class="col-12 col-md-10 col-lg-5 mx-auto mx-lg-0 course-1"></div>
       </div>
@@ -75,11 +95,31 @@
         <div class="col-12 col-md-12 col-lg-7 course-it">
           <h2 class="featurette-heading course-title">BS in Information Technology</span></h2>
           <p class="lead justify">
-            The BS in Information Systems program focuses on the design, development and implementation of information 
+            The BS in Information Technology program focuses on the design, development and implementation of information 
             and communications technology (ICT) resources to ensure information systems applications can be used in various 
             industry sectors (business, education, media and entertainment, healthcare, government, and service).
           </p>
-          <p class="btn-apply-center"><a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="../student/apply.php?program=bscs">Apply Now</a></p>
+          {% if request.user.is_authenticated %}
+            {% if application %}
+              <p class="btn-apply-center">
+                <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'my_application' %}">
+                  View Application
+                </a>
+              </p>
+              {% else %}
+              <p class="btn-apply-center">
+                <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" data="bsit" id="bsit-apply">
+                  Apply Now
+                </a>
+              </p>
+              {% endif %}
+            {% else %}
+          <p class="btn-apply-center">
+            <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'signin' %}">
+              Apply Now
+            </a>
+          </p>
+          {% endif %}
         </div>
         <div class="col-12 col-md-10 col-lg-5 mx-auto mx-lg-0 course-1 course-2"></div>
       </div>
@@ -89,7 +129,6 @@
         <p class="fs-5">
         Our admission process is now powered by a decision-support system called - <span class="green-bold fs-5">GreenScreen</span>.
         </p>
-        <p><a class="btn btn-lg btn-success background-color-green text-center btn-apply btn-font" href="../student/apply.php">Apply Now</a></p>
       </div>
       <div class="row align-items-md-stretch">
         <div class="col-md-6">
@@ -289,6 +328,7 @@
       <hr class="featurette-divider">
     </div>
   </main>
+  <div class="application-container"></div>
   <!-- FOOTER -->
   <footer class="container background-color-green">
     <p class="text-center">&copy; {% block year %}{{ page_year }}{% endblock year %} GreenScreen &middot; <a href="#">Privacy Policy</a></p>
@@ -304,26 +344,47 @@
         $('html,body').animate({
                     scrollTop:$('main#home').offset().top -90}, 'fast');
       }
-      if (path == 'academics'){
+      else if (path == 'academics'){
         $('.nav-link').removeClass('active');
         $('a#academics').addClass('active');
         $('html,body').animate({
                     scrollTop:$('div#academics').offset().top -90}, 'fast');
       }
-      
-      if (path == 'how-it-works'){
+      else if (path == 'how-it-works'){
         $('.nav-link').removeClass('active');
         $('a#admissions').addClass('active');
         $('html,body').animate({
                     scrollTop:$('div#admissions').offset().top -90}, 'fast');
       }
-      
-      if (path == 'faculty'){
+      else if (path == 'faculty'){
         $('.nav-link').removeClass('active');
         $('a#faculty').addClass('active');
         $('html,body').animate({
                     scrollTop:$('div#faculty').offset().top -90}, 'fast');
       }
+
+      $('#bscs-apply, #bsit-apply').click(function(){
+        var code = $(this).attr('data')
+        var formData = {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            program_code: code,
+        };
+        $.ajax({
+            url: "{% url 'view_apply_modal' %}",
+            type: 'POST',
+            data: formData,
+            success: function(data) {
+                $('.application-container').html(data);
+                $('#apply-admission-modal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                  }).modal('show');
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+      })
     });
   </script>
 

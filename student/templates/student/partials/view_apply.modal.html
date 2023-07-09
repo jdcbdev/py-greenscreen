@@ -1,0 +1,51 @@
+<div class="modal fade justify-content-center" id="apply-admission-modal" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header background-color-green">
+                <h5 class="modal-title color-white">{{program.code|upper}} Application</h5>
+                <button type="button" class="btn-close white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="needs-validation" action="" method="post" name="application-form" id="application-form">
+                <div class="modal-body">
+                    <input type="hidden" name="program_name" value="{{program.name}}">
+                    <p class="my-4 text-center"><i class="fa-solid fa-paper-plane color-green" style="font-size: 45px;"></i></p>
+                    {% if period_allowed %}
+                    <p class="text-center message">
+                        You are applying for <b>{{program.name}}</b>. Click <b class="color-green">Send Application</b> to confirm.
+                    </p>
+                    {% else %}
+                    <p class="text-center message">
+                        Unfortunately, the admission period for this school year has already ended. Admission Period: <b>{{period.concat_date}}</b>
+                    </p>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    {% if period_allowed %}
+                    <a class="btn btn-lg btn-success background-color-green btn-apply btn-font mx-auto" id="send_application">Send Application</a>
+                    {% else %}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    {% endif %}
+                </div>  
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $('#send_application').click(function() {
+            var formData = {
+                program_id: '{{ program.id }}',
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            };
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'send_application' %}",
+                data: formData,
+                success: function(data) {
+                    $('#apply-admission-modal').modal('hide');
+                    window.location.href = "{% url 'my_application' %}";
+                },
+            });
+        });  
+    });
+</script>

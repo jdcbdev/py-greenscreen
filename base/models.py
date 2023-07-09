@@ -63,25 +63,49 @@ class CustomAPI(models.Model):
     key = models.CharField(max_length=255, blank=True, default='')
     username = models.CharField(max_length=255, blank=True, default='')
     password = models.CharField(max_length=255, blank=True, default='')
+    
+    def __str__(self):
+        return self.name
 
 class SHSStrand(models.Model):
     code = models.CharField(max_length=50, unique=True)
     name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.code
     
 class ClassRoomOrganization(models.Model):
     name = models.CharField(max_length=100)
     
+    def __str__(self):
+        return self.name
+    
 class StudentSupremeGovernment(models.Model):
     name = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.name
     
 class ClassRank(models.Model):
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
 class AcademicAwards(models.Model):
     name = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.name
 
 class AcademicDegree(models.Model):
     name = models.CharField(max_length=200)
+    
+    def __str__(self):
+        return self.name
 
 class EmploymentStatus(models.Model):
     name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name

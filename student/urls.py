@@ -23,5 +23,8 @@ urlpatterns = [
     path('complete-profile/personality-test-4/', views.complete_personality_test_4, name='complete_personality_test_4'),
     path('complete-profile/complete-study-habit-1/', views.complete_study_habit_1, name='complete_study_habit_1'),
     path('complete-profile/complete-study-habit-2/', views.complete_study_habit_2, name='complete_study_habit_2'),
-    path('complete-profile/complete-study-habit-3/', views.complete_study_habit_3, name='complete_study_habit_3')
+    path('complete-profile/complete-study-habit-3/', views.complete_study_habit_3, name='complete_study_habit_3'),
+    path('view-application/', views.view_apply_modal, name='view_apply_modal'),
+    path('send-application/', views.send_application, name='send_application'),
+    path('my-application/', views.my_application, name='my_application'),
 ]

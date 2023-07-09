@@ -3,12 +3,13 @@ import datetime
 from django.shortcuts import redirect
 from allauth.socialaccount.models import SocialAccount
 from student.views import check_student_exists, add_student_partial
-from student.models import Student
+from student.models import Student, AdmissionApplication
 from ph_geography.models import Region, Province, Municipality, Barangay
 from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from .custom_apis import load_settings
+from admission.models import SchoolYear
 
 load_settings()
 
@@ -16,7 +17,8 @@ def home(request):
     page_title = "Home"
     current_year = datetime.datetime.now().year
     profile = None
-        
+    student = None
+    
     if request.user.is_authenticated and request.user.is_staff:
         return redirect('dashboard')
     elif request.user.is_authenticated and not request.user.is_staff:
@@ -60,10 +62,13 @@ def home(request):
                 return redirect('complete_profile')
             else:
                 request.session['is_profile_complete'] = 'yes'
-        
+    
+    school_year = SchoolYear.objects.filter(is_active=True).first()
+    application = AdmissionApplication.objects.filter(student=student, school_year=school_year).first()
     context = {
         'page_title': page_title,
         'page_year': current_year,
+        'application': application,
         'profile': profile
     }
     return render(request, 'base/home.html', context)

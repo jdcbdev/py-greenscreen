@@ -3,7 +3,6 @@ from .models import User, CustomAPI, SHSStrand, ClassRoomOrganization, StudentSu
 
 # Register your models here.
 
-admin.site.register(User)
 admin.site.register(CustomAPI)
 admin.site.register(SHSStrand)
 admin.site.register(ClassRoomOrganization)

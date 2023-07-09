@@ -5,85 +5,84 @@
 
 <body>
 
-  <!-- Header -->
-  {% if student.is_profile_complete %}
-    {% include 'partials/topnav.html' %}
-  {% else %}
-    {% include 'student/profile/partials/topnav.html' %}
-  {% endif %}
+    <!-- Header -->
+    {% if student.is_profile_complete %}
+        {% include 'partials/topnav.html' %}
+    {% else %}
+        {% include 'student/profile/partials/topnav.html' %}
+    {% endif %}
 
-  <div class="container-fluid main-container">
-    <div class="row">
-        <main class="col-md-10 mx-md-auto mb-md-5 p-4 pt-2 pt-md-4 mt-3">
-            <div class="row g-3">
-                <div class="col-12 text-center mb-md-4 mt-4">
-                    <h4 class="fw-bold text-center green">Welcome to GreenScreen!</h4>
-                    {% if student.is_profile_complete %}
-                        <h5>You have completed your profile. You may update them and click save.</h5>
-                    {% else %}
-                        <h5>Complete the 6 steps to get started</h5>
-                    {% endif %}
-                    <h4 class="fw-bold mt-3 d-md-none"><span class="progress-counter">1</span> of 6</h4>
+    <div class="container-fluid main-container">
+        <div class="row">
+            <main class="col-md-10 mx-md-auto mb-md-5 p-4 pt-2 pt-md-4 mt-3">
+                <div class="row g-3">
+                    <div class="col-12 text-center mb-md-4 mt-4">
+                        <h4 class="fw-bold text-center green">Welcome to GreenScreen!</h4>
+                        {% if student.is_profile_complete %}
+                            <h5>You have completed your profile. You may update them and click save.</h5>
+                        {% else %}
+                            <h5>Complete the 6 steps to get started</h5>
+                        {% endif %}
+                        <h4 class="fw-bold mt-3 d-md-none"><span class="progress-counter">1</span> of 6</h4>
+                    </div>
+                    <div class="col-md-12 text-center d-none d-md-flex progress-bar-profile">
+                        <div class="col-md profile-progress-container wrapper" id="step-1">
+                            <div class="profile-progress bg-pending bg-white">
+                                <i class='bx bxs-user-detail color-green'></i>
+                            </div>
+                            <p class="text-center my-2 small">Personal Information</p>
+                        </div>
+                        <div class="col-md profile-progress-container wrapper" id="step-2">
+                            <div class="profile-progress">
+                                <i class="fa-solid fa-file-circle-check"></i>
+                            </div>
+                            <p class="text-center my-2 small">College Entrance Test</p>
+                        </div>
+                        <div class="col-md profile-progress-container wrapper" id="step-3">
+                            <div class="profile-progress">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </div>
+                            <p class="text-center my-2 small">Educational Background</p>
+                        </div>
+                        <div class="col-md profile-progress-container wrapper" id="step-4">
+                            <div class="profile-progress">
+                                <i class="fa-solid fa-house-chimney-user"></i>
+                            </div>
+                            <p class="text-center my-2 small">Economic Status</p>
+                        </div>
+                        <div class="col-md profile-progress-container wrapper" id="step-5">
+                            <div class="profile-progress">
+                                <i class="fa-solid fa-person-circle-check"></i>
+                            </div>
+                            <p class="text-center my-2 small">Personality Test</p>
+                        </div>
+                        <div class="col-md profile-progress-container wrapper" id="step-6">
+                            <div class="profile-progress">
+                                <i class="fa-solid fa-chalkboard-user"></i>
+                            </div>
+                            <p class="text-center my-2 small">Study Habits</p>
+                        </div>
+                    </div>
+
+                    <div id="student-profile" class="mt-0">
+                        
+                        {% include 'student/profile/personal-information.html' %}
+                        {% include 'student/profile/college-entrance-test.html' %}
+                        {% include 'student/profile/high-school.html' %}
+                        {% include 'student/profile/economic-status.html' %}
+                        {% include 'student/profile/personality-test.html' %}
+                        {% include 'student/profile/study-habit.html' %}
+
+                    </div>
+
                 </div>
-                <div class="col-md-12 text-center d-none d-md-flex progress-bar-profile">
-                    <div class="col-md profile-progress-container wrapper" id="step-1">
-                        <div class="profile-progress bg-pending bg-white">
-                            <i class='bx bxs-user-detail color-green'></i>
-                        </div>
-                        <p class="text-center my-2 small">Personal Information</p>
-                    </div>
-                    <div class="col-md profile-progress-container wrapper" id="step-2">
-                        <div class="profile-progress">
-                            <i class="fa-solid fa-file-circle-check"></i>
-                        </div>
-                        <p class="text-center my-2 small">College Entrance Test</p>
-                    </div>
-                    <div class="col-md profile-progress-container wrapper" id="step-3">
-                        <div class="profile-progress">
-                            <i class="fa-solid fa-graduation-cap"></i>
-                        </div>
-                        <p class="text-center my-2 small">Educational Background</p>
-                    </div>
-                    <div class="col-md profile-progress-container wrapper" id="step-4">
-                        <div class="profile-progress">
-                            <i class="fa-solid fa-house-chimney-user"></i>
-                        </div>
-                        <p class="text-center my-2 small">Economic Status</p>
-                    </div>
-                    <div class="col-md profile-progress-container wrapper" id="step-5">
-                        <div class="profile-progress">
-                            <i class="fa-solid fa-person-circle-check"></i>
-                        </div>
-                        <p class="text-center my-2 small">Personality Test</p>
-                    </div>
-                    <div class="col-md profile-progress-container wrapper" id="step-6">
-                        <div class="profile-progress">
-                            <i class="fa-solid fa-chalkboard-user"></i>
-                        </div>
-                        <p class="text-center my-2 small">Study Habits</p>
-                    </div>
-                </div>
-
-                <div id="student-profile" class="mt-0">
-                    
-                    {% include 'student/profile/personal-information.html' %}
-                    {% include 'student/profile/college-entrance-test.html' %}
-                    {% include 'student/profile/high-school.html' %}
-                    {% include 'student/profile/economic-status.html' %}
-                    {% include 'student/profile/personality-test.html' %}
-                    {% include 'student/profile/study-habit.html' %}
-
-                </div>
-
-            </div>
-        </main>
+            </main>
+        </div>
     </div>
-</div>
-<script>
-    $(document).ready(function(){
-        
-    });
-</script>
-  
+    <script>
+        $(document).ready(function(){
+            
+        });
+    </script>
 </body>
 </html>

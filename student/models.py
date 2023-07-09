@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from admission.models import Program, SchoolYear
 
 # Create your models here.
 
@@ -151,3 +152,12 @@ class StudyHabit(models.Model):
     s23 = models.IntegerField(null=True)
     s24 = models.IntegerField(null=True)
     s25 = models.CharField(max_length=255, null=True)
+
+class AdmissionApplication(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE)
+    status = models.CharField(max_length=255, default='pending')
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from .forms import SignUpForm, SignInForm, SignUpOldForm, ForgotPasswordForm, SetPasswordForm, PersonalInfoForm, CollegeEntranceTestForm, SchoolBackgroundForm, EconomicStatusForm, PersonalityTestForm1, PersonalityTestForm2, PersonalityTestForm3, PersonalityTestForm4
 from .forms import StudyHabitForm1, StudyHabitForm2, StudyHabitForm3
 from django.contrib.auth import authenticate, login, logout
-from .models import Student, SchoolBackground, ContactPoint, PersonalAddress, CollegeEntranceTest, EconomicStatus, PersonalityTest, StudyHabit
+from .models import Student, SchoolBackground, ContactPoint, PersonalAddress, CollegeEntranceTest, EconomicStatus, PersonalityTest, StudyHabit, AdmissionApplication
 from base.models import SHSStrand, ClassRoomOrganization, StudentSupremeGovernment, ClassRank, AcademicAwards, AcademicDegree, EmploymentStatus
 from django.db import transaction
 from django.conf import settings
@@ -23,7 +23,9 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from datetime import datetime
+from datetime import date
+from admission.models import Program, SchoolYear, AdmissionPeriod
+from django.http import HttpResponse
 
 load_settings()
 
@@ -864,3 +866,58 @@ def my_profile(request):
     }
     return render(request, 'student/profile/main.html', context)
 
+@login_required(login_url='/student/sign-in/')
+@ensure_csrf_cookie
+@require_POST
+def view_apply_modal(request):
+    program = Program.objects.get(code=request.POST.get('program_code'))
+    school_year = SchoolYear.objects.filter(is_active=True).first()
+    period = AdmissionPeriod.objects.filter(school_year=school_year, is_active=True).first()
+    today = date.today()
+    period_allowed = period.end_date > today
+    
+    context = {
+        'program': program,
+        'period_allowed': period_allowed,
+        'period': period
+    }
+    
+    rendered_html = render(request, 'student/partials/view_apply.modal.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')
+
+@login_required(login_url='/student/sign-in/')
+@ensure_csrf_cookie
+@require_POST
+def send_application(request):
+    student = Student.objects.get(account=request.user)
+    program = Program.objects.get(pk=request.POST.get('program_id'))
+    school_year = SchoolYear.objects.filter(is_active=True).first()
+
+    application, _ = AdmissionApplication.objects.get_or_create(student=student, program=program, school_year=school_year)
+    application.student = student
+    application.program = program
+    application.school_year = school_year
+    application.status = 'pending'
+    application.save()
+    
+    return JsonResponse({'message': 'Application Sent!'})
+    
+@login_required(login_url='/student/sign-in/')
+def my_application(request):
+    if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=False).exists():
+        return redirect('complete_profile')
+    elif request.user.is_authenticated and request.user.is_staff:
+        return redirect('home')
+    
+    student = Student.objects.filter(account=request.user).first()
+    school_year = SchoolYear.objects.filter(is_active=True).first()
+    application = AdmissionApplication.objects.filter(student=student, school_year=school_year).first()
+    
+    page_title = 'My Application'
+    context = {
+        'page_title': page_title,
+        'student': student,
+        'application': application,
+        'settings': settings
+    }
+    return render(request, 'student/my-application.html', context)
