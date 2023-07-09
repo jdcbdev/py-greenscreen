@@ -1126,6 +1126,14 @@ span.table-struggling{
     font-size: 60px;
 }
 
+.container-no-application{
+    width: 100%;
+    height: calc(100vh - 80px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 @media (min-width: 576px) {
     .shortcut{
         display: block;

@@ -100,3 +100,9 @@ class Faculty(models.Model):
     academic_rank = models.ForeignKey(AcademicRank, on_delete=models.CASCADE)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     admission_role = models.ForeignKey(AdmissionRole, on_delete=models.CASCADE)
+
+class DocumentaryRequirement(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name

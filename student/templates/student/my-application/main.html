@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% include 'partials/header.html' %}
+
+<body>
+    <!-- Header -->
+    {% include 'partials/topnav.html' %}
+
+    {% if application %}
+        {% if application.status == 'pending' %}
+            {% include 'student/my-application/pending.html' %}
+        {% elif application.status == 'approved' %}
+            {% include 'student/my-application/complete.html' %}
+        {% endif %}
+    {% else %}
+        {% include 'student/my-application/no-application.html' %}
+    {% endif %}
+
+  
+</body>
+</html>

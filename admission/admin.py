@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SchoolYear, AdmissionPeriod, Program, Quota, AutoAdmission, Criteria, AdmissionRole, Department, AcademicRank
+from .models import SchoolYear, AdmissionPeriod, Program, Quota, AutoAdmission, Criteria, AdmissionRole, Department, AcademicRank, DocumentaryRequirement
 
 # Register your models here.
 
@@ -12,3 +12,4 @@ admin.site.register(Criteria)
 admin.site.register(AdmissionRole)
 admin.site.register(Department)
 admin.site.register(AcademicRank)
+admin.site.register(DocumentaryRequirement)

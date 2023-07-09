@@ -24,7 +24,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from datetime import date
-from admission.models import Program, SchoolYear, AdmissionPeriod
+from admission.models import Program, SchoolYear, AdmissionPeriod, DocumentaryRequirement
 from django.http import HttpResponse
 
 load_settings()
@@ -911,13 +911,16 @@ def my_application(request):
     
     student = Student.objects.filter(account=request.user).first()
     school_year = SchoolYear.objects.filter(is_active=True).first()
-    application = AdmissionApplication.objects.filter(student=student, school_year=school_year).first()
+    application = AdmissionApplication.objects.filter(student=student, school_year=school_year).order_by('-created_at').first()
+    
+    documents = DocumentaryRequirement.objects.all()
     
     page_title = 'My Application'
     context = {
         'page_title': page_title,
         'student': student,
         'application': application,
+        'documents': documents,
         'settings': settings
     }
-    return render(request, 'student/my-application.html', context)
+    return render(request, 'student/my-application/main.html', context)
