@@ -24,4 +24,8 @@ urlpatterns = [
     path('view-edit-faculty/', views.view_edit_faculty_modal, name="view_edit_faculty_modal"),
     path('view-delete-faculty/', views.view_delete_faculty_modal, name="view_delete_faculty_modal"),
     path('delete-faculty/', views.delete_faculty, name="delete_faculty"),
+    path('view-applications/', views.view_application, name="view_application"),
+    path('all-applications/', views.all_application, name="all_application"),
+    path('pending-applications/', views.pending_application, name="pending_application"),
+    path('view-verify-student/', views.view_verify_student_modal, name="view_verify_student_modal"),
 ]

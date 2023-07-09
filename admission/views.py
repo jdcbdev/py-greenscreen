@@ -30,6 +30,8 @@ from django.core.exceptions import ValidationError
 from django.utils.crypto import get_random_string
 from .tasks import send_faculty_email_task
 from django.shortcuts import get_object_or_404
+from student.models import AdmissionApplication, CollegeEntranceTest, SchoolBackground, ContactPoint, Student
+from django.db.models import Exists, OuterRef
 
 # Create your views here.
 
@@ -589,3 +591,96 @@ def delete_faculty(request):
         return JsonResponse({'message': 'Object deleted successfully'})
     
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@login_required(login_url='/admin/sign-in/')
+def view_application(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
+    page_title = 'Applications'
+    page_active = 'applications'
+    current_year = datetime.datetime.now().year
+    
+    school_year = SchoolYear.objects.filter(is_active=True).first()
+    pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
+
+    context = {
+        'page_title': page_title,
+        'page_active': page_active,
+        'current_year': current_year,
+        'pending_counter': pending_counter,
+    }
+    
+    return render(request, 'admission/application.html', context)
+
+@ensure_csrf_cookie
+@require_POST
+def all_application(request):
+    school_year = SchoolYear.objects.filter(is_active=True).first()
+    applications = AdmissionApplication.objects.filter(school_year=school_year).order_by('created_at')
+
+    context = {
+        'applications': applications,
+    }
+    
+    rendered_html = render(request, 'admission/applications/all.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')
+
+@ensure_csrf_cookie
+@require_POST
+def pending_application(request):
+    school_year = SchoolYear.objects.filter(is_active=True).first()
+    programs = Program.objects.filter(is_active=True)
+    students = (
+        Student.objects
+        .annotate(has_admission_application=Exists(
+            AdmissionApplication.objects
+            .filter(student=OuterRef('pk'), status='pending', school_year=school_year)
+        ))
+        .filter(has_admission_application=True)
+        .prefetch_related(
+            Prefetch(
+                'admissionapplication_set',
+                queryset=AdmissionApplication.objects.select_related('student')
+                .filter(status='pending', school_year=school_year)
+            ),
+            Prefetch(
+                'collegeentrancetest_set',
+                queryset=CollegeEntranceTest.objects.select_related('student')
+            ),
+            Prefetch(
+                'schoolbackground_set',
+                queryset=SchoolBackground.objects.select_related('student')
+            ),
+            Prefetch(
+                'contactpoint_set',
+                queryset=ContactPoint.objects.select_related('student')
+            ),
+        )
+    )
+
+    applications = students
+    
+    context = {
+        'applications': applications,
+        'programs': programs
+    }
+    
+    rendered_html = render(request, 'admission/applications/pending.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')
+
+@ensure_csrf_cookie
+@require_POST
+def view_verify_student_modal(request):
+    application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
+    cet = CollegeEntranceTest.objects.filter(student=application.student).first()
+    school = SchoolBackground.objects.filter(student=application.student).first()
+
+    context = {
+        'application': application,
+        'cet': cet,
+        'school': school,
+    }
+    
+    rendered_html = render(request, 'admission/applications/verify_student.modal.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')

@@ -648,6 +648,16 @@ def complete_school_background(request):
         school.student_supreme_government = form.cleaned_data['student_supreme_government']
         school.gpa_first_semester = form.cleaned_data['gpa_first_semester']
         school.gpa_second_semester = form.cleaned_data['gpa_second_semester']
+
+        if school.gpa_first_semester is not None and school.gpa_second_semester is not None and school.gpa_first_semester != 0 and school.gpa_second_semester != 0:
+            school.combined_gpa = (school.gpa_first_semester + school.gpa_second_semester) / 2
+        elif school.gpa_second_semester is not None and school.gpa_second_semester != 0:
+            school.combined_gpa = school.gpa_second_semester
+        elif school.gpa_first_semester is not None and school.gpa_first_semester != 0:
+            school.combined_gpa = school.gpa_first_semester
+        else:
+            school.combined_gpa = 0
+
         if 'photo_grade' in request.FILES:
             school.photo_grade = form.cleaned_data['photo_grade']
         school.save()

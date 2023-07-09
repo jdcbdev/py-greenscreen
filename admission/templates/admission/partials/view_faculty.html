@@ -2,7 +2,7 @@
     <div id="MyButtons" class="d-flex mb-md-2 mb-lg-0 col-12 col-md-auto"></div>
     <div class="form-group col-12 col-sm-auto flex-sm-grow-1 flex-lg-grow-0 ms-lg-auto">
         <select name="department_prog" id="department_prog" class="form-select me-md-2">
-            <option value="">All</option>
+            <option value="">All Department</option>
             {% for dept in departments %}
                 <option value="{{ dept.name }}">{{ dept.name }}</option>
             {% endfor %}
@@ -10,7 +10,7 @@
     </div>
     <div class="form-group col-12 col-sm-auto flex-sm-grow-1 flex-lg-grow-0">
         <select name="faculty_role" id="faculty_role" class="form-select me-md-2">
-            <option value="">All</option>
+            <option value="">All Faculty</option>
             {% for role in roles %}
                 <option value="{{ role.name }}">{{ role.name }}</option>
             {% endfor %}
@@ -97,7 +97,7 @@
                     $('#delete-faculty-modal').modal({
                         backdrop: 'static',
                         keyboard: false
-                      }).modal('show');
+                    }).modal('show');
                 },
                 error: function(xhr, status, error) {
                     console.error(error);

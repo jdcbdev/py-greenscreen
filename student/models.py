@@ -69,6 +69,7 @@ class SchoolBackground(models.Model):
     student_supreme_government = models.CharField(max_length=150, blank=True, default='')
     gpa_first_semester = models.FloatField(blank=True, default=0)
     gpa_second_semester = models.FloatField(blank=True, default=0)
+    combined_gpa = models.FloatField(blank=True, default=0)
     photo_grade = models.ImageField(upload_to='shs_card/', null=True)
     
 class EconomicStatus(models.Model):

@@ -991,14 +991,6 @@ span.approved{
     cursor: pointer;
 }
 
-.photo-1{
-    background-image: url('../img/upload_files/cet.jpg');
-}
-
-.photo-2{
-    background-image: url('../img/upload_files/shs.jpeg');
-}
-
 .modal {
     z-index: 1040;
 }

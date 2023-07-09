@@ -1,0 +1,75 @@
+<!-- Modal -->
+<div class="modal fade" id="verify-student-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">View Student Application</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" action="" method="post" name="verify-student" id="verify-student">
+                    <div class="row g-2">
+                        <div class="col-12 col-md-12">
+                            <label for="fullname" class="form-label">Name<span class="text-muted"></span></label>
+                            <input type="text" disabled="true" class="form-control" id="fullname" placeholder="" name="fullname" value="{{ application.student.first_name }} {{ application.student.middle_name }} {{ application.student.last_name }}">
+                        </div>
+                        <div class="col-6">
+                            <label for="overall_percentile_rank" class="form-label">CET OAPR<span class="text-muted"></span></label>
+                            <input type="text" disabled="true" class="form-control" id="overall_percentile_rank" placeholder="" name="overall_percentile_rank" value="{{ cet.overall_percentile_rank|default_if_none:'' }}">
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="gpa_second_semester" class="form-label">SHS GPA<span class="text-muted"></span></label>
+                            <input type="text" disabled="true" class="form-control" id="gpa_second_semester" placeholder="" name="gpa_second_semester" step="any" value="{{ school.combined_gpa|default_if_none:'' }}">
+                        </div>
+                        <div class="col-12 col-md-12">
+                            <label for="uploaded-photos" class="form-label">Uploaded Photos<span class="text-muted"></span></label>
+                            <div class="photo-container row g-3">
+                                <div class="col-6" href="{{ cet.report_of_rating.url }}">
+                                    <div class="photo-holder photo-1" style="background-image: url({{ cet.report_of_rating.url }})" title="Click photo to enlarge"></div>
+                                </div>
+                                <div class="col-6" href="{{ school.photo_grade.url }}">
+                                    <div class="photo-holder photo-2" style="background-image: url({{ school.photo_grade.url }})" title="Click photo to enlarge"></div>
+                                </div>
+                                <div href="{{ application.student.identification_card.url }}"></div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="1" id="comments">
+                                <label class="form-check-label" for="comments">
+                                    Return with comments
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-12 comments" style="display:none">
+                            <label for="exampleFormControlTextarea1" class="form-label">Enter your comments below</label>
+                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary background-color-green" id="pending-submit">Accept Application</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $('#comments').on('change', function(){
+            if ($(this).is(":checked")) {
+                $('div.comments').show();
+                $('#pending-submit').text("Return Application")
+            }else{
+                $('div.comments').hide();
+                $('#pending-submit').text("Accept Application")
+            }
+        });
+        $('div.photo-container').lightGallery({
+            thumbnail: false,
+            animateThumb: false,
+            showThumbByDefault: false
+        }); 
+    });
+</script>
