@@ -43,10 +43,60 @@
                 <div class="col-12 col-md-10 col-lg-6 mx-auto mt-3 mt-md-5 document-listing">
                     <h5 class="text-center fw-bold mb-3">Application Details</h5>
                     <ul>
-                        <li>Date: {{application.created_at}}</li>
+                        <li>Application Date: {{application.created_at}}</li>
                     </ul>
                 </div>
+                <h6 class="text-center mt-md-5 mt-4">Do you want to cancel your application? Click <a class="color-green" id="cancel-application" data-bs-toggle="modal" data-bs-target="#cancel-application-modal">here.</a></h6>
             </div>
         </main>
     </div>
 </div>
+<div class="modal fade justify-content-center" id="cancel-application-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header background-color-green">
+                <h5 class="modal-title color-white" id="messageModalLabel">Cancel Application</h5>
+            </div>
+            <form class="needs-validation" action="" method="post" name="" id="cancel-application">
+                <div class="modal-body">
+                    <p class="my-4 text-center"><i class="fa-solid fa-circle-exclamation"></i></p>
+                    <p class="text-center message">
+                        Are you sure you want to cancel your application in <b>{{application.program.name}}</b>?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="submit" value="Cancel Application" name="cancel_application" class="btn btn-primary background-color-green">Yes</button>
+                </div>  
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+
+        $('div.modal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+
+        $('form#cancel-application').submit(function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            formData.append('application_id', '{{ application.id }}');
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'cancel_application' %}",
+                data: formData,
+                processData: false,
+                contentType: false,
+    
+                success: function(data) {
+                    $('#cancel-application-modal').modal('hide');
+                    window.location.href = "{% url 'my_application' %}"
+                },
+            });
+        });  
+    });
+</script>

@@ -63,6 +63,10 @@ a{
     border: 4px solid #107869 !important;
 }
 
+.bg-orange{
+    border: 4px solid #E97451 !important;
+}
+
 .bg-white{
     background-color: white !important;
 }
@@ -70,6 +74,10 @@ a{
 .bg-green{
     background-color: #107869 !important;
     color: white;
+}
+
+.color-orange{
+    color: #E97451 !important;
 }
 
 .color-green{
@@ -145,6 +153,16 @@ footer p a:hover{
     top: 30px;
     left: -50%;
     border-top: .5rem solid #107869;
+    width: 100%;
+    z-index: -1;
+}
+
+.profile-progress-container.wrapper-orange::before {
+    content: '';
+    position: relative;
+    top: 30px;
+    left: -50%;
+    border-top: .5rem solid #E97451;
     width: 100%;
     z-index: -1;
 }

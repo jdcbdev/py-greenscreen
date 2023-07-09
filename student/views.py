@@ -893,12 +893,12 @@ def send_application(request):
     program = Program.objects.get(pk=request.POST.get('program_id'))
     school_year = SchoolYear.objects.filter(is_active=True).first()
 
-    application, _ = AdmissionApplication.objects.get_or_create(student=student, program=program, school_year=school_year)
-    application.student = student
-    application.program = program
-    application.school_year = school_year
-    application.status = 'pending'
-    application.save()
+    AdmissionApplication.objects.create(
+        student=student,
+        program=program,
+        school_year=school_year,
+        status='pending'
+    )
     
     return JsonResponse({'message': 'Application Sent!'})
     
@@ -924,3 +924,14 @@ def my_application(request):
         'settings': settings
     }
     return render(request, 'student/my-application/main.html', context)
+
+@login_required(login_url='/student/sign-in/')
+@ensure_csrf_cookie
+@require_POST
+def cancel_application(request):
+    application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
+    if application:
+        application.status = 'cancelled'
+        application.save()
+    
+    return JsonResponse({'message': 'Application Cancelled.'})

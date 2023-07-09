@@ -67,7 +67,7 @@
             including careers as software engineers, application software designers, system programmers, or system engineers.
           </p>
           {% if request.user.is_authenticated %}
-            {% if application %}
+            {% if application and application.status == 'pending'%}
             <p class="btn-apply-center">
               <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'my_application' %}">
                 View Application
@@ -100,25 +100,25 @@
             industry sectors (business, education, media and entertainment, healthcare, government, and service).
           </p>
           {% if request.user.is_authenticated %}
-            {% if application %}
+            {% if application and application.status == 'pending'%}
               <p class="btn-apply-center">
                 <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'my_application' %}">
                   View Application
                 </a>
               </p>
-              {% else %}
+            {% else %}
               <p class="btn-apply-center">
                 <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" data="bsit" id="bsit-apply">
                   Apply Now
                 </a>
               </p>
-              {% endif %}
-            {% else %}
-          <p class="btn-apply-center">
-            <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'signin' %}">
-              Apply Now
-            </a>
-          </p>
+            {% endif %}
+          {% else %}
+            <p class="btn-apply-center">
+              <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'signin' %}">
+                Apply Now
+              </a>
+            </p>
           {% endif %}
         </div>
         <div class="col-12 col-md-10 col-lg-5 mx-auto mx-lg-0 course-1 course-2"></div>

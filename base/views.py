@@ -64,7 +64,7 @@ def home(request):
                 request.session['is_profile_complete'] = 'yes'
     
     school_year = SchoolYear.objects.filter(is_active=True).first()
-    application = AdmissionApplication.objects.filter(student=student, school_year=school_year).first()
+    application = AdmissionApplication.objects.filter(student=student, school_year=school_year).order_by('-created_at').first()
     context = {
         'page_title': page_title,
         'page_year': current_year,
