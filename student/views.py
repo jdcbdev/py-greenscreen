@@ -562,12 +562,15 @@ def complete_personal_information(request):
         student.is_personal_info_complete = True
         # Update or create uploaded photo
         if 'profile_photo' in request.FILES:
-            student.profile_photo = form.cleaned_data['profile_photo']
+            student.profile_photo = request.FILES['profile_photo']
+        if 'identification_card' in request.FILES:
+            student.identification_card = request.FILES['identification_card']
+            
         student.save()
 
         # Update or create contact information
         contact, _ = ContactPoint.objects.get_or_create(student=student)
-        contact.contact_email = form.cleaned_data['contact_email']
+        contact.contact_email = user.email
         contact.contact_number = form.cleaned_data['contact_number']
         contact.save()
 

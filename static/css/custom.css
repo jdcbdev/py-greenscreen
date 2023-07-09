@@ -1080,7 +1080,22 @@ span.table-struggling{
     background-color: white;
 }
 
+.edit-upload-id{
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    display: none;
+    background-color: white;
+}
+
 .upload-container-cet{
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color: white;
+}
+
+.upload-container-id{
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;

@@ -26,6 +26,7 @@ class Student(models.Model):
     is_study_complete = models.BooleanField(default=False)
     
     profile_photo = models.ImageField(upload_to="students/", null=True)
+    identification_card = models.ImageField(upload_to="identification/", null=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

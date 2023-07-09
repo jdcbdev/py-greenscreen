@@ -155,13 +155,14 @@ class PersonalInfoForm(forms.Form):
     region = forms.CharField(max_length=100, required = True)
     
     profile_photo = forms.FileField(required=False)
+    identification_card = forms.FileField(required=False)
     
     def __init__(self, *args, **kwargs):
         self.instance = kwargs.pop('instance', None)
         super().__init__(*args, **kwargs)
     
     def clean_profile_photo(self):
-        profile_photo = self.cleaned_data.get('profile_photo', False)
+        profile_photo = self.cleaned_data.get('profile_photo')
 
         if not profile_photo:
             return profile_photo
@@ -175,6 +176,22 @@ class PersonalInfoForm(forms.Form):
             raise forms.ValidationError('The selected file format is not supported. Please choose a JPEG, PNG, or GIF image.')
 
         return profile_photo
+    
+    def clean_identification_card(self):
+        identification_card = self.cleaned_data.get('identification_card')
+
+        if not identification_card:
+            return identification_card
+
+        max_size = 5 * 1024 * 1024  # 2MB in bytes
+        if identification_card.size > max_size:
+            raise forms.ValidationError('The file size exceeds the maximum allowed limit of 5MB.')
+
+        allowed_formats = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+        if identification_card.content_type not in allowed_formats:
+            raise forms.ValidationError('The selected file format is not supported. Please choose a JPEG, PNG, or GIF image.')
+
+        return identification_card
     
     def clean_contact_number(self):
         contact_number = self.cleaned_data['contact_number']
