@@ -17,6 +17,7 @@ urlpatterns = [
     path('settings/add-automation/', views.add_auto, name="add_auto"),
     path('settings/view-program-criteria/', views.view_criteria, name="view_criteria"),
     path('settings/add-program-criteria/', views.add_criteria, name="add_criteria"),
+    path('settings/view-program-interview/', views.view_interview_slot, name="view_interview_slot"),
     path('faculty/', views.faculty, name="faculty"),
     path('view-faculty/', views.view_faculty, name="view_faculty"),
     path('add-faculty/', views.add_faculty, name="add_faculty"),
@@ -28,4 +29,9 @@ urlpatterns = [
     path('all-applications/', views.all_application, name="all_application"),
     path('pending-applications/', views.pending_application, name="pending_application"),
     path('view-verify-student/', views.view_verify_student_modal, name="view_verify_student_modal"),
+    path('accept-application/', views.accept_application, name="accept_application"),
+    path('return-application/', views.return_application, name="return_application"),
+    path('view-add-interview-slot/', views.view_interview_slot_modal, name="view_interview_slot_modal"),
+    path('settings/add-interview-slot/', views.add_interview_slot, name="add_interview_slot"),
+    path('interview-applications/', views.interview_application, name="interview_application"),
 ]

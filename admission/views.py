@@ -20,9 +20,8 @@ from student.views import grecaptcha_verify
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
-from .models import SchoolYear, AdmissionPeriod, Program, Quota, AutoAdmission, Criteria, Department, AcademicRank, AdmissionRole, Faculty
-from .forms import SchoolYearForm, AdmissionPeriodForm, QuotaForm, CriteriaForm, AddFacultyForm
-import datetime
+from .models import SchoolYear, AdmissionPeriod, Program, Quota, AutoAdmission, Criteria, Department, AcademicRank, AdmissionRole, Faculty, InterviewSlot
+from .forms import SchoolYearForm, AdmissionPeriodForm, QuotaForm, CriteriaForm, AddFacultyForm, ReturnApplicationForm, InterviewSlotForm
 from django.http import JsonResponse
 from django.db.models import Prefetch
 from django.contrib.auth.password_validation import validate_password
@@ -30,8 +29,11 @@ from django.core.exceptions import ValidationError
 from django.utils.crypto import get_random_string
 from .tasks import send_faculty_email_task
 from django.shortcuts import get_object_or_404
-from student.models import AdmissionApplication, CollegeEntranceTest, SchoolBackground, ContactPoint, Student
+from student.models import AdmissionApplication, CollegeEntranceTest, SchoolBackground, ContactPoint, Student, ApplicationStatusLogs, InterviewLogs
 from django.db.models import Exists, OuterRef
+from django.utils import timezone
+from datetime import datetime
+import datetime
 
 # Create your views here.
 
@@ -510,9 +512,10 @@ def add_faculty(request):
         user.is_active = True
         user.is_staff = True
         user.set_password(password)
-        user.save()
-        
         faculty = form.save(commit=False)
+        if faculty.admission_role.name == "Admission Officer":
+            user.is_superuser = True
+        user.save()
         faculty.user = user
         faculty.save()
         
@@ -556,9 +559,11 @@ def edit_faculty(request):
         user.last_name = form.cleaned_data['last_name']
         user.is_active = True
         user.is_staff = True
-        user.save()
-        
         faculty = form.save(commit=False)
+        if faculty.admission_role.name == "Admission Officer":
+            user.is_superuser = True
+        user.save()
+        faculty.user = user
         faculty.save()
         
     errors = form.errors.as_json()
@@ -600,15 +605,17 @@ def view_application(request):
     page_title = 'Applications'
     page_active = 'applications'
     current_year = datetime.datetime.now().year
-    
+
     school_year = SchoolYear.objects.filter(is_active=True).first()
     pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
+    interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
 
     context = {
         'page_title': page_title,
         'page_active': page_active,
         'current_year': current_year,
         'pending_counter': pending_counter,
+        'interview_counter': interview_counter,
     }
     
     return render(request, 'admission/application.html', context)
@@ -672,15 +679,191 @@ def pending_application(request):
 @ensure_csrf_cookie
 @require_POST
 def view_verify_student_modal(request):
-    application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
-    cet = CollegeEntranceTest.objects.filter(student=application.student).first()
-    school = SchoolBackground.objects.filter(student=application.student).first()
+    has_slot = False
+    interview = None
+    current_datetime = timezone.now()
+    school_year = SchoolYear.objects.filter(is_active=True).first()
+    program = Program.objects.get(pk=request.POST.get('program_id'))
+    slots = InterviewSlot.objects.filter(
+        school_year=school_year,
+        program=program,
+        interview_date__gt=current_datetime.date()
+    )
+    for slot in slots:
+        logs = InterviewLogs.objects.filter(interview=slot, status='okay').count()
+        if slot.slot > logs:
+            has_slot = True
+            interview = slot
+    
+    if has_slot:
+        application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
+        if application:
+            cet = CollegeEntranceTest.objects.filter(student=application.student).first()
+            school = SchoolBackground.objects.filter(student=application.student).first()
 
+        context = {
+            'application': application,
+            'cet': cet,
+            'school': school,
+            'interview': interview,
+        }
+        
+        rendered_html = render(request, 'admission/applications/verify_student.modal.html', context)
+        return HttpResponse(rendered_html, content_type='text/html')
+    
+    else:
+        context = {
+            'program': program,
+        }
+        
+        rendered_html = render(request, 'admission/applications/need_interview_slot.modal.html', context)
+        return HttpResponse(rendered_html, content_type='text/html')
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def accept_application(request):
+    
+    application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
+    slot = InterviewSlot.objects.get(pk=request.POST.get('interview_id'))
+    if application:
+        application.status = 'verified'
+        application.save()
+        
+        ApplicationStatusLogs.objects.create(
+            application=application,
+            status=application.status,
+            processed_by=request.user
+        )
+        InterviewLogs.objects.create(
+            application=application,
+            interview=slot
+        )
+        
+        return JsonResponse({'message': 'Successful.'})
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def return_application(request):
+    pk=request.POST.get('application_id')
+    application = AdmissionApplication.objects.get(pk=pk)
+    form = ReturnApplicationForm(request.POST)
+    if form.is_valid():
+        if application:
+            application.status = 'returned'
+            application.save()
+            
+            ApplicationStatusLogs.objects.create(
+                application=application,
+                status=application.status,
+                comments=form.cleaned_data['details'],
+                processed_by=request.user
+            )
+        
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+def view_interview_slot(request):
+    sy = SchoolYear.objects.filter(is_active=True).first()
+    slots = (
+        Program.objects
+        .filter(is_active=True)
+        .prefetch_related(
+            Prefetch(
+                'interviewslot_set',
+                queryset=InterviewSlot.objects.select_related('program')
+                .order_by('-interview_date', '-interview_time')
+                .filter(school_year=sy)
+            ),
+        )
+    )
+    
     context = {
-        'application': application,
-        'cet': cet,
-        'school': school,
+        'slots': slots,
     }
     
-    rendered_html = render(request, 'admission/applications/verify_student.modal.html', context)
+    rendered_html = render(request, 'admission/partials/view_interview_slot.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
+
+@ensure_csrf_cookie
+@require_POST
+def view_interview_slot_modal(request):
+    program = Program.objects.get(pk=request.POST.get('program_id'))
+
+    context = {
+        'program': program,
+    }
+    
+    rendered_html = render(request, 'admission/partials/add_interview.modal.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def add_interview_slot(request):
+    form = InterviewSlotForm(request.POST)
+    if form.is_valid():
+        school_year = SchoolYear.objects.filter(is_active=True).first()
+        program = Program.objects.get(pk=request.POST.get('program_id'))
+        interview = form.save(commit=False)
+        interview.school_year = school_year
+        interview.program = program
+        interview.save()
+        
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+def interview_application(request):
+    school_year = SchoolYear.objects.filter(is_active=True).first()
+    programs = Program.objects.filter(is_active=True)
+    students = (
+        Student.objects
+        .annotate(has_admission_application=Exists(
+            AdmissionApplication.objects
+            .filter(student=OuterRef('pk'), status='verified', school_year=school_year)
+        ))
+        .filter(has_admission_application=True)
+        .prefetch_related(
+            Prefetch(
+                'admissionapplication_set',
+                queryset=AdmissionApplication.objects.select_related('student')
+                .filter(status='verified', school_year=school_year)
+                .prefetch_related(
+                    Prefetch(
+                        'interviewlogs_set',
+                        queryset=InterviewLogs.objects.select_related('application')
+                    )
+                )
+            ),
+            Prefetch(
+                'collegeentrancetest_set',
+                queryset=CollegeEntranceTest.objects.select_related('student')
+            ),
+            Prefetch(
+                'schoolbackground_set',
+                queryset=SchoolBackground.objects.select_related('student')
+            ),
+            Prefetch(
+                'contactpoint_set',
+                queryset=ContactPoint.objects.select_related('student')
+            ),
+        )
+    )
+
+    applications = students
+    
+    context = {
+        'applications': applications,
+        'programs': programs
+    }
+    
+    rendered_html = render(request, 'admission/applications/interview.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')
+

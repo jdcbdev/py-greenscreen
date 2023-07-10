@@ -67,12 +67,20 @@
             including careers as software engineers, application software designers, system programmers, or system engineers.
           </p>
           {% if request.user.is_authenticated %}
-            {% if application and application.status == 'pending'%}
-            <p class="btn-apply-center">
-              <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'my_application' %}">
-                View Application
-              </a>
-            </p>
+            {% if application %}
+              {% if application.status == 'pending' or application.status == 'verified' %}
+              <p class="btn-apply-center">
+                <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'my_application' %}">
+                  View Application
+                </a>
+              </p>
+              {% else %}
+              <p class="btn-apply-center">
+                <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" data="bscs" id="bscs-apply">
+                  Apply Now
+                </a>
+              </p>
+              {% endif %}
             {% else %}
             <p class="btn-apply-center">
               <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" data="bscs" id="bscs-apply">
@@ -100,12 +108,20 @@
             industry sectors (business, education, media and entertainment, healthcare, government, and service).
           </p>
           {% if request.user.is_authenticated %}
-            {% if application and application.status == 'pending'%}
+            {% if application %}
+              {% if application.status == 'pending' or application.status == 'verified' %}
               <p class="btn-apply-center">
                 <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'my_application' %}">
                   View Application
                 </a>
               </p>
+              {% else %}
+              <p class="btn-apply-center">
+                <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" data="bsit" id="bsit-apply">
+                  Apply Now
+                </a>
+              </p>
+              {% endif %}
             {% else %}
               <p class="btn-apply-center">
                 <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" data="bsit" id="bsit-apply">

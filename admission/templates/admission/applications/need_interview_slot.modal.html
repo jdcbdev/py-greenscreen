@@ -1,0 +1,25 @@
+<div class="modal fade justify-content-center" id="verify-student-modal" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header background-color-green">
+                <h5 class="modal-title color-white" id="messageModalLabel">No Interview Schedule</h5>
+            </div>
+            <form class="needs-validation" action="" method="post">
+                <div class="modal-body">
+                    <p class="my-4 text-center"><i class="fa-solid fa-circle-exclamation"></i></p>
+                    <p class="text-center message">
+                        Go to <a href="{% url 'settings' %}" class="color-green">Settings</a> to setup Interview Schedule for {{ program.code|upper }}.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>  
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+
+    });
+</script>

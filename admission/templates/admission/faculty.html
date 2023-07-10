@@ -10,9 +10,11 @@
         <div class="table-responsive py-3 table-container">
             
         </div>
+        {% if request.user.is_superuser %}
         <a type="button" class="fab" title="Add Faculty" data-bs-toggle="modal" data-bs-target="#add-faculty-modal" id="add-faculty">
             <i class="fa fa-plus"></i>
         </a>
+        {% endif %}
     </div>
 </main>
 <!-- Modal -->

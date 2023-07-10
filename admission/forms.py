@@ -1,5 +1,5 @@
 from django import forms
-from .models import SchoolYear, AdmissionPeriod, Faculty
+from .models import SchoolYear, AdmissionPeriod, Faculty, InterviewSlot
 from datetime import date
 from django.contrib.auth import get_user_model
 
@@ -108,3 +108,30 @@ class AddFacultyForm(forms.ModelForm):
         # Perform any additional validation or cleaning logic
 
         return cleaned_data
+
+class ReturnApplicationForm(forms.Form):
+    comments = forms.CharField(required=True)
+    details = forms.CharField(max_length=255, required=True)
+    
+    def clean(self):
+        cleaned_data = super().clean()
+
+        return cleaned_data
+    
+class InterviewSlotForm(forms.ModelForm):
+    class Meta:
+        model = InterviewSlot
+        fields = [
+            'interview_date',
+            'interview_time',
+            'slot',
+            'setup',
+            'venue',
+        ]
+    
+    
+    def clean(self):
+        cleaned_data = super().clean()
+
+        return cleaned_data
+

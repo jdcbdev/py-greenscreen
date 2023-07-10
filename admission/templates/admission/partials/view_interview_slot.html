@@ -1,0 +1,69 @@
+{% for slot in slots %}
+<div class="m-0 row g-2 p-0 col-12 col-md-8 col-lg-6 mt-0">
+    <div class="d-flex align-items-center justify-content-between mt-0">
+        <div class="col-auto">
+            <h5 class="col-12 fw-bold mt-0 mb-1">{{slot.code|upper}} Interview Schedule</h5>
+        </div>
+        <div class="col-auto">
+            <a class="edit-toggle color-green mt-1" type="button" title="Add {{slot.code|upper}} Interview Schedule" id="add-interview" data="{{ slot.id }}"><i class="fa-regular fa-pen-to-square"></i></a>
+        </div>
+    </div>
+    {% if slot.interviewslot_set.all %}
+    <table class="table table-hover responsive" id="table-interview">
+        <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Time</th>
+                <th scope="col">Slot</th>
+                <th scope="col">Setup</th>
+                <th scope="col">Venue</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for view in slot.interviewslot_set.all %}
+                <tr>
+                    <td>{{ view.interview_date }}</td>
+                    <td>{{ view.interview_time }}</td>
+                    <td>{{ view.slot }}</td>
+                    <td>{{ view.setup }}</td>
+                    <td>{{ view.venue }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <h5 class="color-green">No Interview Schedule found</h5>
+    {% endif %}
+</div>
+<div class="col-12 m-0">
+    <hr class="my-4 mx-auto w-">
+</div>
+<div class="add-slot-container p-0 m-0"></div>
+{% endfor %}
+
+<script>
+    $(document).ready(function(){
+        $('a#add-interview').click(function(){
+            var formData = {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                program_id: $(this).attr('data'),
+            };
+            $.ajax({
+                type: "POST",
+                url: "{% url 'view_interview_slot_modal' %}",
+                data: formData,
+                success: function(result)
+                {
+                    $('div.add-slot-container').html(result);
+                    $('#add-interview-modal').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    }).modal('show');
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+                }  
+            });
+        })
+    });
+</script>

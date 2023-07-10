@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from .forms import SignUpForm, SignInForm, SignUpOldForm, ForgotPasswordForm, SetPasswordForm, PersonalInfoForm, CollegeEntranceTestForm, SchoolBackgroundForm, EconomicStatusForm, PersonalityTestForm1, PersonalityTestForm2, PersonalityTestForm3, PersonalityTestForm4
 from .forms import StudyHabitForm1, StudyHabitForm2, StudyHabitForm3
 from django.contrib.auth import authenticate, login, logout
-from .models import Student, SchoolBackground, ContactPoint, PersonalAddress, CollegeEntranceTest, EconomicStatus, PersonalityTest, StudyHabit, AdmissionApplication
+from .models import Student, SchoolBackground, ContactPoint, PersonalAddress, CollegeEntranceTest, EconomicStatus, PersonalityTest, StudyHabit, AdmissionApplication, ApplicationStatusLogs, InterviewLogs
 from base.models import SHSStrand, ClassRoomOrganization, StudentSupremeGovernment, ClassRank, AcademicAwards, AcademicDegree, EmploymentStatus
 from django.db import transaction
 from django.conf import settings
@@ -24,7 +24,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from datetime import date
-from admission.models import Program, SchoolYear, AdmissionPeriod, DocumentaryRequirement
+from admission.models import Program, SchoolYear, AdmissionPeriod, DocumentaryRequirement, InterviewSlot
 from django.http import HttpResponse
 
 load_settings()
@@ -925,7 +925,8 @@ def my_application(request):
     student = Student.objects.filter(account=request.user).first()
     school_year = SchoolYear.objects.filter(is_active=True).first()
     application = AdmissionApplication.objects.filter(student=student, school_year=school_year).order_by('-created_at').first()
-    
+    appstatus = ApplicationStatusLogs.objects.filter(application=application).order_by('-created_at').first()
+    interview = InterviewLogs.objects.filter(application=application).order_by('-created_at').first()
     documents = DocumentaryRequirement.objects.all()
     
     page_title = 'My Application'
@@ -933,6 +934,8 @@ def my_application(request):
         'page_title': page_title,
         'student': student,
         'application': application,
+        'appstatus': appstatus,
+        'interview': interview,
         'documents': documents,
         'settings': settings
     }
@@ -941,10 +944,15 @@ def my_application(request):
 @login_required(login_url='/student/sign-in/')
 @ensure_csrf_cookie
 @require_POST
+@transaction.atomic
 def cancel_application(request):
     application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
     if application:
         application.status = 'cancelled'
         application.save()
+        logs = InterviewLogs.objects.filter(application=application).order_by('-created_at').first()
+        if logs:
+            logs.status = application.status
+            logs.save()
     
     return JsonResponse({'message': 'Application Cancelled.'})

@@ -11,7 +11,7 @@
             <div class="col-12 col-md-4 col-lg-3">
                 <div class="d-flex align-items-center justify-content-between">
                     <label for="active_school_year" class="form-label">Active School Year<span class="text-muted"></span></label>
-                    <a class="color-green" type="button" title="Update School Year" data-bs-toggle="modal" data-bs-target="#modal-school-year"><i class="fa-regular fa-pen-to-square"></i></a>
+                    <a class="edit-toggle color-green" type="button" title="Update School Year" data-bs-toggle="modal" data-bs-target="#modal-school-year"><i class="fa-regular fa-pen-to-square"></i></a>
                 </div>
                 <input type="text" disabled="true" class="form-control" value="{{ sy.concat_year|default_if_none:'' }}" id="active_school_year">
             </div>
@@ -28,7 +28,7 @@
                       <h5 class="fw-bold mt-4 mb-1">Automation Settings</h5>
                     </div>
                     <div class="col-auto">
-                      <a class="color-green mt-4" type="button" title="Update Automation Settings" id="update_auto_settings"><i class="fa-regular fa-pen-to-square"></i></a>
+                      <a class="edit-toggle color-green mt-4" type="button" title="Update Automation Settings" id="update_auto_settings"><i class="fa-regular fa-pen-to-square"></i></a>
                       <a class="color-green mt-4" type="button" title="Save Automation Settings" id="save_auto_settings" style="display: none;"><i class="fa-regular fa-square-check"></i></a>
                     </div>
                   </div>
@@ -42,6 +42,9 @@
             <div class="col-12 m-0">
                 <hr class="my-4 mx-auto w-">
             </div>
+            <div class="m-0 row g-2 p-0" id="interview-container">
+                {% comment %} View Interview {% endcomment %}
+            </div>
             <div class="m-0 row g-2 p-0" id="criteria-container">
                 {% comment %} View Criteria {% endcomment %}
             </div>
@@ -53,6 +56,7 @@
     $(document).ready(function(){
         view_period()
         view_quota()
+        view_interview_slot()
         view_criteria()
         $('div.modal').modal({
             backdrop: 'static',
@@ -86,6 +90,12 @@
                 });
             });            
         });
+
+        {% if request.user.is_superuser %}
+            $('a.edit-toggle').show()
+        {% else %}
+            $('a.edit-toggle').hide()
+        {% endif %}
     });
     function view_period(){
         var formData = {
@@ -97,6 +107,11 @@
             data: formData,
             success: function(data) {
                 $('#period-container').html(data);
+                {% if request.user.is_superuser %}
+                    $('a.edit-toggle').show()
+                {% else %}
+                    $('a.edit-toggle').hide()
+                {% endif %}
             },
             error: function(xhr, status, error) {
                 console.error(error);
@@ -113,6 +128,32 @@
             data: formData,
             success: function(data) {
                 $('#quota-container').html(data);
+                {% if request.user.is_superuser %}
+                    $('a.edit-toggle').show()
+                {% else %}
+                    $('a.edit-toggle').hide()
+                {% endif %}
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    }
+    function view_interview_slot(){
+        var formData = {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        };
+        $.ajax({
+            url: "{% url 'view_interview_slot' %}",
+            type: 'POST',
+            data: formData,
+            success: function(data) {
+                $('#interview-container').html(data);
+                {% if request.user.is_superuser %}
+                    $('a.edit-toggle').show()
+                {% else %}
+                    $('a.edit-toggle').hide()
+                {% endif %}
             },
             error: function(xhr, status, error) {
                 console.error(error);
@@ -129,6 +170,11 @@
             data: formData,
             success: function(data) {
                 $('#criteria-container').html(data);
+                {% if request.user.is_superuser %}
+                    $('a.edit-toggle').show()
+                {% else %}
+                    $('a.edit-toggle').hide()
+                {% endif %}
             },
             error: function(xhr, status, error) {
                 console.error(error);

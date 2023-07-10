@@ -17,13 +17,13 @@
                             <label for="overall_percentile_rank" class="form-label">CET OAPR<span class="text-muted"></span></label>
                             <input type="text" disabled="true" class="form-control" id="overall_percentile_rank" placeholder="" name="overall_percentile_rank" value="{{ cet.overall_percentile_rank|default_if_none:'' }}">
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-6">
                             <label for="gpa_second_semester" class="form-label">SHS GPA<span class="text-muted"></span></label>
                             <input type="text" disabled="true" class="form-control" id="gpa_second_semester" placeholder="" name="gpa_second_semester" step="any" value="{{ school.combined_gpa|default_if_none:'' }}">
                         </div>
                         <div class="col-12 col-md-12">
                             <label for="uploaded-photos" class="form-label">Uploaded Photos<span class="text-muted"></span></label>
-                            <div class="photo-container row g-3">
+                            <div class="photo-container row g-2">
                                 <div class="col-6" href="{{ cet.report_of_rating.url }}">
                                     <div class="photo-holder photo-1" style="background-image: url({{ cet.report_of_rating.url }})" title="Click photo to enlarge"></div>
                                 </div>
@@ -42,15 +42,18 @@
                             </div>
                         </div>
                         <div class="col-12 col-md-12 comments" style="display:none">
-                            <label for="exampleFormControlTextarea1" class="form-label">Enter your comments below</label>
-                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                            <label for="details" class="form-label">Enter your comments below</label>
+                            <textarea class="form-control" id="details" name="details" rows="3"></textarea>
+                            <div class="invalid-feedback d-none details">
+                            </div>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary background-color-green" id="pending-submit">Accept Application</button>
+                <button type="button" class="btn btn-primary background-color-green" data="{{ application.id }}" id="accept-application">Accept Application</button>
+                <button type="button" class="btn btn-primary background-color-green" data="{{ application.id }}" id="return-application" style="display: none;">Return Application</button>
             </div>
         </div>
     </div>
@@ -60,16 +63,73 @@
         $('#comments').on('change', function(){
             if ($(this).is(":checked")) {
                 $('div.comments').show();
-                $('#pending-submit').text("Return Application")
+                $('#accept-application').hide()
+                $('#return-application').show()
             }else{
                 $('div.comments').hide();
-                $('#pending-submit').text("Accept Application")
+                $('#accept-application').show()
+                $('#return-application').hide()
             }
         });
         $('div.photo-container').lightGallery({
             thumbnail: false,
             animateThumb: false,
             showThumbByDefault: false
-        }); 
+        });
+        $('#accept-application').click(function(){
+            var formData = {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                application_id: $(this).attr('data'),
+                interview_id: {{ interview.id }},
+            };
+            $.ajax({
+                type: "POST",
+                url: "{% url 'accept_application' %}",
+                data: formData,
+                success: function(result)
+                {
+                    $('#verify-student-modal').modal('hide')
+                    load('pending')
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+                }  
+            });
+        });
+        $('#return-application').click(function(){
+            var formData = {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                application_id: $(this).attr('data'),
+                comments: $('#comments').val(),
+                details: $('#details').val(),
+            };
+            $.ajax({
+                type: "POST",
+                url: "{% url 'return_application' %}",
+                data: formData,
+                success: function(data)
+                {
+                    var errors = JSON.parse(data);
+                    has_error = false;
+                    $('div.details').empty().removeClass('d-block');
+                    $('#details').removeClass('is-invalid');
+
+                    if (errors.details) {
+                        $('#details').addClass('is-invalid');
+                        $('div.details').removeClass('d-none');
+                        $('div.details').addClass('d-block');
+                        $.each(errors.details, function(index, error) {
+                            $('div.details').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+    
+                    if (!has_error) {
+                        $('#verify-student-modal').modal('hide')
+                        load('pending')
+                    }
+                } 
+            });
+        });
     });
 </script>

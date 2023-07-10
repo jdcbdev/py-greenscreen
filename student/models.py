@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from admission.models import Program, SchoolYear
+from admission.models import Program, SchoolYear, InterviewSlot
 
 # Create your models here.
 
@@ -161,5 +161,23 @@ class AdmissionApplication(models.Model):
     school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE)
     status = models.CharField(max_length=255, default='pending')
     
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+class ApplicationStatusLogs(models.Model):
+    application = models.ForeignKey(AdmissionApplication, on_delete=models.CASCADE)
+    status = models.CharField(max_length=255, default='')
+    comments = models.CharField(max_length=255, default='')
+    processed_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class InterviewLogs(models.Model):
+    application = models.ForeignKey(AdmissionApplication, on_delete=models.CASCADE)
+    interview = models.ForeignKey(InterviewSlot, on_delete=models.CASCADE)
+    status = models.CharField(max_length=255, default='okay')
+    comments = models.CharField(max_length=255, default='')
+    processed_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    score = models.FloatField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

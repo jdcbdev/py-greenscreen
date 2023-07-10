@@ -1,11 +1,10 @@
 <div class="row g-2 mb-2 ">
     <div id="MyButtons" class="d-flex mb-md-2 mb-lg-0 col-12 col-md-auto"></div>
     <div class="form-group col-12 col-sm-auto flex-sm-grow-1 flex-lg-grow-0 ms-lg-auto">
-        <select name="student_type" id="student_type" class="form-select me-md-2">
-            <option value="">All Type</option>
-            <option value="Freshman">Freshman</option>
-            <option value="Shiftee">Shiftee</option>
-            <option value="Transferee">Transferee</option>
+        <select name="interview_type" id="interview_type" class="form-select me-md-2">
+            <option value="">All Setup</option>
+            <option value="Face-to-Face">Face-to-Face</option>
+            <option value="Online">Online</option>
         </select>
     </div>
     <div class="form-group col-12 col-sm-auto flex-sm-grow-1 flex-lg-grow-0">
@@ -21,17 +20,18 @@
         <button class="btn btn-outline-secondary background-color-green" type="button"><i class="fas fa-search white"></i></button>
     </div>
 </div>
-<table class="table table-hover responsive" id="table-pending">
+<table class="table table-hover responsive" id="table-interview">
     <thead>
         <tr>
             <th scope="col">Action</th>
             <th scope="col">Name</th>
-            <th scope="col">Type</th>
             <th scope="col">Program</th>
             <th scope="col">CET OAPR</th>
             <th scope="col">SHS GPA</th>
             <th scope="col">Email Address</th>
             <th scope="col">Phone Number</th>
+            <th scope="col">Date & Time</th>
+            <th scope="col">Setup</th>
         </tr>
     </thead>
     <tbody>
@@ -39,32 +39,34 @@
         <tr>
             <td>
                 <div class="action-button">
-                    <a title="Verify Student Application" class="me-2 green verify-application" id="{{ application.admissionapplication_set.first.program.id }}" data="{{ application.admissionapplication_set.first.id }}"><i class="fa-solid fa-user-check"></i></a>
+                    <a title="Rate Student Interview" href="" class="me-2 green rate-interview" id="{{ application.admissionapplication_set.first.interviewlogs_set.first.id }}" data="{{ application.admissionapplication_set.first.interviewlogs_set.first.id }}"><i class="fa-solid fa-pen-to-square"></i></a>
                     <a title="View Student Profile" class="me-2 green view-profile" data="{{ application.id }}"><i class="fa-solid fa-eye"></i></a>
                 </div>
             </td>
             <td>{{ application.last_name }}, {{ application.first_name }} {{ application.middle_name }}</td>
-            <td>{{ application.student_type_name|capfirst }}</td>
             <td>{{ application.admissionapplication_set.first.program.code }}</td>
             <td>{{ application.collegeentrancetest_set.first.overall_percentile_rank }}</td>
             <td>{{ application.schoolbackground_set.first.combined_gpa }}</td>
             <td>{{ application.contactpoint_set.first.contact_email }}</td>
             <td>{{ application.contactpoint_set.first.contact_number }}</td>
+            <td>
+                {{ application.admissionapplication_set.first.interviewlogs_set.first.interview.interview_date }}
+                {{ application.admissionapplication_set.first.interviewlogs_set.first.interview.interview_time }}
+            </td>
+            <td>{{ application.admissionapplication_set.first.interviewlogs_set.first.interview.setup }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-<!-- Modal -->
-<div class="application-container"></div>
+
 <script>
     $(document).ready(function(){
-        $('span.pending-counter').text({{ applications.count }})
+        $('span.interview-counter').text({{ applications.count }})
 
-        dataTable = $("#table-pending").DataTable({
+        dataTable = $("#table-interview").DataTable({
             dom: 'Brtp',
             responsive: true,
             fixedHeader: true,
-            pageLength: 10,
             buttons: [
                 {
                     extend: 'excel',
@@ -85,40 +87,17 @@
         });
         dataTable.buttons().container().appendTo($('#MyButtons'));
 
-        $('input#keyword').on('input', function(e){
+        $('input#keyword').on('input', function(e) {
             var status = $(this).val();
-            dataTable.columns([1]).search(status).draw();
-        });
-        $('select#student_type').on('change', function(e){
+            dataTable.columns([1]).search(status, false, true).draw();
+        });        
+        $('select#interview_type').on('change', function(e){
             var status = $(this).val();
-            dataTable.columns([2]).search(status).draw();
+            dataTable.columns([8]).search(status).draw();
         });
         $('select#program').on('change', function(e){
             var status = $(this).val();
-            dataTable.columns([3]).search(status).draw();
-        });
-        $('.verify-application').click(function(){
-            var formData = {
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-                application_id: $(this).attr('data'),
-                program_id: $(this).attr('id'),
-            };
-            $.ajax({
-                type: "POST",
-                url: "{% url 'view_verify_student_modal' %}",
-                data: formData,
-                success: function(result)
-                {
-                    $('div.application-container').html(result);
-                    $('#verify-student-modal').modal({
-                        backdrop: 'static',
-                        keyboard: false
-                    }).modal('show');
-                },
-                error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                    alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-                }  
-            });
+            dataTable.columns([2]).search(status).draw();
         });
     })
 </script>

@@ -12,8 +12,10 @@
             {% include 'student/my-application/pending.html' %}
         {% elif application.status == 'cancelled' %}
             {% include 'student/my-application/cancelled.html' %}
-        {% elif application.status == 'approved' %}
-            {% include 'student/my-application/complete.html' %}
+        {% elif application.status == 'returned' %}
+            {% include 'student/my-application/returned.html' %}
+        {% elif application.status == 'verified' %}
+            {% include 'student/my-application/interview.html' %}
         {% endif %}
     {% else %}
         {% include 'student/my-application/no-application.html' %}

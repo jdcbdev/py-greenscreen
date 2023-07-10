@@ -1,0 +1,151 @@
+<!-- Modal -->
+<div class="modal fade" id="add-interview-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add {{ program.code|upper }} Interview Schedule</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="needs-validation" action="" method="post" name="add-{{ program.code|upper }}-interview" id="add-{{ program.code|upper }}-interview">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row g-2">
+                        <div class="col-sm-6">
+                            <label for="interview_date" class="form-label">Date<span class="text-muted"></span></label>
+                            <input type="date" class="form-control" id="interview_date" placeholder="" name="interview_date">
+                            <div class="invalid-feedback d-none interview_date">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="interview_time" class="form-label">Time<span class="text-muted"></span></label>
+                            <input type="time" class="form-control" id="interview_time" placeholder="" name="interview_time">
+                            <div class="invalid-feedback d-none interview_time">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="slot" class="form-label">Slot<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="slot" placeholder="" name="slot">
+                            <div class="invalid-feedback d-none slot">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="setup" class="form-label">Setup<span class="text-muted"></span></label>
+                            <select type="text" class="form-control form-select" id="setup" placeholder="" name="setup">
+                                <option value="">--Select--</option>
+                                <option value="Face-to-Face">Face-to-Face</option>
+                                <option value="Online">Online</option>
+                            </select>
+                            <div class="invalid-feedback d-none setup">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="venue" class="form-label">Venue<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="venue" placeholder="" name="venue" value="College of Computing Studies">
+                            <div class="invalid-feedback d-none venue">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" value="Save {{ program.code|upper }} Interview" name="save_{{ program.code|upper }}_interview" id="save_{{ slot.code|upper }}_interview" class="btn btn-primary background-color-green">Save {{ slot.code|upper }} Interview</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $('form#add-{{ program.code|upper }}-interview').submit(function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            formData.append('program_id', '{{program.id}}');
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'add_interview_slot' %}",
+                data: formData,
+                processData: false,
+                contentType: false,
+    
+                success: function(data) {
+                    var errors = JSON.parse(data);
+                    has_error = false;
+    
+                    $('div.interview_date').empty().removeClass('d-block');
+                    $('#interview_date').removeClass('is-invalid');
+                    $('div.interview_time').empty().removeClass('d-block');
+                    $('#interview_time').removeClass('is-invalid');
+                    $('div.slot').empty().removeClass('d-block');
+                    $('#slot').removeClass('is-invalid');
+                    $('div.setup').empty().removeClass('d-block');
+                    $('#setup').removeClass('is-invalid');
+                    $('div.venue').empty().removeClass('d-block');
+                    $('#venue').removeClass('is-invalid');
+    
+                    if (errors.interview_date) {
+                        $('#interview_date').addClass('is-invalid');
+                        $('div.interview_date').removeClass('d-none');
+                        $('div.interview_date').addClass('d-block');
+                        $.each(errors.interview_date, function(index, error) {
+                            $('div.interview_date').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+    
+                    if (errors.interview_time) {
+                        $('#interview_time').addClass('is-invalid');
+                        $('div.interview_time').removeClass('d-none');
+                        $('div.interview_time').addClass('d-block');
+                        $.each(errors.interview_time, function(index, error) {
+                            $('div.interview_time').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+    
+                    if (errors.slot) {
+                        $('#slot').addClass('is-invalid');
+                        $('div.slot').removeClass('d-none');
+                        $('div.slot').addClass('d-block');
+                        $.each(errors.slot, function(index, error) {
+                            $('div.slot').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+    
+                    if (errors.setup) {
+                        $('#setup').addClass('is-invalid');
+                        $('div.setup').removeClass('d-none');
+                        $('div.setup').addClass('d-block');
+                        $.each(errors.setup, function(index, error) {
+                            $('div.setup').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+    
+                    if (errors.venue) {
+                        $('#venue').addClass('is-invalid');
+                        $('div.venue').removeClass('d-none');
+                        $('div.venue').addClass('d-block');
+                        $.each(errors.venue, function(index, error) {
+                            $('div.venue').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+    
+                    if (!has_error) {
+                        view_interview_slot()
+                        $('#add-interview-modal').modal('hide');
+                    }
+                },
+            });
+        });
+          
+        function clearFormFields() {
+            
+        }
+        $('#add-interview-modal').on('hidden.bs.modal', function () {
+            clearFormFields();
+        });   
+    });
+</script>

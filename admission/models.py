@@ -106,3 +106,15 @@ class DocumentaryRequirement(models.Model):
 
     def __str__(self):
         return self.name
+    
+class InterviewSlot(models.Model):
+    school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE, null=True)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, null=True)
+    interview_date = models.DateField(null=True)
+    interview_time = models.TimeField(null=True)
+    setup = models.CharField(max_length=100, default='face-to-face')
+    venue = models.CharField(max_length=255, default='College of Computing Studies')
+    slot = models.IntegerField(default=30)
+
+    def __str__(self):
+        return f'{self.program} {self.interview_date}'

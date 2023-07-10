@@ -5,7 +5,7 @@
             <h5 class="col-12 fw-bold mt-0 mb-1">{{criterium.code|upper}} Admission Criteria</h5>
         </div>
         <div class="col-auto">
-            <a class="color-green mt-1" type="button" title="Update {{criterium.code|upper}} Admission Criteria" id="update_{{criterium.code|upper}}_criteria" data-bs-toggle="modal" data-bs-target="#modal-{{ criterium.code|upper }}-criteria"><i class="fa-regular fa-pen-to-square"></i></a>
+            <a class="edit-toggle color-green mt-1" type="button" title="Update {{criterium.code|upper}} Admission Criteria" id="update_{{criterium.code|upper}}_criteria" data-bs-toggle="modal" data-bs-target="#modal-{{ criterium.code|upper }}-criteria"><i class="fa-regular fa-pen-to-square"></i></a>
         </div>
     </div>
     {% for ctr in criterium.criterias %}
