@@ -8,6 +8,8 @@ def load_initial_data(apps, schema_editor):
     positions = [
         'President',
         'Vice President (Internal/External)',
+        'Senator',
+        'Board Member',
         'Secretary',
         'Treasurer',
         'Auditor',

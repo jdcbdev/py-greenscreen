@@ -135,3 +135,17 @@ class InterviewSlotForm(forms.ModelForm):
 
         return cleaned_data
 
+class RateInterviewForm(forms.Form):
+    score = forms.IntegerField(required=True)
+    comments = forms.CharField(widget=forms.Textarea, required=False)
+    
+    def clean_score(self):
+        score = self.cleaned_data.get('score')
+        if score is not None and (score < 0 or score > 100):
+            raise forms.ValidationError("Score must be between 0 and 100.")
+        return score
+    
+    def clean(self):
+        cleaned_data = super().clean()
+
+        return cleaned_data

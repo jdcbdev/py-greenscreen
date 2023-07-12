@@ -21,7 +21,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from .models import SchoolYear, AdmissionPeriod, Program, Quota, AutoAdmission, Criteria, Department, AcademicRank, AdmissionRole, Faculty, InterviewSlot
-from .forms import SchoolYearForm, AdmissionPeriodForm, QuotaForm, CriteriaForm, AddFacultyForm, ReturnApplicationForm, InterviewSlotForm
+from .forms import SchoolYearForm, AdmissionPeriodForm, QuotaForm, CriteriaForm, AddFacultyForm, ReturnApplicationForm, InterviewSlotForm, RateInterviewForm
 from django.http import JsonResponse
 from django.db.models import Prefetch
 from django.contrib.auth.password_validation import validate_password
@@ -915,3 +915,39 @@ def view_student_profile(request, id):
     }
     
     return render(request, 'admission/student/main.html', context)
+
+@ensure_csrf_cookie
+@require_POST
+def view_rate_interview_modal(request):
+    application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
+    
+    context = {
+        'application': application,
+    }
+    
+    rendered_html = render(request, 'admission/applications/interview_student.modal.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def rate_interview(request):
+    application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
+    
+    form = RateInterviewForm(request.POST)
+    if form.is_valid():
+        if application:
+            log = InterviewLogs.objects.filter(application=application).order_by('-created_at').first()
+            if log:
+                log.status = 'interviewed'
+                log.score = form.cleaned_data.get('score')
+                log.comments = form.cleaned_data.get('comments')
+                log.processed_by = request.user
+                log.save()
+                
+                application = log.application
+                application.status = 'interviewed'
+                application.save()
+        
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
