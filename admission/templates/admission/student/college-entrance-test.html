@@ -1,0 +1,134 @@
+{% load static %}
+
+<div id='cet' class="col-12 col-md-11 profile-screen mt-0 mt-md-3 mx-auto" style="display:none;">
+    <div class="mt-3 mt-md-0">
+        <div class="card-profile p-4 mt-3">
+            <div class="row">
+                <h5 class="col-12 fw-bold mb-3">College Entrance Test (CET) Rating</h5>
+                <form class="needs-validation" method="get" name="cet" id="cet" enctype="multipart/form-data">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label for="application_number" class="form-label">CET Application Number<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="application_number" placeholder="" name="application_number" value="{{ cet.application_number|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none application_number">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="rating_period" class="form-label">Period of Rating<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="rating_period" placeholder="Ex: January-February 2022" name="rating_period" value="{{ cet.rating_period|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none rating_period">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="overall_percentile_rank" class="form-label">Overall Percentile Rank (OAPR)<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="overall_percentile_rank" placeholder="" name="overall_percentile_rank" value="{{ cet.overall_percentile_rank|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none overall_percentile_rank">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="english_proficiency_skills" class="form-label">English Proficiency Skills<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="english_proficiency_skills" placeholder="" name="english_proficiency_skills" value="{{ cet.english_proficiency_skills|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none english_proficiency_skills">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="reading_comprehension_skills" class="form-label">Reading Comprehension Skills<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="reading_comprehension_skills" placeholder="" name="reading_comprehension_skills" value="{{ cet.reading_comprehension_skills|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none reading_comprehension_skills">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="science_process_skills" class="form-label">Science Process Skills<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="science_process_skills" placeholder="" name="science_process_skills" value="{{ cet.science_process_skills|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none science_process_skills">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="quantitative_skills" class="form-label">Quantitative Skills<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="quantitative_skills" placeholder="" name="quantitative_skills" value="{{ cet.quantitative_skills|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none quantitative_skills">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="abstract_thinking_skills" class="form-label">Abstract Thinking Skills<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="abstract_thinking_skills" placeholder="" name="abstract_thinking_skills" value="{{ cet.abstract_thinking_skills|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none abstract_thinking_skills">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="upload-cet" class="form-label">Photo of CET Report of Rating (Accepted files: jpg, jpeg, png)<span class="text-muted"></span></label>
+                            <div class="card-profile p-4 justify-content-center upload-container upload-container-cet" {% if cet.report_of_rating %} style="background-image: url({{ cet.report_of_rating.url }}); background-color: #5a5a5a" {% endif %}> 
+                            </div>
+                            <div class="invalid-feedback d-none report_of_rating text-center">
+                            </div>
+                        </div>
+                        <div class="col-12 m-0">
+                            <hr class="my-4 mx-auto w-">
+                        </div>
+                        <div class="col-6 text-start m-0">
+                            <a class="btn btn-lg btn-success btn-font w-100 back-button m-0" name="cet" id="cet">
+                                <i class="fa-solid fa-arrow-left-long pe-1"></i>
+                                Back
+                            </a>
+                        </div>
+                        <div class="col-6 text-end m-0">
+                            <button class="btn btn-lg btn-success background-color-green w-100 next-button btn-font m-0" type="submit" value="Next" name="cet">
+                                Next
+                                <i class="ps-1 fa-solid fa-arrow-right-long"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        {% if cet.report_of_rating %}
+          var file = '{{ cet.report_of_rating.url|default_if_none:'' }}';
+        {% else %}
+          var file;
+        {% endif %}
+
+        $('input#report_of_rating').on('change', function() {
+            file = this.files[0];
+            var reader = new FileReader();
+          
+            reader.onload = function(e) {
+              $('.upload-container-cet').css('background-image', 'url('+e.target.result+')');
+              $('.upload-container-cet').css('background-color', '#808080');
+            };
+          
+            reader.readAsDataURL(file);
+            $('a#upload_cet').hide();
+            $('#edit_upload_cet').show();
+        });
+        $('#cet.back-button').click(function(e){
+            $('div.profile-screen').hide();
+            $('div#personal-info').show();
+  
+            $('span.progress-counter').text('1');
+            $('html,body').animate({
+                scrollTop:$('div.profile-screen').offset().top -400}, 'fast');
+        });
+
+        $('.view-student div#step-2.profile-progress-container').click(function(){
+            $('#shs.back-button').trigger('click');
+        })
+
+        $('form#cet').submit(function(e){
+            e.preventDefault()
+            $('div.profile-screen').hide();
+            $('div#shs').show();
+
+            $('span.progress-counter').text('3');
+            $('html,body').animate({
+                scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+        });
+        $('input:not(:radio), select').prop('disabled', true);
+        $('input[type="radio"]').click(function() {
+            return false;
+        });
+    });
+</script>

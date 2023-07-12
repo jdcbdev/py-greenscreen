@@ -1,0 +1,367 @@
+{% load static %}
+
+<div id='personal-info' class="col-12 col-md-11 profile-screen mt-0 mt-md-3 mx-auto">
+    <div class="mt-3 mt-md-0">
+        <div class="card-profile p-4 d-block">
+            <div class="card-profile w-100 border-0">
+                <div class="upload-photo-container">
+                    {% if student.profile_photo %}
+                        <img id="preview_image" src="{{ student.profile_photo.url }}" alt="">
+                    {% else %}
+                        <img id="preview_image" src="{% static 'img/faculty/male.png' %}" alt="">
+                    {% endif %}
+                    <h6 class="ms-3 card-title fw-bold d-none d-sm-block">Profile Picture</h6>
+                </div>
+            </div>
+            <div class="invalid-feedback d-none profile_photo text-center">
+            </div>
+        </div>
+        <div class="card-profile p-4 mt-3">
+            <div class="row">
+                <h5 class="col-12 fw-bold mb-3">Personal Information</h5>
+                <form class="needs-validation" action="" method="get" name="personal-info" id="personal-info" enctype="multipart/form-data">
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6 d-none">
+                            <label for="profile_photo" class="form-label">Upload Photo<span class="text-muted"></span></label>
+                            <input class="upload-photo custom-file-input" type="file" accept="image/*" name="profile_photo" id="profile_photo">
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="first_name" class="form-label">First Name<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="" value="{{ student.first_name|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none first_name">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="middle_name" class="form-label">Middle Name<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="middle_name" name="middle_name" placeholder="" value="{{ student.middle_name|default_if_none:'' }}">
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="last_name" class="form-label">Last Name<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="last_name" placeholder="" name="last_name" value="{{ student.last_name|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none last_name">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="extension_name" class="form-label">Extension Name<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="extension_name" placeholder="Optional (Jr, Sr, I, III)" name="extension_name" value="{{ student.extension_name|default_if_none:'' }}">
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="sex" class="form-label">Sex<span class="text-muted"></span></label>
+                            <select class="form-control form-select" id="sex" placeholder="" name="sex">
+                                <option value="">--Select--</option>
+                                <option value="Male" {% if student.sex == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if student.sex == 'Female' %}selected{% endif %}>Female</option>
+                            </select>
+                            <div class="invalid-feedback d-none sex">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="birth_date" class="form-label">Birth Date<span class="text-muted"> (DD-MM-YYYY)</span></label>
+                            <input type="date" class="form-control" id="birth_date" placeholder="" name="birth_date" value="{{ student.birth_date|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none birth_date">
+                            </div>
+                        </div>
+                        <h5 class="col-12 fw-bold my-4 mb-1">Contact Points</h5>
+                        <div class="col-sm-6">
+                            <label for="contact_email" class="form-label">School or Personal Email<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="contact_email" placeholder="" name="contact_email" value="{{ request.user.email|default_if_none:'' }}" disabled>
+                            <div class="invalid-feedback d-none contact_email">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="contact_number" class="form-label">Phone Number<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="contact_number" placeholder="11-digit mobile number" name="contact_number" value="{{ contact.contact_number|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none contact_number">
+                            </div>
+                        </div>
+                        <h5 class="col-12 fw-bold my-4 mb-1">Home Address</h5>
+                        <div class="col-sm-6">
+                            <label for="house_no" class="form-label">Building/House No.<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="house_no" placeholder="Optional" name="house_no" value="{{ address.house_no|default_if_none:'' }}">
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="street_name" class="form-label">Street Name<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="street_name" placeholder="Optional" name="street_name" value="{{ address.street_name|default_if_none:'' }}">
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="barangay" class="form-label">Barangay<span class="text-muted"></span></label>
+                            <select class="form-control form-select" id="barangay" placeholder="" name="barangay">
+                                <option value="">--Select--</option>
+                            </select>
+                            <div class="invalid-feedback d-none barangay">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="city" class="form-label">City/Municipality<span class="text-muted"></span></label>
+                            <select class="form-control form-select" id="city" placeholder="" name="city">
+                                <option value="">--Select--</option>
+                            </select>
+                            <div class="invalid-feedback d-none city">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="province" class="form-label">Province<span class="text-muted"></span></label>
+                            <select class="form-control form-select" id="province" placeholder="" name="province">
+                                <option value="">--Select--</option>
+                            </select>
+                            <div class="invalid-feedback d-none province">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="region" class="form-label">Region<span class="text-muted"></span></label>
+                            <select type="text" class="form-control form-select" id="region" placeholder="" name="region">
+                                <option value="">--Select--</option>
+                            </select>
+                            <div class="invalid-feedback d-none region">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="upload-id" class="form-label">Government or School Issued ID (Accepted files: jpg, jpeg, png)<span class="text-muted"></span></label>
+                            <div class="card-profile p-4 justify-content-center upload-container upload-container-id" {% if student.identification_card %} style="background-image: url({{ student.identification_card.url }}); background-color: #5a5a5a" {% endif %}> 
+                                
+                            </div>
+                            <div class="invalid-feedback d-none identification_card text-center">
+                            </div>
+                        </div>
+                        <div class="col-12 m-0">
+                            <hr class="my-4 mx-auto w-">
+                        </div>
+                        <div class="col-6 text-start m-0">
+                            <a class="btn btn-lg btn-success btn-font w-100 back-button m-0 d-none" name="personal" id="personal">
+                                <i class="fa-solid fa-arrow-left-long pe-1"></i>
+                                Back
+                            </a>
+                        </div>
+                        <div class="col-6 text-end m-0">
+                            <button class="btn btn-lg btn-success background-color-green w-100 next-button btn-font m-0" type="submit" id="personal">
+                                Next
+                                <i class="ps-1 fa-solid fa-arrow-right-long"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        var file;
+        {% if student.identification_card %}
+          $('a#upload_id').hide();
+            $('#edit_upload_id').show();
+        {% endif %}
+
+        {% if student.identification_card %}
+          var fileID = '{{ student.identification_card.url|default_if_none:'' }}';
+        {% else %}
+          var fileID;
+        {% endif %}
+
+        var formData = {
+            action: 'region',
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        };
+        $.ajax({
+            type: 'POST',
+            url: '/student/complete-profile/select-address/',
+            data: formData,
+            success: function(data) {
+                $('#region').empty().append('<option value="">--Select--</option>');
+                $.each(data, function(index, region) {
+                  var option = $('<option value="' + region.code + '">' + region.name + '</option>');
+                  if (region.code === '{{ address.region|default_if_none:"090000000"|default:"090000000" }}') {
+                    option.prop('selected', true);
+                  }
+                  $('#region').append(option);
+                });
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert('Error: ' + textStatus);
+            }
+        });
+        var formData = {
+            filter: '{{ address.region|default_if_none:"090000000"|default:"090000000" }}',
+            action: 'province',
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        };
+        $.ajax({
+            type: 'POST',
+            url: '/student/complete-profile/select-address/',
+            data: formData,
+            success: function(data) {
+                $('#province').empty().append('<option value="">--Select--</option>');
+                $.each(data, function(index, province) {
+                    var option = $('<option value="' + province.code + '">' + province.name + '</option>');
+                    if (province.code === '{{ address.province|default_if_none:"097300000"|default:"097300000" }}') {
+                        option.prop('selected', true);
+                    }
+                    $('#province').append(option);
+                });
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert('Error: ' + textStatus);
+            }
+        });
+        var formData = {
+            filter: '{{ address.province|default_if_none:"097300000"|default:"097300000" }}',
+            action: 'city',
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        };
+        $.ajax({
+            type: 'POST',
+            url: '/student/complete-profile/select-address/',
+            data: formData,
+            success: function(data) {
+                $('#city').empty().append('<option value="">--Select--</option>');
+                $.each(data, function(index, city) {
+                    var option = $('<option value="' + city.code + '">' + city.name + '</option>');
+                    if (city.code === '{{ address.city|default_if_none:"097332000"|default:"097332000" }}') {
+                        option.prop('selected', true);
+                    }
+                    $('#city').append(option);
+                });
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert('Error: ' + textStatus);
+            }
+        });
+        var formData = {
+            filter: '{{ address.city|default_if_none:"097332000"|default:"097332000" }}',
+            action: 'barangay',
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        };
+        $.ajax({
+            type: 'POST',
+            url: '/student/complete-profile/select-address/',
+            data: formData,
+            success: function(data) {
+                $('#barangay').empty().append('<option value="">--Select--</option>');
+                $.each(data, function(index, barangay) {
+                    var option = $('<option value="' + barangay.code + '">' + barangay.name + '</option>');
+                    if (barangay.code === '{{ address.barangay }}') {
+                        option.prop('selected', true);
+                    }
+                    $('#barangay').append(option);
+                });
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert('Error: ' + textStatus);
+            }
+        });
+
+        $('#region').on('change', function(){
+            if ($('#region').val() === '') {
+                return;
+            }
+            var formData = {
+                filter: $("#region").val(),
+                action: 'province',
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/student/complete-profile/select-address/',
+                data: formData,
+                success: function(data) {
+                    $('#province').empty().append('<option value="">--Select--</option>');
+                    $.each(data, function(index, province) {
+                        $('#province').append('<option value="' + province.code + '">' + province.name + '</option>');
+                    });
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert('Error: ' + textStatus);
+                }
+            });
+        });
+        $('#province').on('change', function(){
+            if ($('#province').val() === '') {
+                return;
+            }
+            var formData = {
+                filter: $("#province").val(),
+                action: 'city',
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/student/complete-profile/select-address/',
+                data: formData,
+                success: function(data) {
+                    $('#city').empty().append('<option value="">--Select--</option>');
+                    $.each(data, function(index, city) {
+                        $('#city').append('<option value="' + city.code + '">' + city.name + '</option>');
+                    });
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert('Error: ' + textStatus);
+                }
+            });
+        });
+        $('#city').on('change', function(){
+            if ($('#city').val() === '') {
+                return;
+            }
+            var formData = {
+                filter: $("#city").val(),
+                action: 'barangay',
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/student/complete-profile/select-address/',
+                data: formData,
+                success: function(data) {
+                    $('#barangay').empty().append('<option value="">--Select--</option>');
+                    $.each(data, function(index, barangay) {
+                        $('#barangay').append('<option value="' + barangay.code + '">' + barangay.name + '</option>');
+                    });
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert('Error: ' + textStatus);
+                }
+            });
+        });
+        $('input#profile_photo').on('change', function() {
+            file = this.files[0];
+            var reader = new FileReader();
+          
+            reader.onload = function(e) {
+              $('#preview_image').attr('src', e.target.result);
+            };
+          
+            reader.readAsDataURL(file);
+        });
+        $('input#identification_card').on('change', function() {
+            fileID = this.files[0];
+            var readerID = new FileReader();
+          
+            readerID.onload = function(e) {
+              $('.upload-container-id').css('background-image', 'url('+e.target.result+')');
+              $('.upload-container-id').css('background-color', '#808080');
+            };
+          
+            readerID.readAsDataURL(fileID);
+            $('a#upload_id').hide();
+            $('#edit_upload_id').show();
+        }); 
+        
+        $('.view-student div#step-1.profile-progress-container').click(function(){
+            $('#cet.back-button').trigger('click');
+        })
+
+        $('form#personal-info').submit(function(e){
+            e.preventDefault()
+            $('div.profile-screen').hide();
+            $('div#cet').show();
+            
+            $('span.progress-counter').text('2');
+            $('html,body').animate({
+                scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+        });
+        $('input:not(:radio), select').prop('disabled', true);
+        $('input[type="radio"]').click(function() {
+            return false;
+        });
+    });
+</script>

@@ -29,11 +29,12 @@ from django.core.exceptions import ValidationError
 from django.utils.crypto import get_random_string
 from .tasks import send_faculty_email_task
 from django.shortcuts import get_object_or_404
-from student.models import AdmissionApplication, CollegeEntranceTest, SchoolBackground, ContactPoint, Student, ApplicationStatusLogs, InterviewLogs
+from student.models import AdmissionApplication, CollegeEntranceTest, SchoolBackground, ContactPoint, Student, ApplicationStatusLogs, InterviewLogs, PersonalAddress, EconomicStatus, PersonalityTest, StudyHabit
 from django.db.models import Exists, OuterRef
 from django.utils import timezone
 from datetime import datetime
 import datetime
+from base.models import SHSStrand, ClassRoomOrganization, StudentSupremeGovernment, ClassRank, AcademicAwards, AcademicDegree, EmploymentStatus
 
 # Create your views here.
 
@@ -867,3 +868,50 @@ def interview_application(request):
     rendered_html = render(request, 'admission/applications/interview.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
+def view_student_profile(request, id):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
+    student = Student.objects.filter(pk=id).first()
+    if student.birth_date:
+        student_birth_date = student.birth_date
+        formatted_date = student_birth_date.strftime('%Y-%m-%d')
+        student.birth_date = formatted_date
+    contact = ContactPoint.objects.filter(student=student).first()
+    address = PersonalAddress.objects.filter(student=student).first()
+    cet = CollegeEntranceTest.objects.filter(student=student).first()
+    strands = SHSStrand.objects.all()
+    class_positions = ClassRoomOrganization.objects.all()
+    ssg = StudentSupremeGovernment.objects.all()
+    ranks = ClassRank.objects.all()
+    awards = AcademicAwards.objects.all()
+    school = SchoolBackground.objects.filter(student=student).first()
+    degrees = AcademicDegree.objects.all()
+    employment = EmploymentStatus.objects.all()
+    economic = EconomicStatus.objects.filter(student=student).first()
+    pt = PersonalityTest.objects.filter(student=student).first()
+    sh = StudyHabit.objects.filter(student=student).first()
+    
+    page_title = 'View Student Profile'
+    context = {
+        'page_title': page_title,
+        'student': student,
+        'contact': contact,
+        'address': address,
+        'cet': cet,
+        'strands': strands,
+        'class_positions': class_positions,
+        'ssg': ssg,
+        'ranks': ranks,
+        'awards': awards,
+        'school': school,
+        'degrees': degrees,
+        'employment': employment,
+        'economic': economic,
+        'pt': pt,
+        'sh': sh,
+        'settings': settings
+    }
+    
+    return render(request, 'admission/student/main.html', context)

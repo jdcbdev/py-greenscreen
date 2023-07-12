@@ -1,0 +1,253 @@
+{% load static %}
+<div id='shs' class="col-12 col-md-11 profile-screen mt-0 mt-md-3 mx-auto" style="display:none;">
+    <div class="mt-3 mt-md-0">
+        <div class="card-profile p-4 mt-3 d-block">
+            <div class="row">
+                <h5 class="col-12 fw-bold mb-3">Additional Student Information</h5>
+                <form class="needs-validation" method="get" name="college" id="college">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Student Type</label>
+                            <div class="col-12 rb-container">
+                                <div class="form-check d-sm-inline-block me-sm-3">
+                                    <input class="form-check-input" type="radio" id="freshman" name="student_type_name" value="freshman" {% if school.student_type_name == 'freshman' %}checked{% endif %}>
+                                    <label class="form-check-label" for="freshman">Incoming College Student</label>
+                                </div>
+                                <div class="form-check d-sm-inline-block me-sm-3">
+                                    <input class="form-check-input" type="radio" id="shiftee" name="student_type_name" value="shiftee" {% if school.student_type_name == 'shiftee' %}checked{% endif %}>
+                                    <label class="form-check-label" for="shiftee">Shiftee</label>
+                                </div>
+                                <div class="form-check d-sm-inline-block me-sm-3">
+                                    <input class="form-check-input" type="radio" id="transferee" name="student_type_name" value="transferee" {% if school.student_type_name == 'transferee' %}checked{% endif %}>
+                                    <label class="form-check-label" for="transferee">Transferee</label>
+                                </div>
+                                <div class="invalid-feedback d-none student_type_name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="last-school" class="form-label">Last School Attended</label>
+                            <input type="text" class="form-control" id="last_school_attended" name="last_school_attended" placeholder="" value="{{ school.last_school_attended|default_if_none:'' }}" disabled>
+                            <div class="invalid-feedback d-none last_school_attended">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="last-course" class="form-label">Course (Complete Name)</label>
+                            <input type="text" class="form-control" id="last_course_attended" name="last_course_attended" placeholder="e.g. BS Accountancy" value="{{ school.last_course_attended|default_if_none:'' }}" disabled>
+                            <div class="invalid-feedback d-none last_course_attended">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="card-profile p-4 mt-3">
+            <div class="row">
+                <h5 class="col-12 fw-bold mb-3">Senior High School Background</h5>
+                <form class="needs-validation" method="post" name="shs" id="shs">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label for="strand" class="form-label">Strand/Track<span class="text-muted"></span></label>
+                            <select class="form-control form-select" id="strand" placeholder="" name="strand">
+                                <option value="">--Select--</option>
+                                {% for strand in strands %}
+                                    {% if school.strand == strand.code %}
+                                        <option value="{{ strand.code }}" selected>{{ strand.name }}</option>
+                                    {% else %}
+                                        <option value="{{ strand.code }}">{{ strand.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback d-none strand">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="high_school_name" class="form-label">High School Name<span class="text-muted"></span></label>
+                            <input class="form-control" id="high_school_name" placeholder="" name="high_school_name" value="{{ school.high_school_name|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none high_school_name">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="class_rank" class="form-label">Class Rank<span class="text-muted ms-1" data-bs-toggle="tooltip" title="Your class rank in Grade 12."><i class="fa fa-info-circle"></i></span></span></label>
+                            <select class="form-control form-select" id="class_rank" placeholder="" name="class_rank">
+                                <option value="">--Select--</option>
+                                {% for rank in ranks %}
+                                    {% if school.class_rank == rank.name %}
+                                        <option value="{{ rank.name }}" selected>{{ rank.name }}</option>
+                                    {% else %}
+                                        <option value="{{ rank.name }}">{{ rank.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback d-none class_rank">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="academic_awards_received" class="form-label">Academic Awards Received<span class="text-muted"></span></label>
+                            <select class="form-control form-select" id="academic_awards_received" placeholder="" name="academic_awards_received">
+                                <option value="">--Select--</option>
+                                {% for award in awards %}
+                                    {% if school.academic_awards_received == award.name %}
+                                        <option value="{{ award.name }}" selected>{{ award.name }}</option>
+                                    {% else %}
+                                        <option value="{{ award.name }}">{{ award.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback d-none academic_awards_received">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="classroom_organization" class="form-label">Classroom Organization<span class="text-muted ms-1" data-bs-toggle="tooltip" title="Your membership in the classroom organization in Grade 12."><i class="fa fa-info-circle"></i></span></label>
+                            <select class="form-control form-select" id="classroom_organization" placeholder="" name="classroom_organization">
+                                <option value="">--Select--</option>
+                                {% for position in class_positions %}
+                                    {% if school.classroom_organization == position.name %}
+                                        <option value="{{ position.name }}" selected>{{ position.name }}</option>
+                                    {% else %}
+                                        <option value="{{ position.name }}">{{ position.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback d-none classroom_organization">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="student_supreme_government" class="form-label">Student Supreme Government<span class="text-muted ms-1" data-bs-toggle="tooltip" title="Your highest membership in the Student Supreme Council/Government."><i class="fa fa-info-circle"></i></span></label>
+                            <select class="form-control form-select" id="student_supreme_government" placeholder="" name="student_supreme_government">
+                                <option value="">--Select--</option>
+                                {% for ssc in ssg %}
+                                    {% if school.student_supreme_government == ssc.name %}
+                                        <option value="{{ ssc.name }}" selected>{{ ssc.name }}</option>
+                                    {% else %}
+                                        <option value="{{ ssc.name }}">{{ ssc.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback d-none student_supreme_government">
+                            </div>
+                        </div>
+                        <h5 id="shs_report_h5" class="col-12 fw-bold my-4 mb-1">SHS Report Card</h5>
+                        <div class="col-sm-6">
+                            <label for="gpa_first_semester" class="form-label">General Point Average (1st Semester)<span class="text-muted ms-1" data-bs-toggle="tooltip" title="If not available, leave it blank."><i class="fa fa-info-circle"></i></span></label>
+                            <input type="number" class="form-control" id="gpa_first_semester" placeholder="" name="gpa_first_semester" step="any" value="{{ school.gpa_first_semester|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none gpa_first_semester">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="gpa_second_semester" class="form-label">General Point Average (2nd Semester)<span class="text-muted ms-1" data-bs-toggle="tooltip" title="If not available, leave it blank."><i class="fa fa-info-circle"></i></span></label>
+                            <input type="number" class="form-control" id="gpa_second_semester" placeholder="" name="gpa_second_semester" step="any" value="{{ school.gpa_second_semester|default_if_none:'' }}">
+                            <div class="invalid-feedback d-none gpa_second_semester">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="upload-cet" class="form-label">Photo or scanned copy of <span id="shs_report_label">SHS Report Card</span> (Accepted files: jpg, jpeg, png)<span class="text-muted ms-1" data-bs-toggle="tooltip" title="Make sure your name and grades are visible."><i class="fa fa-info-circle"></i></span></label>
+                            <div class="card-profile p-4 justify-content-center upload-container upload-container-shs" {% if school.photo_grade %} style="background-image: url({{ school.photo_grade.url }}); background-color: #5a5a5a" {% endif %}>
+                                
+                            </div>
+                            <div class="invalid-feedback d-none photo_grade text-center">
+                            </div>
+                        </div>
+                        <div class="col-12 m-0">
+                            <hr class="my-4 mx-auto w-">
+                        </div>
+                        <div class="col-6 text-start m-0">
+                            <a class="btn btn-lg btn-success btn-font w-100 back-button m-0" name="shs" id="shs">
+                                <i class="fa-solid fa-arrow-left-long pe-1"></i>
+                                Back
+                            </a>
+                        </div>
+                        <div class="col-6 text-end m-0">
+                            <button class="btn btn-lg btn-success background-color-green w-100 next-button btn-font m-0" type="submit" value="Next" name="shs" id="shs">
+                                Next
+                                <i class="ps-1 fa-solid fa-arrow-right-long"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+
+        $("#freshman").on('click', function(){
+            $('#shs_report_h5').text('SHS Report Card')
+            $('#shs_report_label').text('SHS Report Card')
+            $('#shs_card_button_name').text('SHS Report Card')
+        });
+
+        $("#shiftee").on('click', function(){
+            $('#shs_report_h5').text('Previous Grades in College')
+            $('#shs_report_label').text('Previous Grades')
+            $('#shs_card_button_name').text('Previous Grades')
+        });
+
+        $("#transferee").on('click', function(){
+            $('#shs_report_h5').text('Transcript of Record (TOR)')
+            $('#shs_report_label').text('Transcript of Record (TOR)')
+            $('#shs_card_button_name').text('TOR')
+        });
+
+        {% if student.student_type_name == 'shiftee' %}
+            $('#shiftee').trigger('click')
+        {% elif student.student_type_name == 'transferee' %}
+            $('#transferee').trigger('click')
+        {% elif student.student_type_name == 'freshman' %}
+            $('#freshman').trigger('click')
+        {% endif %}
+
+        {% if school.photo_grade %}
+            var shs_file = '{{ school.photo_grade.url|default_if_none:'' }}';
+        {% else %}
+            var shs_file;
+        {% endif %}
+
+        $('input#photo_grade').on('change', function() {
+            shs_file = this.files[0];
+            var reader = new FileReader();
+          
+            reader.onload = function(e) {
+              $('.upload-container-shs').css('background-image', 'url('+e.target.result+')');
+              $('.upload-container-shs').css('background-color', '#808080');
+            };
+          
+            reader.readAsDataURL(shs_file);
+            $('a#upload_shs_card').hide();
+            $('#edit_upload_shs').show();
+        });
+
+        $('#shs.back-button').click(function(e){
+            $('div.profile-screen').hide();
+            $('div#cet').show();
+  
+            $('span.progress-counter').text('2');
+            $('html,body').animate({
+                scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+        });
+
+        $('.view-student div#step-3.profile-progress-container').click(function(){
+            $('#economic-status.back-button').trigger('click');
+        })
+
+        $('form#shs').submit(function(e){
+            e.preventDefault()
+            $('div.profile-screen').hide();
+            $('div#economic-status').show();
+
+            $('span.progress-counter').text('4');
+            $('html,body').animate({
+                scrollTop:$('div.profile-screen').offset().top -90}, 'fast');  
+        });
+        $('input:not(:radio), select').prop('disabled', true);
+        $('input[type="radio"]').click(function() {
+            return false;
+        });
+    })
+</script>

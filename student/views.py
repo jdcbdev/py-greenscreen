@@ -956,3 +956,4 @@ def cancel_application(request):
             logs.save()
     
     return JsonResponse({'message': 'Application Cancelled.'})
+

@@ -1159,6 +1159,10 @@ span.table-struggling{
     align-items: center;
 }
 
+.view-student div.profile-progress-container{
+    cursor: pointer;
+}
+
 @media (min-width: 576px) {
     .shortcut{
         display: block;

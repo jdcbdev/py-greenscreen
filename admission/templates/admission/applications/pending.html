@@ -40,7 +40,7 @@
             <td>
                 <div class="action-button">
                     <a title="Verify Student Application" class="me-2 green verify-application" id="{{ application.admissionapplication_set.first.program.id }}" data="{{ application.admissionapplication_set.first.id }}"><i class="fa-solid fa-user-check"></i></a>
-                    <a title="View Student Profile" class="me-2 green view-profile" data="{{ application.id }}"><i class="fa-solid fa-eye"></i></a>
+                    <a title="View Student Profile" class="me-2 green view-profile" data="{{ application.id }}" href="{% url 'view_student_profile' application.id %}" target="_blank"><i class="fa-solid fa-eye"></i></a>
                 </div>
             </td>
             <td>{{ application.last_name }}, {{ application.first_name }} {{ application.middle_name }}</td>

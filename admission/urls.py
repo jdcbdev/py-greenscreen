@@ -34,4 +34,5 @@ urlpatterns = [
     path('view-add-interview-slot/', views.view_interview_slot_modal, name="view_interview_slot_modal"),
     path('settings/add-interview-slot/', views.add_interview_slot, name="add_interview_slot"),
     path('interview-applications/', views.interview_application, name="interview_application"),
+    path('student-profile/<int:id>', views.view_student_profile, name="view_student_profile"),
 ]
