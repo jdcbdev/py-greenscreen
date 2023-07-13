@@ -933,21 +933,31 @@ def view_rate_interview_modal(request):
 @transaction.atomic
 def rate_interview(request):
     application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
-    
     form = RateInterviewForm(request.POST)
     if form.is_valid():
         if application:
             log = InterviewLogs.objects.filter(application=application).order_by('-created_at').first()
             if log:
-                log.status = 'interviewed'
+                status = form.cleaned_data.get('student_status')
+                log.status = status
                 log.score = form.cleaned_data.get('score')
                 log.comments = form.cleaned_data.get('comments')
                 log.processed_by = request.user
                 log.save()
                 
                 application = log.application
-                application.status = 'interviewed'
+                if status == 'interviewed':
+                    application.status = status
+                else:
+                    application.status = 'declined'
                 application.save()
+                
+                ApplicationStatusLogs.objects.create(
+                    status = application.status,
+                    comments = form.cleaned_data.get('comments'),
+                    application = application,
+                    processed_by = request.user
+                )
         
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)

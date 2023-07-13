@@ -1163,6 +1163,12 @@ span.table-struggling{
     cursor: pointer;
 }
 
+.admin-login{
+    height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+}
+
 @media (min-width: 576px) {
     .shortcut{
         display: block;

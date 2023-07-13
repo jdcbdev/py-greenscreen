@@ -14,6 +14,25 @@
                             <label for="fullname" class="form-label">Name<span class="text-muted"></span></label>
                             <input type="text" disabled="true" class="form-control" id="fullname" placeholder="" name="fullname" value="{{ application.student.first_name }} {{ application.student.middle_name }} {{ application.student.last_name }}">
                         </div>
+                        <div class="col-12">
+                            <label class="form-label">Student Status</label>
+                            <div class="col-12 rb-container">
+                                <div class="form-check d-sm-inline-block me-sm-2">
+                                    <input class="form-check-input" type="radio" id="ranking" name="student_status" value="interviewed">
+                                    <label class="form-check-label" for="ranking">Include in Ranking</label>
+                                </div>
+                                <div class="form-check d-sm-inline-block me-sm-2">
+                                    <input class="form-check-input" type="radio" id="no-show" name="student_status" value="no-show">
+                                    <label class="form-check-label" for="no-show">No Show</label>
+                                </div>
+                                <div class="form-check d-sm-inline-block me-sm-2">
+                                    <input class="form-check-input" type="radio" id="not-interested" name="student_status" value="not-interested">
+                                    <label class="form-check-label" for="not-interested">Not anymore interested</label>
+                                </div>
+                                <div class="invalid-feedback d-none student_status">
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-12 col-md-12">
                             <label for="score" class="form-label">Score (out of 100)<span class="text-muted"></span></label>
                             <input type="number" class="form-control" id="score" placeholder="" name="score">
@@ -22,7 +41,9 @@
                         </div>
                         <div class="col-12 col-md-12 interview-comments">
                             <label for="comments" class="form-label">Comments</label>
-                            <textarea class="form-control" id="comments" rows="3"></textarea>
+                            <textarea class="form-control" id="comments" name="comments" rows="3"></textarea>
+                            <div class="invalid-feedback d-none comments">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -36,10 +57,33 @@
 </div>
 <script>
     $(document).ready(function(){
+
+        $("#ranking").on('click', function(){
+            $('#score').prop('disabled', false)
+            $('#comments').val('')
+        });
+
+        $("#no-show").on('click', function(){
+            $('#score').prop('disabled', true)
+            $('#comments').val('Failed to attend the interview.')
+        });
+
+        $("#not-interested").on('click', function(){
+            $('#score').prop('disabled', true)
+            $('#comments').val('Not anymore interested. Cancelled the application.')
+        });
+
         $('form#interview-student').submit(function(e) {
             e.preventDefault();
             var formData = new FormData(this);
-            formData.append('application_id', '{{application.id}}')
+            if ($('#ranking').is(':checked')) {
+                formData.append('student_status', 'interviewed');
+            }else if ($('#no-show').is(':checked')) {
+                formData.append('student_status', 'no-show');
+            }else if ($('#not-interested').is(':checked')){
+                formData.append('student_status', 'not-interested');
+            }
+            formData.append('application_id', '{{application.id}}');
             $.ajax({
                 type: 'POST',
                 url: "{% url 'rate_interview' %}",
@@ -51,8 +95,22 @@
                     var errors = JSON.parse(data);
                     has_error = false;
     
+                    $('div.student_status').empty().removeClass('d-block');
+                    $('.rb-container .form-check-input').removeClass('rb-invalid');
                     $('div.score').empty().removeClass('d-block');
                     $('#score').removeClass('is-invalid');
+                    $('div.comments').empty().removeClass('d-block');
+                    $('#comments').removeClass('is-invalid');
+
+                    if (errors.student_status) {
+                        $('.rb-container .form-check-input').addClass('rb-invalid');
+                        $('div.student_status').removeClass('d-none');
+                        $('div.student_status').addClass('d-block');
+                        $.each(errors.student_status, function(index, error) {
+                          $('div.student_status').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                      }
     
                     if (errors.score) {
                         $('#score').addClass('is-invalid');
@@ -60,6 +118,16 @@
                         $('div.score').addClass('d-block');
                         $.each(errors.score, function(index, error) {
                             $('div.score').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+
+                    if (errors.comments) {
+                        $('#comments').addClass('is-invalid');
+                        $('div.comments').removeClass('d-none');
+                        $('div.comments').addClass('d-block');
+                        $.each(errors.comments, function(index, error) {
+                            $('div.comments').append('<span>' + error.message + '</span>');
                         });
                         has_error = true
                     }

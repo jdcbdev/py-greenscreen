@@ -69,7 +69,13 @@
           </p>
           {% if request.user.is_authenticated %}
             {% if application %}
-              {% if application.status == 'pending' or application.status == 'verified' %}
+              {% if application.status == 'pending' or application.status == 'verified' or application.status == 'interviewed' or application.status == 'approved' %}
+              <p class="btn-apply-center">
+                <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'my_application' %}">
+                  View Application
+                </a>
+              </p>
+              {% elif application.status == 'declined' and application.program.code == "BSCS" %}
               <p class="btn-apply-center">
                 <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'my_application' %}">
                   View Application
@@ -111,7 +117,7 @@
           </p>
           {% if request.user.is_authenticated %}
             {% if application %}
-              {% if application.status == 'pending' or application.status == 'verified' %}
+              {% if application.status == 'pending' or application.status == 'verified' or application.status == 'interviewed' or application.status == 'approved' %}
               <p class="btn-apply-center">
                 <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'my_application' %}">
                   View Application

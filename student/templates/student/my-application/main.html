@@ -16,6 +16,10 @@
             {% include 'student/my-application/returned.html' %}
         {% elif application.status == 'verified' %}
             {% include 'student/my-application/interview.html' %}
+        {% elif application.status == 'interviewed' %}
+            {% include 'student/my-application/ranking.html' %}
+        {% elif application.status == 'declined' %}
+            {% include 'student/my-application/declined.html' %}
         {% endif %}
     {% else %}
         {% include 'student/my-application/no-application.html' %}

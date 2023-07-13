@@ -24,8 +24,9 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from datetime import date
-from admission.models import Program, SchoolYear, AdmissionPeriod, DocumentaryRequirement, InterviewSlot
+from admission.models import Program, SchoolYear, AdmissionPeriod, DocumentaryRequirement, InterviewSlot, Criteria
 from django.http import HttpResponse
+from decimal import Decimal
 
 load_settings()
 
@@ -929,6 +930,23 @@ def my_application(request):
     interview = InterviewLogs.objects.filter(application=application).order_by('-created_at').first()
     documents = DocumentaryRequirement.objects.all()
     
+    criterias = None
+    shs = None
+    cet = None
+    total = 0
+    
+    if interview and interview.status == "interviewed":
+        cet = CollegeEntranceTest.objects.filter(student=student).first()
+        shs = SchoolBackground.objects.filter(student=student).first()
+        criterias = Criteria.objects.filter(program=application.program, school_year=school_year)
+        cet_crt = Criteria.objects.filter(program=application.program, school_year=school_year, code='cet').first()
+        shs_crt = Criteria.objects.filter(program=application.program, school_year=school_year, code='shs').first()
+        int_crt = Criteria.objects.filter(program=application.program, school_year=school_year, code='interview').first()
+        total = ((Decimal(cet_crt.weight)/100*Decimal(cet.overall_percentile_rank))
+                +(Decimal(shs_crt.weight)/100*Decimal(shs.combined_gpa))
+                +(Decimal(int_crt.weight)/100*Decimal(interview.score)))
+        total = round(total, 2)
+    
     page_title = 'My Application'
     context = {
         'page_title': page_title,
@@ -937,6 +955,10 @@ def my_application(request):
         'appstatus': appstatus,
         'interview': interview,
         'documents': documents,
+        'criterias': criterias,
+        'shs': shs,
+        'cet': cet,
+        'total': total,
         'settings': settings
     }
     return render(request, 'student/my-application/main.html', context)
