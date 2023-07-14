@@ -58,8 +58,14 @@
 <div class="application-container"></div>
 <script>
     $(document).ready(function(){
-        $('span.pending-counter').text({{ applications.count }})
 
+        $('span.pending-counter').text({{ pending_counter }})
+        $('span.interview-counter').text({{ interview_counter }})
+        $('span.ranking-counter').text({{ ranking_counter }})
+        $('span.waiting-counter').text({{ waiting_counter }})
+        $('span.qualified-counter').text({{ qualified_counter }})
+        $('span.withdrawn-counter').text({{ withdrawn_counter }})
+        
         dataTable = $("#table-pending").DataTable({
             dom: 'Brtp',
             responsive: true,

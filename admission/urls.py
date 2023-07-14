@@ -40,4 +40,9 @@ urlpatterns = [
     path('ranking-applications/', views.ranking_application, name="ranking_application"),
     path('view-process-applications/', views.view_process_student_modal, name="view_process_student_modal"),
     path('process-student-application/', views.process_application, name="process_application"),
+    path('waiting-applications/', views.waiting_application, name="waiting_application"),
+    path('view-process-waiting-applications/', views.view_process_waitingstudent_modal, name="view_process_waitingstudent_modal"),
+    path('qualified-applications/', views.qualified_application, name="qualified_application"),
+    path('view-withdraw-applications/', views.view_withdraw_modal, name="view_withdraw_modal"),
+    path('withdraw-student-application/', views.withdraw_application, name="withdraw_application"),
 ]

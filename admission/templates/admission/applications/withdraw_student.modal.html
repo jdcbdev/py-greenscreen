@@ -1,0 +1,76 @@
+<!-- Modal -->
+<div class="modal fade" id="withdraw-student-modal" tabindex="-1" aria-labelledby="" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="">Withdraw Student Application</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="needs-validation" action="" method="post" name="withdraw-student" id="withdraw-student">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div class="row g-2">
+                        <div class="col-12 col-md-12">
+                            <label for="fullname" class="form-label">Name<span class="text-muted"></span></label>
+                            <input type="text" disabled="true" class="form-control" id="fullname" placeholder="" name="fullname" value="{{ application.student.first_name }} {{ application.student.middle_name }} {{ application.student.last_name }}">
+                        </div>
+                        <div class="col-12 col-md-12">
+                            <label for="program" class="form-label">Program<span class="text-muted"></span></label>
+                            <input type="text" disabled="true" class="form-control" id="program" placeholder="" name="program" value="{{ application.program.name }}">
+                        </div>
+                        <div class="col-12 col-md-12 process-comments">
+                            <label for="reason" class="form-label">Reason</label>
+                            <textarea class="form-control" id="reason" name="reason" rows="3"></textarea>
+                            <div class="invalid-feedback d-none reason">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" value="Save" class="btn btn-primary background-color-green" name="withdraw-student" id="withdraw-student">Withdraw Application</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+
+        $('form#withdraw-student').submit(function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            formData.append('application_id', '{{application.id}}');
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'withdraw_application' %}",
+                data: formData,
+                processData: false,
+                contentType: false,
+    
+                success: function(data) {
+                    var errors = JSON.parse(data);
+                    has_error = false;
+    
+                    $('div.reason').empty().removeClass('d-block');
+                    $('#reason').removeClass('is-invalid');
+
+                    if (errors.reason) {
+                        $('#reason').addClass('is-invalid');
+                        $('div.reason').removeClass('d-none');
+                        $('div.reason').addClass('d-block');
+                        $.each(errors.reason, function(index, error) {
+                            $('div.reason').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+    
+                    if (!has_error) {
+                        load('qualified')
+                        $('#withdraw-student-modal').modal('hide');
+                    }
+                },
+            });
+        });
+    })
+</script>

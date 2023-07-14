@@ -64,7 +64,7 @@
                         <h5 class="col-12 fw-bold my-4 mb-1">Contact Points</h5>
                         <div class="col-sm-6">
                             <label for="contact_email" class="form-label">School or Personal Email<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="contact_email" placeholder="" name="contact_email" value="{{ request.user.email|default_if_none:'' }}" disabled>
+                            <input type="text" class="form-control" id="contact_email" placeholder="" name="contact_email" value="{{ contact.contact_email|default_if_none:'' }}" disabled>
                             <div class="invalid-feedback d-none contact_email">
                             </div>
                         </div>
