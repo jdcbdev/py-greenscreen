@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from .forms import SignUpForm, SignInForm, SignUpOldForm, ForgotPasswordForm, SetPasswordForm, PersonalInfoForm, CollegeEntranceTestForm, SchoolBackgroundForm, EconomicStatusForm, PersonalityTestForm1, PersonalityTestForm2, PersonalityTestForm3, PersonalityTestForm4
-from .forms import StudyHabitForm1, StudyHabitForm2, StudyHabitForm3
+from .forms import StudyHabitForm1, StudyHabitForm2, StudyHabitForm3, WithdrawApplicationForm
 from django.contrib.auth import authenticate, login, logout
 from .models import Student, SchoolBackground, ContactPoint, PersonalAddress, CollegeEntranceTest, EconomicStatus, PersonalityTest, StudyHabit, AdmissionApplication, ApplicationStatusLogs, InterviewLogs
 from base.models import SHSStrand, ClassRoomOrganization, StudentSupremeGovernment, ClassRank, AcademicAwards, AcademicDegree, EmploymentStatus
@@ -978,4 +978,26 @@ def cancel_application(request):
             logs.save()
     
     return JsonResponse({'message': 'Application Cancelled.'})
+
+@login_required(login_url='/student/sign-in/')
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def withdraw_application(request):
+    application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
+    form = WithdrawApplicationForm(request.POST)
+    if form.is_valid():
+        if application:
+            application.status = 'withdrawn'
+            application.save()
+            
+            ApplicationStatusLogs.objects.create(
+                status = application.status,
+                comments = form.cleaned_data.get('reason'),
+                application = application,
+                processed_by = request.user
+            )
+        
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
 

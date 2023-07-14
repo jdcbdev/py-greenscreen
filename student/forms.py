@@ -967,3 +967,5 @@ class StudyHabitForm3(forms.Form):
 
         return cleaned_data
 
+class WithdrawApplicationForm(forms.Form):
+    reason = forms.CharField(max_length=255, required=True)

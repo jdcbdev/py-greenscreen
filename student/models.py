@@ -160,7 +160,7 @@ class AdmissionApplication(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE)
     status = models.CharField(max_length=255, default='pending')
-    
+    total = models.FloatField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

@@ -21,7 +21,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from .models import SchoolYear, AdmissionPeriod, Program, Quota, AutoAdmission, Criteria, Department, AcademicRank, AdmissionRole, Faculty, InterviewSlot
-from .forms import SchoolYearForm, AdmissionPeriodForm, QuotaForm, CriteriaForm, AddFacultyForm, ReturnApplicationForm, InterviewSlotForm, RateInterviewForm
+from .forms import SchoolYearForm, AdmissionPeriodForm, QuotaForm, CriteriaForm, AddFacultyForm, ReturnApplicationForm, InterviewSlotForm, RateInterviewForm, ProcessApplicationForm
 from django.http import JsonResponse
 from django.db.models import Prefetch
 from django.contrib.auth.password_validation import validate_password
@@ -35,6 +35,7 @@ from django.utils import timezone
 from datetime import datetime
 import datetime
 from base.models import SHSStrand, ClassRoomOrganization, StudentSupremeGovernment, ClassRank, AcademicAwards, AcademicDegree, EmploymentStatus
+from decimal import Decimal
 
 # Create your views here.
 
@@ -610,6 +611,10 @@ def view_application(request):
     school_year = SchoolYear.objects.filter(is_active=True).first()
     pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
     interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
+    ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
+    waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
+    qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
+    withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
 
     context = {
         'page_title': page_title,
@@ -617,6 +622,10 @@ def view_application(request):
         'current_year': current_year,
         'pending_counter': pending_counter,
         'interview_counter': interview_counter,
+        'ranking_counter': ranking_counter,
+        'waiting_counter': waiting_counter,
+        'qualified_counter': qualified_counter,
+        'withdrawn_counter': withdrawn_counter,
     }
     
     return render(request, 'admission/application.html', context)
@@ -961,3 +970,111 @@ def rate_interview(request):
         
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+def ranking_application(request):
+    school_year = SchoolYear.objects.filter(is_active=True).first()
+    programs = Program.objects.filter(is_active=True)
+    students = (
+        Student.objects
+        .annotate(has_admission_application=Exists(
+            AdmissionApplication.objects
+            .filter(student=OuterRef('pk'), status='interviewed', school_year=school_year)
+        ))
+        .filter(has_admission_application=True)
+        .prefetch_related(
+            Prefetch(
+                'admissionapplication_set',
+                queryset=AdmissionApplication.objects.select_related('student')
+                .filter(status='interviewed', school_year=school_year)
+                .prefetch_related(
+                    Prefetch(
+                        'interviewlogs_set',
+                        queryset=InterviewLogs.objects.select_related('application')
+                        .filter(status='interviewed')
+                        .order_by('-created_at')
+                    )
+                )
+            ),
+            Prefetch(
+                'collegeentrancetest_set',
+                queryset=CollegeEntranceTest.objects.select_related('student')
+            ),
+            Prefetch(
+                'schoolbackground_set',
+                queryset=SchoolBackground.objects.select_related('student')
+            ),
+            Prefetch(
+                'contactpoint_set',
+                queryset=ContactPoint.objects.select_related('student')
+            ),
+        )
+    )
+    
+    # Calculate total for each student
+    students_with_total = []
+    for student in students:
+        cet = student.collegeentrancetest_set.first()
+        shs = student.schoolbackground_set.first()
+        admission_application = student.admissionapplication_set.first()
+        
+        cet_crt = Criteria.objects.filter(program=admission_application.program, school_year=school_year, code='cet').first()
+        shs_crt = Criteria.objects.filter(program=admission_application.program, school_year=school_year, code='shs').first()
+        int_crt = Criteria.objects.filter(program=admission_application.program, school_year=school_year, code='interview').first()
+        
+        total = ((Decimal(cet_crt.weight)/100 * Decimal(cet.overall_percentile_rank))
+                + (Decimal(shs_crt.weight)/100 * Decimal(shs.combined_gpa))
+                + (Decimal(int_crt.weight)/100 * Decimal(admission_application.interviewlogs_set.first().score)))
+        total = round(total, 2)
+        
+        admission_application.total = total
+        admission_application.save()
+        students_with_total.append((student, total))
+
+    students_with_total = sorted(students_with_total, key=lambda x: x[1], reverse=True)
+    sorted_students = [student for student, _ in students_with_total]
+    
+    applications = sorted_students
+    
+    context = {
+        'applications': applications,
+        'programs': programs
+    }
+    
+    rendered_html = render(request, 'admission/applications/ranking.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')
+
+@ensure_csrf_cookie
+@require_POST
+def view_process_student_modal(request):
+    application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
+    
+    context = {
+        'application': application,
+    }
+    
+    rendered_html = render(request, 'admission/applications/process_student.modal.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def process_application(request):
+    application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
+    form = ProcessApplicationForm(request.POST)
+    if form.is_valid():
+        if application:
+            application.status = form.cleaned_data.get('student_status')
+            application.save()
+            
+            ApplicationStatusLogs.objects.create(
+                status = application.status,
+                comments = form.cleaned_data.get('comments'),
+                application = application,
+                processed_by = request.user
+            )
+        
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
+

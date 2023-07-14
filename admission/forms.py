@@ -165,3 +165,21 @@ class RateInterviewForm(forms.Form):
         cleaned_data = super().clean()
 
         return cleaned_data
+
+class ProcessApplicationForm(forms.Form):
+    student_status = forms.CharField(max_length=255, required=True)
+    comments = forms.CharField(required=False)
+
+    def clean_comments(self):
+        comments = self.cleaned_data.get('comments', False)
+        student_status = self.cleaned_data.get('student_status')
+        
+        if (student_status == "declined" or student_status == "waiting-list") and not comments:
+            raise forms.ValidationError("This field is required.")
+
+        return comments
+    
+    def clean(self):
+        cleaned_data = super().clean()
+
+        return cleaned_data

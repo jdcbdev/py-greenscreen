@@ -37,4 +37,7 @@ urlpatterns = [
     path('student-profile/<int:id>', views.view_student_profile, name="view_student_profile"),
     path('view-interview-student/', views.view_rate_interview_modal, name="view_rate_interview_modal"),
     path('rate-student-interview/', views.rate_interview, name="rate_interview"),
+    path('ranking-applications/', views.ranking_application, name="ranking_application"),
+    path('view-process-applications/', views.view_process_student_modal, name="view_process_student_modal"),
+    path('process-student-application/', views.process_application, name="process_application"),
 ]

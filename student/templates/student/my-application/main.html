@@ -18,8 +18,14 @@
             {% include 'student/my-application/interview.html' %}
         {% elif application.status == 'interviewed' %}
             {% include 'student/my-application/ranking.html' %}
+        {% elif application.status == 'approved' %}
+            {% include 'student/my-application/approved.html' %}
+        {% elif application.status == 'waiting-list' %}
+            {% include 'student/my-application/waiting.html' %}
         {% elif application.status == 'declined' %}
             {% include 'student/my-application/declined.html' %}
+        {% elif application.status == 'withdrawn' %}
+            {% include 'student/my-application/withdrawn.html' %}
         {% endif %}
     {% else %}
         {% include 'student/my-application/no-application.html' %}

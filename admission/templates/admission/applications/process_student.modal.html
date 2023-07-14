@@ -1,12 +1,12 @@
 <!-- Modal -->
-<div class="modal fade" id="modal-rate-interview" tabindex="-1" aria-labelledby="" aria-hidden="true">
+<div class="modal fade" id="process-student-modal" tabindex="-1" aria-labelledby="" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="">Rate Student Interview</h5>
+                <h5 class="modal-title" id="">Update Student Application</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form class="needs-validation" action="" method="post" name="interview-student" id="interview-student">
+            <form class="needs-validation" action="" method="post" name="process-student" id="process-student">
                 <div class="modal-body">
                     {% csrf_token %}
                     <div class="row g-2">
@@ -15,31 +15,25 @@
                             <input type="text" disabled="true" class="form-control" id="fullname" placeholder="" name="fullname" value="{{ application.student.first_name }} {{ application.student.middle_name }} {{ application.student.last_name }}">
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Student Status</label>
+                            <label class="form-label">Application Status</label>
                             <div class="col-12 rb-container">
                                 <div class="form-check d-sm-inline-block me-sm-2">
-                                    <input class="form-check-input" type="radio" id="ranking" name="student_status" value="interviewed">
-                                    <label class="form-check-label" for="ranking">Include in Ranking</label>
+                                    <input class="form-check-input" type="radio" id="approved" name="student_status" value="approved">
+                                    <label class="form-check-label" for="approved">Approved</label>
                                 </div>
                                 <div class="form-check d-sm-inline-block me-sm-2">
-                                    <input class="form-check-input" type="radio" id="no-show" name="student_status" value="no-show">
-                                    <label class="form-check-label" for="no-show">No Show</label>
+                                    <input class="form-check-input" type="radio" id="declined" name="student_status" value="declined">
+                                    <label class="form-check-label" for="declined">Declined</label>
                                 </div>
                                 <div class="form-check d-sm-inline-block me-sm-2">
-                                    <input class="form-check-input" type="radio" id="not-interested" name="student_status" value="not-interested">
-                                    <label class="form-check-label" for="not-interested">Not anymore interested</label>
+                                    <input class="form-check-input" type="radio" id="waiting-list" name="student_status" value="waiting-list">
+                                    <label class="form-check-label" for="waiting-list">Moved to Waiting List</label>
                                 </div>
                                 <div class="invalid-feedback d-none student_status">
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 col-md-12">
-                            <label for="score" class="form-label">Score (out of 100)<span class="text-muted"></span></label>
-                            <input type="number" class="form-control" id="score" placeholder="" name="score">
-                            <div class="invalid-feedback d-none score">
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-12 interview-comments">
+                        <div class="col-12 col-md-12 process-comments">
                             <label for="comments" class="form-label">Comments</label>
                             <textarea class="form-control" id="comments" name="comments" rows="3"></textarea>
                             <div class="invalid-feedback d-none comments">
@@ -49,7 +43,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" value="Save" class="btn btn-primary background-color-green" name="interview-student" id="interview-student">Submit</button>
+                    <button type="submit" value="Save" class="btn btn-primary background-color-green" name="process-student" id="process-student">Update Application Status</button>
                 </div>
             </form>
         </div>
@@ -58,35 +52,26 @@
 <script>
     $(document).ready(function(){
 
-        $("#ranking").on('click', function(){
-            $('#score').prop('disabled', false)
-            $('#comments').val('')
+        $("#approved").on('click', function(){
+            $('#comments').val('Application approved. Waiting for enrollment.')
         });
 
-        $("#no-show").on('click', function(){
+        $("#declined").on('click', function(){
+            $('#comments').val('Did not qualify.')
+        });
+
+        $("#waiting-list").on('click', function(){
             $('#score').prop('disabled', true)
-            $('#comments').val('Failed to attend the interview.')
+            $('#comments').val('Moved to waiting list. Waiting for slot availability.')
         });
 
-        $("#not-interested").on('click', function(){
-            $('#score').prop('disabled', true)
-            $('#comments').val('Not anymore interested. Cancelled the application.')
-        });
-
-        $('form#interview-student').submit(function(e) {
+        $('form#process-student').submit(function(e) {
             e.preventDefault();
             var formData = new FormData(this);
-            if ($('#ranking').is(':checked')) {
-                formData.append('student_status', 'interviewed');
-            }else if ($('#no-show').is(':checked')) {
-                formData.append('student_status', 'no-show');
-            }else if ($('#not-interested').is(':checked')){
-                formData.append('student_status', 'not-interested');
-            }
             formData.append('application_id', '{{application.id}}');
             $.ajax({
                 type: 'POST',
-                url: "{% url 'rate_interview' %}",
+                url: "{% url 'process_application' %}",
                 data: formData,
                 processData: false,
                 contentType: false,
@@ -97,8 +82,6 @@
     
                     $('div.student_status').empty().removeClass('d-block');
                     $('.rb-container .form-check-input').removeClass('rb-invalid');
-                    $('div.score').empty().removeClass('d-block');
-                    $('#score').removeClass('is-invalid');
                     $('div.comments').empty().removeClass('d-block');
                     $('#comments').removeClass('is-invalid');
 
@@ -111,16 +94,6 @@
                         });
                         has_error = true
                       }
-    
-                    if (errors.score) {
-                        $('#score').addClass('is-invalid');
-                        $('div.score').removeClass('d-none');
-                        $('div.score').addClass('d-block');
-                        $.each(errors.score, function(index, error) {
-                            $('div.score').append('<span>' + error.message + '</span>');
-                        });
-                        has_error = true
-                    }
 
                     if (errors.comments) {
                         $('#comments').addClass('is-invalid');
@@ -133,9 +106,10 @@
                     }
     
                     if (!has_error) {
+                        load('pending')
                         load('interview')
                         load('ranking')
-                        $('#modal-rate-interview').modal('hide');
+                        $('#process-student-modal').modal('hide');
                     }
                 },
             });
