@@ -944,6 +944,78 @@ div.question-group-study .form-label{
     font-weight: 700;
 }
 
+.status-pending {
+  background-color: #F6A623; /* Orange */
+  color: #FFFFFF; /* White */
+  padding: 5px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.status-cancelled {
+  background-color: #FF4C4C; /* Red */
+  color: #FFFFFF; /* White */
+  padding: 5px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.status-returned {
+  background-color: #A56DE2; /* Purple */
+  color: #FFFFFF; /* White */
+  padding: 5px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.status-verified {
+  background-color: #00B894; /* Green */
+  color: #FFFFFF; /* White */
+  padding: 5px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.status-interviewed {
+  background-color: #3498DB; /* Blue */
+  color: #FFFFFF; /* White */
+  padding: 5px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.status-approved {
+  background-color: #27AE60; /* Green */
+  color: #FFFFFF; /* White */
+  padding: 5px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.status-declined {
+  background-color: #E74C3C; /* Red */
+  color: #FFFFFF; /* White */
+  padding: 5px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.status-withdrawn {
+  background-color: #7F8C8D; /* Gray */
+  color: #FFFFFF; /* White */
+  padding: 5px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.status-waiting-list {
+  background-color: #F1C40F; /* Yellow */
+  color: #000000; /* Black */
+  padding: 5px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
 span.pending{
     background-color: orange;
     padding: 5px;

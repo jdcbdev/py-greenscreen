@@ -21,7 +21,7 @@
         <button class="btn btn-outline-secondary background-color-green" type="button"><i class="fas fa-search white"></i></button>
     </div>
 </div>
-<table class="table table-hover responsive" id="table-all">
+<table class="table table-hover responsive" id="table-withdrawn">
     <thead>
         <tr>
             <th scope="col">Action</th>
@@ -30,9 +30,10 @@
             <th scope="col">Program</th>
             <th scope="col">CET OAPR</th>
             <th scope="col">SHS GPA</th>
+            <th scope="col">Interview</th>
             <th scope="col">Email Address</th>
             <th scope="col">Phone Number</th>
-            <th scope="col">Status</th>
+            <th scope="col">Reason</th>
         </tr>
     </thead>
     <tbody>
@@ -48,29 +49,10 @@
             <td>{{ application.admissionapplication_set.first.program.code }}</td>
             <td>{{ application.collegeentrancetest_set.first.overall_percentile_rank }}</td>
             <td>{{ application.schoolbackground_set.first.combined_gpa }}</td>
+            <td>{{ application.admissionapplication_set.first.interviewlogs_set.first.score }}</td>
             <td>{{ application.contactpoint_set.first.contact_email }}</td>
             <td>{{ application.contactpoint_set.first.contact_number }}</td>
-            <td>
-                {% if application.admissionapplication_set.first.status == "pending" %}
-                  <span class="status-pending">Pending</span>
-                {% elif application.admissionapplication_set.first.status == "cancelled" %}
-                  <span class="status-cancelled">Cancelled</span>
-                {% elif application.admissionapplication_set.first.status == "returned" %}
-                  <span class="status-returned">Returned</span>
-                {% elif application.admissionapplication_set.first.status == "verified" %}
-                  <span class="status-verified">For Interview</span>
-                {% elif application.admissionapplication_set.first.status == "interviewed" %}
-                  <span class="status-interviewed">For Ranking</span>
-                {% elif application.admissionapplication_set.first.status == "approved" %}
-                  <span class="status-approved">Qualified</span>
-                {% elif application.admissionapplication_set.first.status == "declined" %}
-                  <span class="status-declined">Declined</span>
-                {% elif application.admissionapplication_set.first.status == "withdrawn" %}
-                  <span class="status-withdrawn">Withdrawn</span>
-                {% elif application.admissionapplication_set.first.status == "waiting-list" %}
-                  <span class="status-waiting-list">Waiting List</span>
-                {% endif %}
-            </td>
+            <td>{{ application.admissionapplication_set.first.applicationstatuslogs_set.first.comments }}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -87,7 +69,7 @@
         $('span.qualified-counter').text({{ qualified_counter }})
         $('span.withdrawn-counter').text({{ withdrawn_counter }})
 
-        dataTable = $("#table-all").DataTable({
+        dataTable = $("#table-withdrawn").DataTable({
             dom: 'Brtp',
             responsive: true,
             fixedHeader: true,
@@ -113,7 +95,7 @@
         dataTable.buttons().container().appendTo($('#MyButtons'));
 
         var table = dataTable;
-        var filter = createFilter(table, [1,2,3,4,5,6,7,8]);
+        var filter = createFilter(table, [1,2,3,4,5,6,7,8,9]);
 
         function createFilter(table, columns) {
             var input = $('input#keyword').on("keyup", function() {

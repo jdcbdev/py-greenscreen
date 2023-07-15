@@ -110,7 +110,6 @@ class AddFacultyForm(forms.ModelForm):
         return cleaned_data
 
 class ReturnApplicationForm(forms.Form):
-    comments = forms.CharField(required=True)
     details = forms.CharField(max_length=255, required=True)
     
     def clean(self):

@@ -633,19 +633,6 @@ def view_application(request):
 
 @ensure_csrf_cookie
 @require_POST
-def all_application(request):
-    school_year = SchoolYear.objects.filter(is_active=True).first()
-    applications = AdmissionApplication.objects.filter(school_year=school_year).order_by('created_at')
-
-    context = {
-        'applications': applications,
-    }
-    
-    rendered_html = render(request, 'admission/applications/all.html', context)
-    return HttpResponse(rendered_html, content_type='text/html')
-
-@ensure_csrf_cookie
-@require_POST
 def pending_application(request):
     school_year = SchoolYear.objects.filter(is_active=True).first()
     pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
@@ -1334,3 +1321,150 @@ def withdraw_application(request):
         
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def decline_application(request):
+    pk=request.POST.get('application_id')
+    application = AdmissionApplication.objects.get(pk=pk)
+    form = ReturnApplicationForm(request.POST)
+    if form.is_valid():
+        if application:
+            application.status = 'declined'
+            application.save()
+            
+            ApplicationStatusLogs.objects.create(
+                application=application,
+                status=application.status,
+                comments=form.cleaned_data['details'],
+                processed_by=request.user
+            )
+        
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)
+
+@ensure_csrf_cookie
+@require_POST
+def withdrawn_application(request):
+    school_year = SchoolYear.objects.filter(is_active=True).first()
+    pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
+    interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
+    ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
+    waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
+    qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
+    withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
+    programs = Program.objects.filter(is_active=True)
+    students = (
+        Student.objects
+        .annotate(has_admission_application=Exists(
+            AdmissionApplication.objects
+            .filter(student=OuterRef('pk'), status='withdrawn', school_year=school_year)
+        ))
+        .filter(has_admission_application=True)
+        .prefetch_related(
+            Prefetch(
+                'admissionapplication_set',
+                queryset=AdmissionApplication.objects.select_related('student')
+                .filter(status='withdrawn', school_year=school_year)
+                .prefetch_related(
+                    Prefetch(
+                        'interviewlogs_set',
+                        queryset=InterviewLogs.objects.select_related('application')
+                        .filter(status='interviewed')
+                        .order_by('-created_at')
+                    ),
+                    Prefetch(
+                        'applicationstatuslogs_set',
+                        queryset=ApplicationStatusLogs.objects.select_related('application')
+                        .filter(status='withdrawn')
+                        .order_by('-created_at')
+                    )
+                )
+            ),
+            Prefetch(
+                'collegeentrancetest_set',
+                queryset=CollegeEntranceTest.objects.select_related('student')
+            ),
+            Prefetch(
+                'schoolbackground_set',
+                queryset=SchoolBackground.objects.select_related('student')
+            ),
+            Prefetch(
+                'contactpoint_set',
+                queryset=ContactPoint.objects.select_related('student')
+            ),
+        )
+    )
+    
+    applications = students
+    
+    context = {
+        'applications': applications,
+        'programs': programs,
+        'pending_counter': pending_counter,
+        'interview_counter': interview_counter,
+        'ranking_counter': ranking_counter,
+        'waiting_counter': waiting_counter,
+        'qualified_counter': qualified_counter,
+        'withdrawn_counter': withdrawn_counter,
+    }
+    
+    rendered_html = render(request, 'admission/applications/withdrawn.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')
+
+@ensure_csrf_cookie
+@require_POST
+def all_application(request):
+    school_year = SchoolYear.objects.filter(is_active=True).first()
+    pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
+    interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
+    ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
+    waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
+    qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
+    withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
+    programs = Program.objects.filter(is_active=True)
+    students = (
+        Student.objects
+        .annotate(has_admission_application=Exists(
+            AdmissionApplication.objects
+            .filter(student=OuterRef('pk'), school_year=school_year)
+        ))
+        .filter(has_admission_application=True)
+        .prefetch_related(
+            Prefetch(
+                'admissionapplication_set',
+                queryset=AdmissionApplication.objects.select_related('student')
+                .filter(school_year=school_year)
+                .order_by('-created_at')
+            ),
+            Prefetch(
+                'collegeentrancetest_set',
+                queryset=CollegeEntranceTest.objects.select_related('student')
+            ),
+            Prefetch(
+                'schoolbackground_set',
+                queryset=SchoolBackground.objects.select_related('student')
+            ),
+            Prefetch(
+                'contactpoint_set',
+                queryset=ContactPoint.objects.select_related('student')
+            ),
+        )
+    )
+    
+    applications = students
+    
+    context = {
+        'applications': applications,
+        'programs': programs,
+        'pending_counter': pending_counter,
+        'interview_counter': interview_counter,
+        'ranking_counter': ranking_counter,
+        'waiting_counter': waiting_counter,
+        'qualified_counter': qualified_counter,
+        'withdrawn_counter': withdrawn_counter,
+    }
+    
+    rendered_html = render(request, 'admission/applications/all.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')

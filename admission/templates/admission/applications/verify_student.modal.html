@@ -34,10 +34,16 @@
                             </div>
                         </div>
                         <div class="col-12 col-md-12">
-                            <div class="form-check">
+                            <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" value="1" id="comments">
                                 <label class="form-check-label" for="comments">
                                     Return with comments
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="1" id="decline">
+                                <label class="form-check-label" for="decline">
+                                    Decline with comments
                                 </label>
                             </div>
                         </div>
@@ -54,23 +60,42 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary background-color-green" data="{{ application.id }}" id="accept-application">Accept Application</button>
                 <button type="button" class="btn btn-primary background-color-green" data="{{ application.id }}" id="return-application" style="display: none;">Return Application</button>
+                <button type="button" class="btn btn-primary background-color-green" data="{{ application.id }}" id="decline-application" style="display: none;">Decline Application</button>
             </div>
         </div>
     </div>
 </div>
 <script>
     $(document).ready(function(){
-        $('#comments').on('change', function(){
+        $('#comments').on('change', function() {
             if ($(this).is(":checked")) {
                 $('div.comments').show();
-                $('#accept-application').hide()
-                $('#return-application').show()
-            }else{
+                $('#accept-application').hide();
+                $('#return-application').show();
+                $('#decline-application').hide();
+                $('#decline').prop('checked', false);
+            } else {
                 $('div.comments').hide();
-                $('#accept-application').show()
-                $('#return-application').hide()
+                $('#accept-application').show();
+                $('#return-application').hide();
+                $('#decline-application').hide();
             }
         });
+        
+        $('#decline').on('change', function() {
+            if ($(this).is(":checked")) {
+                $('div.comments').show();
+                $('#accept-application').hide();
+                $('#return-application').hide();
+                $('#decline-application').show();
+                $('#comments').prop('checked', false);
+            } else {
+                $('div.comments').hide();
+                $('#accept-application').show();
+                $('#return-application').hide();
+                $('#decline-application').hide();
+            }
+        });        
         $('div.photo-container').lightGallery({
             thumbnail: false,
             animateThumb: false,
@@ -88,9 +113,8 @@
                 data: formData,
                 success: function(result)
                 {
-                    $('#verify-student-modal').modal('hide')
                     load('pending')
-                    load('interview')
+                    $('#verify-student-modal').modal('hide');
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) { 
                     alert("Status: " + textStatus); alert("Error: " + errorThrown); 
@@ -101,7 +125,6 @@
             var formData = {
                 csrfmiddlewaretoken: '{{ csrf_token }}',
                 application_id: $(this).attr('data'),
-                comments: $('#comments').val(),
                 details: $('#details').val(),
             };
             $.ajax({
@@ -127,7 +150,41 @@
     
                     if (!has_error) {
                         load('pending')
-                        $('#verify-student-modal').modal('hide')
+                        $('#verify-student-modal').modal('hide');
+                    }
+                } 
+            });
+        });
+        $('#decline-application').click(function(){
+            var formData = {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                application_id: $(this).attr('data'),
+                details: $('#details').val(),
+            };
+            $.ajax({
+                type: "POST",
+                url: "{% url 'decline_application' %}",
+                data: formData,
+                success: function(data)
+                {
+                    var errors = JSON.parse(data);
+                    has_error = false;
+                    $('div.details').empty().removeClass('d-block');
+                    $('#details').removeClass('is-invalid');
+
+                    if (errors.details) {
+                        $('#details').addClass('is-invalid');
+                        $('div.details').removeClass('d-none');
+                        $('div.details').addClass('d-block');
+                        $.each(errors.details, function(index, error) {
+                            $('div.details').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+    
+                    if (!has_error) {
+                        load('pending')
+                        $('#verify-student-modal').modal('hide');
                     }
                 } 
             });

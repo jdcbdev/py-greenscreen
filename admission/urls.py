@@ -45,4 +45,6 @@ urlpatterns = [
     path('qualified-applications/', views.qualified_application, name="qualified_application"),
     path('view-withdraw-applications/', views.view_withdraw_modal, name="view_withdraw_modal"),
     path('withdraw-student-application/', views.withdraw_application, name="withdraw_application"),
+    path('decline-application/', views.decline_application, name="decline_application"),
+    path('withdrawn-applications/', views.withdrawn_application, name="withdrawn_application"),
 ]
