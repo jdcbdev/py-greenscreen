@@ -47,4 +47,8 @@ urlpatterns = [
     path('withdraw-student-application/', views.withdraw_application, name="withdraw_application"),
     path('decline-application/', views.decline_application, name="decline_application"),
     path('withdrawn-applications/', views.withdrawn_application, name="withdrawn_application"),
+    path('monitoring/', views.monitoring, name="monitoring"),
+    path('monitoring/view/', views.view_monitoring, name="view_monitoring"),
+    path('monitoring/view/modal', views.view_monitoring_modal, name="view_monitoring_modal"),
+    path('monitoring/save-monitoring/', views.save_monitoring, name="save_monitoring"),
 ]

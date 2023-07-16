@@ -21,7 +21,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from .models import SchoolYear, AdmissionPeriod, Program, Quota, AutoAdmission, Criteria, Department, AcademicRank, AdmissionRole, Faculty, InterviewSlot
-from .forms import SchoolYearForm, AdmissionPeriodForm, QuotaForm, CriteriaForm, AddFacultyForm, ReturnApplicationForm, InterviewSlotForm, RateInterviewForm, ProcessApplicationForm
+from .forms import SchoolYearForm, AdmissionPeriodForm, QuotaForm, CriteriaForm, AddFacultyForm, ReturnApplicationForm, InterviewSlotForm, RateInterviewForm, ProcessApplicationForm, MonitoringForm
 from django.http import JsonResponse
 from django.db.models import Prefetch
 from django.contrib.auth.password_validation import validate_password
@@ -29,7 +29,7 @@ from django.core.exceptions import ValidationError
 from django.utils.crypto import get_random_string
 from .tasks import send_faculty_email_task
 from django.shortcuts import get_object_or_404
-from student.models import AdmissionApplication, CollegeEntranceTest, SchoolBackground, ContactPoint, Student, ApplicationStatusLogs, InterviewLogs, PersonalAddress, EconomicStatus, PersonalityTest, StudyHabit
+from student.models import AdmissionApplication, CollegeEntranceTest, SchoolBackground, ContactPoint, Student, ApplicationStatusLogs, InterviewLogs, PersonalAddress, EconomicStatus, PersonalityTest, StudyHabit, CCGrade
 from django.db.models import Exists, OuterRef
 from django.utils import timezone
 from datetime import datetime
@@ -1477,3 +1477,129 @@ def all_application(request):
     
     rendered_html = render(request, 'admission/applications/all.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
+
+@login_required(login_url='/admin/sign-in/')
+def monitoring(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
+    page_title = 'Monitoring'
+    page_active = 'monitoring'
+
+    context = {
+        'page_title': page_title,
+        'page_active': page_active,
+    }
+    
+    return render(request, 'admission/monitoring.html', context)
+
+@ensure_csrf_cookie
+@require_POST
+def view_monitoring(request):
+    school_year = SchoolYear.objects.all()
+    active_year = SchoolYear.objects.filter(is_active=True).first()
+    programs = Program.objects.filter(is_active=True)
+    students = (
+        Student.objects
+        .annotate(has_admission_application=Exists(
+            AdmissionApplication.objects
+            .filter(student=OuterRef('pk'), status='approved')
+        ))
+        .filter(has_admission_application=True)
+        .prefetch_related(
+            Prefetch(
+                'admissionapplication_set',
+                queryset=AdmissionApplication.objects.select_related('student')
+                .filter(status='approved')
+            ),
+            Prefetch(
+                'contactpoint_set',
+                queryset=ContactPoint.objects.select_related('student')
+            ),
+            Prefetch(
+                'ccgrade_set',
+                queryset=CCGrade.objects.select_related('student')
+            ),
+        )
+        .order_by('last_name', 'first_name', 'middle_name')
+    )
+
+    for student in students:
+        is_none = True
+        is_successful = False
+        
+        try:
+            ccgrade = student.ccgrade_set.first()
+            
+            if ccgrade is not None:
+                cc101 = ccgrade.cc101
+                cc102 = ccgrade.cc102
+                
+                if cc101 is None or cc101 == "":
+                    is_none = True
+                elif cc102 is None or cc102 == "":
+                    is_none = True
+                else:
+                    is_none = False
+                    if cc101 == 'INC' or cc101 == 'AW' or cc101 == 'UW':
+                        is_successful = False
+                    elif cc102 == 'INC' or cc102 == 'AW' or cc102 == 'UW':
+                        is_successful = False
+                    else:
+                        cc101 = float(ccgrade.cc101)
+                        cc102 = float(ccgrade.cc102)
+                        average = (cc101 + cc102) / 2
+                        if average <= 2.0:
+                            is_successful = True
+                        else:
+                            is_successful = False
+        except CCGrade.DoesNotExist:
+            is_none = True
+        
+        student.is_none = is_none
+        student.is_successful = is_successful
+    
+    applications = students
+    context = {
+        'school_year': school_year,
+        'active_year': active_year,
+        'applications': applications,
+        'programs': programs,
+    }
+    
+    rendered_html = render(request, 'admission/partials/view_monitoring.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')
+
+@ensure_csrf_cookie
+@require_POST
+def view_monitoring_modal(request):
+    student = Student.objects.get(pk=request.POST.get('student_id'))
+    ccgrade = CCGrade.objects.filter(student=student).first()
+    
+    context = {
+        'student': student,
+        'ccgrade': ccgrade,
+    }
+    
+    rendered_html = render(request, 'admission/partials/monitor_student.modal.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')
+
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def save_monitoring(request):
+    student = Student.objects.get(pk=request.POST.get('student_id'))
+    form = MonitoringForm(request.POST)
+    if form.is_valid():
+        ccgrade, _ = CCGrade.objects.get_or_create(student=student)
+        ccgrade.cc101 = form.cleaned_data.get('cc101')
+        ccgrade.cc102 = form.cleaned_data.get('cc102')
+        if form.cleaned_data.get('with_intervention') == '1':
+            ccgrade.with_intervention = True
+        else:
+            ccgrade.with_intervention = False
+        ccgrade.comments = form.cleaned_data.get('comments')
+        ccgrade.save()
+        
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)

@@ -182,3 +182,14 @@ class ProcessApplicationForm(forms.Form):
         cleaned_data = super().clean()
 
         return cleaned_data
+    
+class MonitoringForm(forms.Form):
+    cc101 = forms.CharField(required=False)
+    cc102 = forms.CharField(required=False)
+    with_intervention = forms.CharField(required=False)
+    comments = forms.CharField(required=False)
+    
+    def clean(self):
+        cleaned_data = super().clean()
+
+        return cleaned_data

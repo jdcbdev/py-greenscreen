@@ -1,0 +1,103 @@
+<!-- Modal -->
+<div class="modal fade" id="monitor-student-modal" tabindex="-1" aria-labelledby="" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="">View Student Monitoring</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="needs-validation" action="" method="post" name="monitor-student" id="monitor-student">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div class="row g-2">
+                        <div class="col-12 col-md-12">
+                            <label for="fullname" class="form-label">Name<span class="text-muted"></span></label>
+                            <input type="text" disabled="true" class="form-control" id="fullname" placeholder="" name="fullname" value="{{ student.first_name }} {{ student.middle_name }} {{ student.last_name }}">
+                        </div>
+                        <div class="col-12 col-md-12">
+                            <label for="cc101" class="form-label">CC 101 Grade<span class="text-muted"></span></label>
+                            <select class="form-control form-select" id="cc101" name="cc101">
+                                <option value="">--Select--</option>
+                                <option value="1.0" {% if ccgrade.cc101 == '1.0' %}selected{% endif %}>1.0</option>
+                                <option value="1.25" {% if ccgrade.cc101 == '1.25' %}selected{% endif %}>1.25</option>
+                                <option value="1.50" {% if ccgrade.cc101 == '1.50' %}selected{% endif %}>1.50</option>
+                                <option value="1.75" {% if ccgrade.cc101 == '1.75' %}selected{% endif %}>1.75</option>
+                                <option value="2.0" {% if ccgrade.cc101 == '2.0' %}selected{% endif %}>2.0</option>
+                                <option value="2.25" {% if ccgrade.cc101 == '2.25' %}selected{% endif %}>2.25</option>
+                                <option value="2.50" {% if ccgrade.cc101 == '2.50' %}selected{% endif %}>2.50</option>
+                                <option value="2.75" {% if ccgrade.cc101 == '2.75' %}selected{% endif %}>2.75</option>
+                                <option value="3.0" {% if ccgrade.cc101 == '3.0' %}selected{% endif %}>3.0</option>
+                                <option value="5.0" {% if ccgrade.cc101 == '5.0' %}selected{% endif %}>5.0</option>
+                                <option value="INC" {% if ccgrade.cc101 == 'INC' %}selected{% endif %}>INC</option>
+                                <option value="AW" {% if ccgrade.cc101 == 'AW' %}selected{% endif %}>AW</option>
+                                <option value="UW" {% if ccgrade.cc101 == 'UW' %}selected{% endif %}>UW</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-12">
+                            <label for="cc102" class="form-label">CC 102 Grade<span class="text-muted"></span></label>
+                            <select class="form-control form-select" id="cc102" name="cc102">
+                                <option value="">--Select--</option>
+                                <option value="1.0" {% if ccgrade.cc102 == '1.0' %}selected{% endif %}>1.0</option>
+                                <option value="1.25" {% if ccgrade.cc102 == '1.25' %}selected{% endif %}>1.25</option>
+                                <option value="1.50" {% if ccgrade.cc102 == '1.50' %}selected{% endif %}>1.50</option>
+                                <option value="1.75" {% if ccgrade.cc102 == '1.75' %}selected{% endif %}>1.75</option>
+                                <option value="2.0" {% if ccgrade.cc102 == '2.0' %}selected{% endif %}>2.0</option>
+                                <option value="2.25" {% if ccgrade.cc102 == '2.25' %}selected{% endif %}>2.25</option>
+                                <option value="2.50" {% if ccgrade.cc102 == '2.50' %}selected{% endif %}>2.50</option>
+                                <option value="2.75" {% if ccgrade.cc102 == '2.75' %}selected{% endif %}>2.75</option>
+                                <option value="3.0" {% if ccgrade.cc102 == '3.0' %}selected{% endif %}>3.0</option>
+                                <option value="5.0" {% if ccgrade.cc102 == '5.0' %}selected{% endif %}>5.0</option>
+                                <option value="INC" {% if ccgrade.cc102 == 'INC' %}selected{% endif %}>INC</option>
+                                <option value="AW" {% if ccgrade.cc102 == 'AW' %}selected{% endif %}>AW</option>
+                                <option value="UW" {% if ccgrade.cc102 == 'UW' %}selected{% endif %}>UW</option>
+                            </select>
+                        </div>                        
+                        <div class="col-12 col-md-12 mt-3">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="1" name="with_intervention" id="with_intervention" {% if ccgrade.with_intervention %}checked{% endif %}>
+                                <label class="form-check-label" for="with_intervention">
+                                    Received intervention
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-12 comments">
+                            <label for="comments" class="form-label">Enter your comments below</label>
+                            <textarea placeholder="Optional" class="form-control" id="comments" name="comments" rows="3">{{ccgrade.comments}}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" value="Save" class="btn btn-primary background-color-green" name="monitor-student" id="monitor-student">Save Monitoring</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+
+        $('form#monitor-student').submit(function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            formData.append('student_id', '{{student.id}}');
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'save_monitoring' %}",
+                data: formData,
+                processData: false,
+                contentType: false,
+    
+                success: function(data) {
+                    var errors = JSON.parse(data);
+                    has_error = false;
+    
+                    if (!has_error) {
+                        load()
+                        $('#monitor-student-modal').modal('hide');
+                    }
+                },
+            });
+        });
+    })
+</script>

@@ -1,0 +1,168 @@
+<div class="row g-2 mb-2 ">
+    <div id="MyButtons" class="d-flex mb-md-2 mb-lg-0 col-12 col-md-auto"></div>
+    <div class="form-group col-12 col-sm-auto flex-sm-grow-1 flex-lg-grow-0 ms-lg-auto">
+        <select name="schoolyear" id="schoolyear" class="form-select me-md-2">
+            <option value="">All School Year</option>
+            {% for sy in school_year %}
+            <option value="{{ sy.concat_year }}">{{ sy.concat_year }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group col-12 col-sm-auto flex-sm-grow-1 flex-lg-grow-0">
+        <select name="program" id="program" class="form-select me-md-2">
+            <option value="">All Program</option>
+            {% for program in programs %}
+            <option value="{{ program.code }}">{{ program.code }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group col-12 col-sm-auto flex-sm-grow-1 flex-lg-grow-0">
+        <select name="prediction" id="prediction" class="form-select me-md-2">
+            <option value="">All Prediction</option>
+            <option value="Successful">Successful</option>
+            <option value="Struggling">Struggling</option>
+        </select>
+    </div>
+    <div class="input-group search-keyword col-12 flex-lg-grow-1">
+        <input type="text" name="keyword" id="keyword" placeholder="Search Student" class="form-control">
+        <button class="btn btn-outline-secondary background-color-green" type="button"><i class="fas fa-search white"></i></button>
+    </div>
+</div>
+<table class="table table-hover responsive" id="table-monitoring">
+    <thead>
+        <tr>
+            <th scope="col">Action</th>
+            <th scope="col">Name</th>
+            <th scope="col">Program</th>
+            <th scope="col">Admission Year</th>
+            <th scope="col">Prediction</th>
+            <th scope="col">CC 101</th>
+            <th scope="col">CC 102</th>
+            <th scope="col">Actual Result</th>
+            <th scope="col">Email Address</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for application in applications %}
+        <tr>
+            <td>
+                <div class="action-button">
+                    <a title="View Student Monitoring" class="me-2 green monitor-student" data="{{ application.id }}"><i class="fa-solid fa-pen-to-square"></i></a>
+                    <a title="View Student Profile" class="me-2 green view-profile" data="{{ application.id }}" href="{% url 'view_student_profile' application.id %}" target="_blank"><i class="fa-solid fa-eye"></i></a>
+                </div>
+            </td>
+            <td>{{ application.last_name }}, {{ application.first_name }} {{ application.middle_name }}</td>
+            <td>{{ application.admissionapplication_set.first.program.code }}</td>
+            <td>{{ application.admissionapplication_set.first.school_year.concat_year }}</td>
+            <td>---</td>
+            <td>{{ application.ccgrade_set.first.cc101|default:'---' }}</td>
+            <td>{{ application.ccgrade_set.first.cc102|default:'---' }}</td>
+            {% if application.is_none %}
+            <td>---</td>
+            {% elif application.is_successful %}
+            <td><span class="table-successful">Successful</span></td>
+            {% else %}
+            <td><span class="table-struggling">Struggling</span></td>
+            {% endif %}
+            <td>{{ application.contactpoint_set.first.contact_email }}</td>
+            
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<!-- Modal -->
+<div class="application-container"></div>
+<script>
+    $(document).ready(function(){
+        dataTable = $("#table-monitoring").DataTable({
+            dom: 'Brtp',
+            responsive: true,
+            fixedHeader: true,
+            pageLength: 10,
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    className: 'border-white'
+                },
+                {
+                    extend: 'pdf',
+                    text: 'PDF',
+                    className: 'border-white'
+                },
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    className: 'border-white'
+                }
+            ],
+        });
+        dataTable.buttons().container().appendTo($('#MyButtons'));
+
+        var table = dataTable;
+        var filter = createFilter(table, [1,2,3,4,5,6,7,8]);
+
+        function createFilter(table, columns) {
+            var input = $('input#keyword').on("keyup", function() {
+                table.draw();
+            });
+          
+            $.fn.dataTable.ext.search.push(function(
+                settings,
+                searchData,
+                index,
+                rowData,
+                counter
+            ) {
+                var val = input.val().toLowerCase();
+            
+                for (var i = 0, ien = columns.length; i < ien; i++) {
+                    if (searchData[columns[i]].toLowerCase().indexOf(val) !== -1) {
+                    return true;
+                    }
+                }
+          
+                return false;
+            });
+          
+            return input;
+        }
+
+        $('select#prediction').on('change', function(e){
+            var status = $(this).val();
+            dataTable.columns([4]).search(status).draw();
+        });
+        $('select#program').on('change', function(e){
+            var status = $(this).val();
+            dataTable.columns([2]).search(status).draw();
+        });
+        $('select#schoolyear').on('change', function(e){
+            var status = $(this).val();
+            dataTable.columns([3]).search(status).draw();
+        });
+        $('#schoolyear').val('{{active_year.concat_year}}')
+
+        $('.monitor-student').click(function(){
+            var formData = {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                student_id: $(this).attr('data'),
+            };
+            $.ajax({
+                type: "POST",
+                url: "{% url 'view_monitoring_modal' %}",
+                data: formData,
+                success: function(result)
+                {
+                    $('div.application-container').html(result);
+                    $('#monitor-student-modal').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    }).modal('show');
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                    alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+                }  
+            });
+        });
+    })
+</script>

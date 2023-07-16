@@ -182,3 +182,14 @@ class InterviewLogs(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+class CCGrade(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
+    cc101 = models.CharField(max_length=255, null=True)
+    cc102 = models.CharField(max_length=255, null=True)
+    
+    with_intervention = models.BooleanField(null=True)
+    comments = models.CharField(max_length=255, null=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
