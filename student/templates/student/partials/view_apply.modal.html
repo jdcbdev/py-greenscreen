@@ -9,23 +9,44 @@
                 <div class="modal-body">
                     <input type="hidden" name="program_name" value="{{program.name}}">
                     <p class="my-4 text-center"><i class="fa-solid fa-paper-plane color-green" style="font-size: 45px;"></i></p>
-                    {% if period_allowed %}
+                    {% if ongoing_application %}
+                    <p class="text-center message">
+                        You have an on-going application. <a class="color-green" href="{% url 'my_application' %}">View My Application</a>.
+                    </p>
+                    {% elif is_admitted %}
+                    <p class="text-center message">
+                        No need to apply. You are already admitted.
+                    </p>
+                    {% elif invalid_application %}
+                    <p class="text-center message">
+                        You have already applied for the <b>{{program.name}}</b> program, and your application has been <span class="color-orange">{{invalid_application.status}}</span>.
+                        You may choose another program or <a class="color-green" href="{% url 'my_application' %}">View My Previous Application</a>.
+                    </p>                    
+                    {% elif not period_allowed %}
+                    <p class="text-center message">
+                        Unfortunately, the admission period for <b>{{program.name}}</b> has already ended.
+                    </p>
+                    {% elif cet_criteria.score > student_cet.overall_percentile_rank %}
+                    <p class="text-center message">
+                        Unfortunately, you do not meet the qualifications. The minimum CET OAPR for <b>{{program.name}}</b> is <b>{{cet_criteria.score}}</b>.
+                    </p>
+                    {% elif slot_taken > quota.number %}
+                    <p class="text-center message">
+                        Unfortunately, there are no more slots available for <b>{{program.name}}</b>.
+                    </p>
+                    {% else %}
                     <p class="text-center message">
                         You are applying for <b>{{program.name}}</b>. Click <b class="color-green">Send Application</b> to confirm.
                     </p>
-                    {% else %}
-                    <p class="text-center message">
-                        Unfortunately, the admission period for this school year has already ended. Admission Period: <b>{{period.concat_date}}</b>
-                    </p>
-                    {% endif %}
+                    {% endif %}                    
                 </div>
                 <div class="modal-footer">
-                    {% if period_allowed %}
-                    <a class="btn btn-lg btn-success background-color-green btn-apply btn-font mx-auto" id="send_application">Send Application</a>
-                    {% else %}
+                    {% if ongoing_application or is_admitted or invalid_application or not period_allowed or cet_criteria.score > student_cet.overall_percentile_rank or slot_taken > quota.number %}
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    {% else %}
+                    <a class="btn btn-lg btn-success background-color-green btn-apply btn-font mx-auto" id="send_application">Send Application</a>
                     {% endif %}
-                </div>  
+                </div>
             </form>
         </div>
     </div>

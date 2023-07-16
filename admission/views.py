@@ -180,6 +180,9 @@ def password_reset(request, uidb64, token):
     except:
         user = None
 
+    if not user:
+        return redirect('login')
+    
     form = SetPasswordForm()
     
     if user is not None and reset_password_token.check_token(user, token):
@@ -897,8 +900,12 @@ def view_student_profile(request, id):
     if request.user.is_authenticated and not request.user.is_staff:
         return redirect('home')
     
-    student = Student.objects.filter(pk=id).first()
-    if student.birth_date:
+    student = Student.objects.filter(pk=id, is_profile_complete=True).first()
+    
+    if not student:
+        return redirect('view_application')
+    
+    if student.birth_date is not None:
         student_birth_date = student.birth_date
         formatted_date = student_birth_date.strftime('%Y-%m-%d')
         student.birth_date = formatted_date

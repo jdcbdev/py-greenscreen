@@ -68,33 +68,11 @@
             <a href="https://drive.google.com/file/d/1QynQg6wq4jYg60dlSto631a6-0lPJUKp/view?usp=sharing" class="color-green text-decoration-none" target="_blank">View Curriculum</a>
           </p>
           {% if request.user.is_authenticated %}
-            {% if application %}
-              {% if application.status == 'pending' or application.status == 'verified' or application.status == 'interviewed' or application.status == 'approved' %}
-              <p class="btn-apply-center">
-                <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'my_application' %}">
-                  View Application
-                </a>
-              </p>
-              {% elif application.status == 'declined' and application.program.code == "BSCS" %}
-              <p class="btn-apply-center">
-                <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'my_application' %}">
-                  View Application
-                </a>
-              </p>
-              {% else %}
-              <p class="btn-apply-center">
-                <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" data="bscs" id="bscs-apply">
-                  Apply Now
-                </a>
-              </p>
-              {% endif %}
-            {% else %}
-            <p class="btn-apply-center">
-              <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" data="bscs" id="bscs-apply">
-                Apply Now
-              </a>
-            </p>
-            {% endif %}
+          <p class="btn-apply-center">
+            <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" data="bscs" id="bscs-apply">
+              Apply Now
+            </a>
+          </p>
           {% else %}
           <p class="btn-apply-center">
             <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'signin' %}">
@@ -116,27 +94,11 @@
             <a href="https://drive.google.com/file/d/1tY0SN0kIvOowi02dAAD2YCBloJq2oKWb/view?usp=sharing" class="color-green text-decoration-none" target="_blank">View Curriculum</a>
           </p>
           {% if request.user.is_authenticated %}
-            {% if application %}
-              {% if application.status == 'pending' or application.status == 'verified' or application.status == 'interviewed' or application.status == 'approved' %}
-              <p class="btn-apply-center">
-                <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'my_application' %}">
-                  View Application
-                </a>
-              </p>
-              {% else %}
-              <p class="btn-apply-center">
-                <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" data="bsit" id="bsit-apply">
-                  Apply Now
-                </a>
-              </p>
-              {% endif %}
-            {% else %}
-              <p class="btn-apply-center">
-                <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" data="bsit" id="bsit-apply">
-                  Apply Now
-                </a>
-              </p>
-            {% endif %}
+          <p class="btn-apply-center">
+            <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" data="bsit" id="bsit-apply">
+              Apply Now
+            </a>
+          </p>
           {% else %}
             <p class="btn-apply-center">
               <a class="btn btn-lg btn-success background-color-green btn-apply btn-font" href="{% url 'signin' %}">

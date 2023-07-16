@@ -40,7 +40,7 @@ class AdmissionPeriod(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
-        return self.concat_date
+        return f"{self.program} - {self.school_year} - {self.concat_date}"
     
 class Quota(models.Model):
     school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE, null=True)

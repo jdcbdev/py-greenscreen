@@ -24,7 +24,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from datetime import date
-from admission.models import Program, SchoolYear, AdmissionPeriod, DocumentaryRequirement, InterviewSlot, Criteria
+from admission.models import Program, SchoolYear, AdmissionPeriod, DocumentaryRequirement, InterviewSlot, Criteria, Quota
 from django.http import HttpResponse
 from decimal import Decimal
 
@@ -336,6 +336,9 @@ def password_reset(request, uidb64, token):
     except:
         user = None
 
+    if not user:
+        return redirect('signin')
+    
     form = SetPasswordForm()
     
     if user is not None and reset_password_token.check_token(user, token):
@@ -395,6 +398,9 @@ def activate(request, uidb64, token):
         user = User.objects.get(pk=uid)
     except:
         user = None
+    
+    if not user:
+        return redirect('signin')
 
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
@@ -887,13 +893,33 @@ def view_apply_modal(request):
     program = Program.objects.get(code=request.POST.get('program_code'))
     school_year = SchoolYear.objects.filter(is_active=True).first()
     period = AdmissionPeriod.objects.filter(school_year=school_year, program=program, is_active=True).first()
-    today = date.today()
-    period_allowed = period.end_date > today
+    period_allowed = False
+    if period:
+        today = date.today()
+        period_allowed = period.end_date > today
+    
+    cet_criteria = Criteria.objects.filter(program=program, school_year=school_year, code='cet').first()
+    student = Student.objects.get(account=request.user)   
+    student_cet = CollegeEntranceTest.objects.filter(student=student).first()
+    
+    quota = Quota.objects.filter(program=program, school_year=school_year).first()
+    slot_taken = AdmissionApplication.objects.filter(program=program, school_year=school_year, status='approved').count()
+    
+    ongoing_application = AdmissionApplication.objects.filter(school_year=school_year, student=student, status__in=['pending', 'verified', 'interviewed', 'approved']).order_by('-created_at').first()
+    invalid_application = AdmissionApplication.objects.filter(program=program, school_year=school_year, student=student, status__in=['cancelled', 'declined', 'withdrawn']).order_by('-created_at').first()
+    
+    is_admitted = AdmissionApplication.objects.filter(status='approved', student=student).order_by('-created_at').first()
     
     context = {
         'program': program,
         'period_allowed': period_allowed,
-        'period': period
+        'cet_criteria': cet_criteria,
+        'student_cet': student_cet,
+        'quota': quota,
+        'slot_taken': slot_taken,
+        'ongoing_application': ongoing_application,
+        'invalid_application': invalid_application,
+        'is_admitted': is_admitted,
     }
     
     rendered_html = render(request, 'student/partials/view_apply.modal.html', context)
