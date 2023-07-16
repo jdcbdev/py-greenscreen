@@ -9,7 +9,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from .custom_apis import load_settings
-from admission.models import SchoolYear
+from admission.models import SchoolYear, AdmissionPeriod
+from datetime import date
 
 load_settings()
 

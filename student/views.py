@@ -886,7 +886,7 @@ def my_profile(request):
 def view_apply_modal(request):
     program = Program.objects.get(code=request.POST.get('program_code'))
     school_year = SchoolYear.objects.filter(is_active=True).first()
-    period = AdmissionPeriod.objects.filter(school_year=school_year, is_active=True).first()
+    period = AdmissionPeriod.objects.filter(school_year=school_year, program=program, is_active=True).first()
     today = date.today()
     period_allowed = period.end_date > today
     

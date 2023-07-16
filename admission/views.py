@@ -303,19 +303,21 @@ def add_admission_period(request):
     if form.is_valid():
         # Create or update
         sy = SchoolYear.objects.filter(is_active=True).first()
-        period, _ = AdmissionPeriod.objects.get_or_create(school_year=sy)
+        program = Program.objects.filter(is_active=True)
+        if program:
+            for prog in program:
+                period, _ = AdmissionPeriod.objects.get_or_create(school_year=sy, program=prog)
         
-        start_date = form.cleaned_data['start_date']
-        end_date = form.cleaned_data['end_date']
-        period.start_date = start_date
-        period.end_date = end_date
-        period.concat_date = start_date.strftime("%b. %d") + ' - ' + end_date.strftime("%b. %d")
-        period.is_active = True
-        period.save()  
-        
-        # Deactivate
-        AdmissionPeriod.objects.exclude(school_year=sy).update(is_active=False)
-
+                start_date = form.cleaned_data['start_date']
+                end_date = form.cleaned_data['end_date']
+                period.start_date = start_date
+                period.end_date = end_date
+                period.concat_date = start_date.strftime("%b. %d") + ' - ' + end_date.strftime("%b. %d")
+                period.is_active = True
+                period.save()  
+                
+                # Deactivate
+                AdmissionPeriod.objects.exclude(school_year=sy).update(is_active=False)
         
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
