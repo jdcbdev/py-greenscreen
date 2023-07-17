@@ -54,7 +54,13 @@
             <td>{{ application.last_name }}, {{ application.first_name }} {{ application.middle_name }}</td>
             <td>{{ application.admissionapplication_set.first.program.code }}</td>
             <td>{{ application.admissionapplication_set.first.school_year.concat_year }}</td>
-            <td>---</td>
+            {% if application.admissionapplication_set.first.prediction == True %}
+                <td><span class="table-successful">Successful</span></td>
+            {% elif application.admissionapplication_set.first.prediction == False %}
+                <td><span class="table-struggling">Struggling</span></td>
+            {% else %}
+                <td>---</td>
+            {% endif %}
             <td>{{ application.ccgrade_set.first.cc101|default:'---' }}</td>
             <td>{{ application.ccgrade_set.first.cc102|default:'---' }}</td>
             {% if application.is_none %}

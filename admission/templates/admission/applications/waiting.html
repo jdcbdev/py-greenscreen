@@ -62,7 +62,13 @@
             <td>{{ application.schoolbackground_set.first.combined_gpa }}</td>
             <td>{{ application.admissionapplication_set.first.interviewlogs_set.first.score }}</td>
             <td>{{ application.admissionapplication_set.first.total }}</td>
-            <td>---</td>
+            {% if application.admissionapplication_set.first.prediction == True %}
+                <td><span class="table-successful">Successful</span></td>
+            {% elif application.admissionapplication_set.first.prediction == False %}
+                <td><span class="table-struggling">Struggling</span></td>
+            {% else %}
+                <td>---</td>
+            {% endif %}
             <td>{{ application.contactpoint_set.first.contact_email }}</td>
             <td>{{ application.contactpoint_set.first.contact_number }}</td>
         </tr>

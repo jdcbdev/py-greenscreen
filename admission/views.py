@@ -37,6 +37,7 @@ import datetime
 from base.models import SHSStrand, ClassRoomOrganization, StudentSupremeGovernment, ClassRank, AcademicAwards, AcademicDegree, EmploymentStatus
 from decimal import Decimal
 from student.forms import WithdrawApplicationForm
+import pickle
 
 # Create your views here.
 
@@ -750,9 +751,34 @@ def accept_application(request):
             status=application.status,
             processed_by=request.user
         )
+        
+        score = 0
+        status = 'okay'
+        processed_by = None
+        comments = ''
+        
+        auto = AutoAdmission.objects.filter(program=application.program, school_year=application.school_year).first()
+        print(auto.automate)
+        if auto.automate:
+            #predict
+            predict = predict_programming_success(application)
+            if predict[0] == 1:
+                score = 100
+                status = 'interviewed'
+                processed_by = request.user
+                comments = 'Automated: skipped interview'
+                application.status = 'interviewed'
+                
+            application.prediction = predict[0]
+            application.save() 
+        
         InterviewLogs.objects.create(
             application=application,
-            interview=slot
+            interview=slot,
+            score=score,
+            status=status,
+            processed_by=processed_by,
+            comments = comments
         )
         
         return JsonResponse({'message': 'Successful.'})
@@ -1603,3 +1629,327 @@ def save_monitoring(request):
         
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
+
+def load_model():
+    with open('model.pkl', 'rb') as file:
+        model = pickle.load(file)
+    return model
+
+def predict_programming_success(application):
+    model = load_model()
+
+    #query
+    cet = CollegeEntranceTest.objects.filter(student=application.student).first()
+    shs = SchoolBackground.objects.filter(student=application.student).first()
+    pt = PersonalityTest.objects.filter(student=application.student).first()
+    ss = StudyHabit.objects.filter(student=application.student).first()
+    econ = EconomicStatus.objects.filter(student=application.student).first()
+       
+    #load data
+    cet_oapr = cet.overall_percentile_rank
+    english = cet.english_proficiency_skills
+    reading = cet.reading_comprehension_skills
+    science = cet.science_process_skills
+    quantitative = cet.quantitative_skills
+    abstract = cet.quantitative_skills
+    shs_gpa = shs.combined_gpa
+    p1 = pt.p1
+    p2 = pt.p2
+    p3 = pt.p3
+    p4 = pt.p4
+    p5 = pt.p5
+    p6 = pt.p6
+    p7 = pt.p7
+    p8 = pt.p8
+    p9 = pt.p9
+    p10 = pt.p10
+    p11 = pt.p11
+    p12 = pt.p12
+    p13 = pt.p13
+    p14 = pt.p14
+    p15 = pt.p15
+    p16 = pt.p16
+    p17 = pt.p17
+    p18 = pt.p18
+    p19 = pt.p19
+    p20 = pt.p20
+    p21 = pt.p21
+    p22 = pt.p22
+    p23 = pt.p23
+    p24 = pt.p24
+    p25 = pt.p25
+    p26 = pt.p26
+    p27 = pt.p27
+    p28 = pt.p28
+    p29 = pt.p29
+    p30 = pt.p30
+    p31 = pt.p31
+    p32 = pt.p32
+    p33 = pt.p33
+    p34 = pt.p34
+    p35 = pt.p35
+    p36 = pt.p36
+    p37 = pt.p37
+    p38 = pt.p38
+    p39 = pt.p39
+    p40 = pt.p40
+    ptotal = p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9 + p10 + p11 + p12 + p13 + p14 + p15 + p16 + p17 + p18 + p19 + p20 + p21 + p22 + p23 + p24 + p25 + p26 + p27 + p28 + p29 + p30 + p31 + p32 + p33 + p34 + p35 + p36 + p37 + p38 + p39 + p40
+    s1 = ss.s1
+    s2 = ss.s2
+    s3 = ss.s3
+    s4 = ss.s4
+    s5 = ss.s5
+    s6 = ss.s6
+    s7 = ss.s7
+    s8 = ss.s8
+    s9 = ss.s9
+    s10 = ss.s10
+    s11 = ss.s11
+    s12 = ss.s12
+    s13 = ss.s13
+    s14 = ss.s14
+    s15 = ss.s15
+    s16 = ss.s16
+    s17 = ss.s17
+    s18 = ss.s18
+    s19 = ss.s19
+    s20 = ss.s20
+    s21 = ss.s21
+    s22 = ss.s22
+    s23 = ss.s23
+    s24 = ss.s24
+    stotal = s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8 + s9 + s10 + s11 + s12 + s13 + s14 + s15 + s16 + s17 + s18 + s19 + s20 + s21 + s22 + s23 + s24
+    bscs = 1 if application.program.code.lower() == "bscs" else 0
+    bsit = 1 if application.program.code.lower() == "bsit" else 0
+    female = 1 if application.student.sex.lower() == "female" else 0
+    male = 1 if application.student.sex.lower() == "male" else 0
+    abm = 1 if shs.strand.lower() == "abm" else 0
+    gas = 1 if shs.strand.lower() == "gas" else 0
+    humss = 1 if shs.strand.lower() == "humss" else 0
+    stem = 1 if shs.strand.lower() == "stem" else 0
+    he = 1 if shs.strand.lower() == "homeecon" else 0
+    ict = 1 if shs.strand.lower() == "ict" else 0
+    arts = 1 if shs.strand.lower() == "artsdesign" or shs.strand.lower() == "agri-fishery" or shs.strand.lower() == "indarts" else 0
+    sports = 1 if shs.strand.lower() == "sports" else 0
+    class_rank_5 = 1 if shs.class_rank.lower() == "top 5" else 0
+    class_rank_10 = 1 if shs.class_rank.lower() == "top 10" else 0
+    class_rank_20 = 1 if shs.class_rank.lower() == "top 20" else 0
+    class_rank_none = 1 if shs.class_rank.lower() == "none" else 0
+    highest_honor = 1 if shs.academic_awards_received.lower() == "highest honor" else 0
+    high_honor = 1 if shs.academic_awards_received.lower() == "high honor" else 0
+    with_honor = 1 if shs.academic_awards_received.lower() == "with honor" else 0
+    awards_none = 1 if shs.academic_awards_received.lower() == "none" else 0
+    class_president = 1 if shs.classroom_organization.lower() == "president" else 0
+    class_vice_president = 1 if shs.classroom_organization.lower() == "vice president" else 0
+    class_secretary = 1 if shs.classroom_organization.lower() == "secretary" else 0
+    class_treasurer = 1 if shs.classroom_organization.lower() == "treasurer" else 0
+    class_auditor = 1 if shs.classroom_organization.lower() == "auditor" else 0
+    class_project_manager = 1 if shs.classroom_organization.lower() == "project manager" else 0
+    class_pio = 1 if shs.classroom_organization.lower() == "pio (public information officer)" else 0
+    class_peace_officer = 1 if shs.classroom_organization.lower() == "sgt. at arms" else 0
+    class_none = 1 if shs.classroom_organization.lower() == "none" else 0
+    school_president = 1 if shs.student_supreme_government.lower() == "president" else 0
+    school_vice_president = 1 if "vice president" in shs.student_supreme_government.lower() else 0
+    school_senator = 1 if shs.student_supreme_government.lower() == "senator" else 0
+    school_board = 1 if shs.student_supreme_government.lower() == "board member" else 0
+    school_secretary = 1 if shs.student_supreme_government.lower() == "secretary" else 0
+    school_treasurer = 1 if shs.student_supreme_government.lower() == "treasurer" else 0
+    school_auditor = 1 if shs.student_supreme_government.lower() == "auditor" else 0
+    school_project_manager = 1 if shs.student_supreme_government.lower() == "project manager" else 0
+    school_pio = 1 if shs.student_supreme_government.lower() == "pio (public information officer)" else 0
+    school_peace_officer = 1 if "sgt. at arms" in shs.student_supreme_government.lower() else 0
+    school_grade_level_rep = 1 if shs.student_supreme_government.lower() == "grade level representative" else 0
+    school_volunteer = 1 if shs.student_supreme_government.lower() == "volunteer" else 0
+    school_none = 1 if shs.student_supreme_government.lower() == "none" else 0
+    father_college = 1 if econ.father_highest_academic_degree.lower() in ["doctorate degree", "master’s degree", "bachelor’s degree", "associate degree"] else 0
+    father_highschool = 1 if econ.father_highest_academic_degree.lower() in ["trade/technical/vocational training", "some college credit, no degree", "high school graduate, diploma or the equivalent", "some high school, no diploma"] else 0
+    father_no_school = 1 if econ.father_highest_academic_degree.lower() in ["nursery school to 8th grade", "no schooling completed"] else 0
+    father_na = 1 if econ.father_highest_academic_degree.lower() == "not applicable (not known, deceased, etc.)" else 0
+    father_fulltime = 1 if econ.father_employment_status.lower() == "employed, working 40 hours or more per week (fulltime)" else 0
+    father_part_time = 1 if econ.father_employment_status.lower() == "employed, working 1 to 39 hours or more per week (part-time)" else 0
+    father_self_employed = 1 if econ.father_employment_status.lower() == "self-employed (doing business, etc.)" else 0
+    father_not_employed = 1 if econ.father_employment_status.lower() in ["not employed, looking for work", "not employed, not looking for work", "retired", "disabled, not able to work"] else 0
+    father_emp_na = 1 if econ.father_employment_status.lower() == "not applicable (not known, deceased, etc.)" else 0
+    mother_college = 1 if econ.mother_highest_academic_degree.lower() in ["doctorate degree", "master’s degree", "bachelor’s degree", "associate degree"] else 0
+    mother_highschool = 1 if econ.mother_highest_academic_degree.lower() in ["trade/technical/vocational training", "some college credit, no degree", "high school graduate, diploma or the equivalent", "some high school, no diploma"] else 0
+    mother_no_school = 1 if econ.mother_highest_academic_degree.lower() in ["nursery school to 8th grade", "no schooling completed"] else 0
+    mother_na = 1 if econ.mother_highest_academic_degree.lower() == "not applicable (not known, deceased, etc.)" else 0
+    mother_fulltime = 1 if econ.mother_employment_status.lower() == "employed, working 40 hours or more per week (fulltime)" else 0
+    mother_part_time = 1 if econ.mother_employment_status.lower() == "employed, working 1 to 39 hours or more per week (part-time)" else 0
+    mother_self_employed = 1 if econ.mother_employment_status.lower() == "self-employed (doing business, etc.)" else 0
+    mother_not_employed = 1 if econ.mother_employment_status.lower() in ["not employed, looking for work", "not employed, not looking for work", "retired", "disabled, not able to work"] else 0
+    mother_emp_na = 1 if econ.mother_employment_status.lower() == "not applicable (not known, deceased, etc.)" else 0
+    income_100k = 1 if econ.family_income.lower() == "more than p100,000" else 0
+    income_50k = 1 if econ.family_income.lower() == "p50,000 to p100,000" else 0
+    income_20k = 1 if econ.family_income.lower() == "p20,000 to p50,000" else 0
+    income_10k = 1 if econ.family_income.lower() == "p10,000 to p20,000" else 0
+    income_below_10k = 1 if econ.family_income.lower() == "below p10,000" else 0
+    income_na = 1 if econ.family_income.lower() == "prefer not to say" else 0
+    laptop_no = 1 if econ.computer.lower() == "no" else 0
+    laptop_yes = 1 if econ.computer.lower() == "yes" else 0
+    internet_post_paid = 1 if econ.internet_connection.lower() == "post-paid plan(unlimited data subscription to pldt, globe, smart, sky, etc.)" else 0
+    internet_pre_paid = 1 if econ.internet_connection.lower() == "pre-paid plan(limited data subscription)" else 0
+    s25_teacher = 1 if ss.s25.lower() == "ask my teachers at school" else 0
+    s25_tutor = 1 if ss.s25.lower() == "ask tutors at a private tutoring school" else 0
+    s25_friends = 1 if ss.s25.lower() == "ask my friends" else 0
+    s25_family = 1 if ss.s25.lower() == "ask my family" else 0
+    s25_research = 1 if ss.s25.lower() in ["research from reference books on my own", "research online"] else 0
+    s25_leave_it = 1 if ss.s25.lower() == "leave it" else 0
+    
+    # Prepare the input data
+    input_data = [[
+        cet_oapr,
+        english,
+        reading,
+        science,
+        quantitative,
+        abstract,
+        shs_gpa,
+        p1,
+        p2,
+        p3,
+        p4,
+        p5,
+        p6,
+        p7,
+        p8,
+        p9,
+        p10,
+        p11,
+        p12,
+        p13,
+        p14,
+        p15,
+        p16,
+        p17,
+        p18,
+        p19,
+        p20,
+        p21,
+        p22,
+        p23,
+        p24,
+        p25,
+        p26,
+        p27,
+        p28,
+        p29,
+        p30,
+        p31,
+        p32,
+        p33,
+        p34,
+        p35,
+        p36,
+        p37,
+        p38,
+        p39,
+        p40,
+        ptotal,
+        s1,
+        s2,
+        s3,
+        s4,
+        s5,
+        s6,
+        s7,
+        s8,
+        s9,
+        s10,
+        s11,
+        s12,
+        s13,
+        s14,
+        s15,
+        s16,
+        s17,
+        s18,
+        s19,
+        s20,
+        s21,
+        s22,
+        s23,
+        s24,
+        stotal,
+        bscs,
+        bsit,
+        female,
+        male,
+        abm,
+        gas,
+        humss,
+        stem,
+        he,
+        ict,
+        arts,
+        sports,
+        class_rank_5,
+        class_rank_10,
+        class_rank_20,
+        class_rank_none,
+        highest_honor,
+        high_honor,
+        with_honor,
+        awards_none,
+        class_president,
+        class_vice_president,
+        class_secretary,
+        class_treasurer,
+        class_auditor,
+        class_project_manager,
+        class_pio,
+        class_peace_officer,
+        class_none,
+        school_president,
+        school_vice_president,
+        school_senator,
+        school_board,
+        school_secretary,
+        school_treasurer,
+        school_auditor,
+        school_project_manager,
+        school_pio,
+        school_peace_officer,
+        school_grade_level_rep,
+        school_volunteer,
+        school_none,
+        father_college,
+        father_highschool,
+        father_no_school,
+        father_na,
+        father_fulltime,
+        father_part_time,
+        father_self_employed,
+        father_not_employed,
+        father_emp_na,
+        mother_college,
+        mother_highschool,
+        mother_no_school,
+        mother_na,
+        mother_fulltime,
+        mother_part_time,
+        mother_self_employed,
+        mother_not_employed,
+        mother_emp_na,
+        income_100k,
+        income_50k,
+        income_20k,
+        income_10k,
+        income_below_10k,
+        income_na,
+        laptop_no,
+        laptop_yes,
+        internet_post_paid,
+        internet_pre_paid,
+        s25_teacher,
+        s25_tutor,
+        s25_friends,
+        s25_family,
+        s25_research,
+        s25_leave_it
+    ]]
+
+    # Make the prediction using the model
+    prediction = model.predict(input_data)
+
+    return prediction

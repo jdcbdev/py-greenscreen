@@ -49,12 +49,12 @@ class CollegeEntranceTest(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
     application_number = models.CharField(max_length=100, unique=True, blank=False)
     rating_period = models.CharField(max_length=100, blank=False)
-    overall_percentile_rank = models.DecimalField(max_digits=5, decimal_places=2, blank=False)
-    english_proficiency_skills = models.DecimalField(max_digits=5, decimal_places=2, blank=False)
-    reading_comprehension_skills = models.DecimalField(max_digits=5, decimal_places=2, blank=False)
-    science_process_skills = models.DecimalField(max_digits=5, decimal_places=2, blank=False)
-    quantitative_skills = models.DecimalField(max_digits=5, decimal_places=2, blank=False)
-    abstract_thinking_skills = models.DecimalField(max_digits=5, decimal_places=2, blank=False)
+    overall_percentile_rank = models.FloatField(blank=False)
+    english_proficiency_skills = models.FloatField(blank=False)
+    reading_comprehension_skills = models.FloatField(blank=False)
+    science_process_skills = models.FloatField(blank=False)
+    quantitative_skills = models.FloatField(blank=False)
+    abstract_thinking_skills = models.FloatField(blank=False)
     report_of_rating = models.ImageField(upload_to='cet_reports/', null=True)
 
 class SchoolBackground(models.Model):
@@ -161,6 +161,7 @@ class AdmissionApplication(models.Model):
     school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE)
     status = models.CharField(max_length=255, default='pending')
     total = models.FloatField(null=True)
+    prediction = models.BooleanField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
