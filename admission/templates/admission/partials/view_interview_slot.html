@@ -5,7 +5,11 @@
             <h5 class="col-12 fw-bold mt-0 mb-1">{{slot.code|upper}} Interview Schedule</h5>
         </div>
         <div class="col-auto">
+            {% if request.user.is_superuser %}
             <a class="edit-toggle color-green mt-1" type="button" title="Add {{slot.code|upper}} Interview Schedule" id="add-interview" data="{{ slot.id }}"><i class="fa-regular fa-pen-to-square"></i></a>
+            {% elif faculty_user.admission_role.id == 1 and faculty_user.department == slot %}
+            <a class="edit-toggle color-green mt-1" type="button" title="Add {{slot.code|upper}} Interview Schedule" id="add-interview" data="{{ slot.id }}"><i class="fa-regular fa-pen-to-square"></i></a>
+            {% endif %}
         </div>
     </div>
     {% if slot.interviewslot_set.all %}

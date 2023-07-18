@@ -5,7 +5,11 @@
             <h5 class="col-12 fw-bold mt-0 mb-1">{{criterium.code|upper}} Admission Criteria</h5>
         </div>
         <div class="col-auto">
+            {% if request.user.is_superuser %}
             <a class="edit-toggle color-green mt-1" type="button" title="Update {{criterium.code|upper}} Admission Criteria" id="update_{{criterium.code|upper}}_criteria" data-bs-toggle="modal" data-bs-target="#modal-{{ criterium.code|upper }}-criteria"><i class="fa-regular fa-pen-to-square"></i></a>
+            {% elif faculty_user.admission_role.id == 1 and faculty_user.department == criterium %}
+            <a class="edit-toggle color-green mt-1" type="button" title="Update {{criterium.code|upper}} Admission Criteria" id="update_{{criterium.code|upper}}_criteria" data-bs-toggle="modal" data-bs-target="#modal-{{ criterium.code|upper }}-criteria"><i class="fa-regular fa-pen-to-square"></i></a>
+            {% endif %}
         </div>
     </div>
     {% for ctr in criterium.criterias %}

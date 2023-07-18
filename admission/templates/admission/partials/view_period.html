@@ -1,7 +1,9 @@
 <div class="col">
     <div class="d-flex align-items-center justify-content-between">
         <label for="active_admission_period" class="form-label">Admission Period<span class="text-muted"></span></label>
+        {% if request.user.is_superuser or faculty_user.admission_role.id == 1 %}
         <a class="edit-toggle mt-auto color-green" type="button" title="Update Admission Period" data-bs-toggle="modal" data-bs-target="#modal-admission-period"><i class="fa-regular fa-pen-to-square"></i></a>
+        {% endif %}
     </div>
     <input type="text" disabled="true" class="form-control" value="{{ period.concat_date|default_if_none:'' }}" id="active_admission_period" placeholder="" name="active_admission_period">
 </div>

@@ -8,6 +8,7 @@
     <div class="w-100">
         <h5 class="col-12 fw-bold mb-3 mt-3 mt-md-0">Applications</h5>
         <ul class="nav nav-tabs application">
+            {% if request.user.is_superuser or faculty_user.admission_role.name|lower == "admission officer" %}
             <li class="nav-item active" id="li-pending">
                 <a class="nav-link">Pending <span class="counter pending-counter">{{ pending_counter|default_if_none:'0' }}</span></a>
             </li>
@@ -28,7 +29,22 @@
             </li>
             <li class="nav-item" id="li-all">
                 <a class="nav-link">All</a>
+            </li>            
+            {% elif faculty_user.admission_role.name|lower == "staff" %}
+            <li class="nav-item active" id="li-pending">
+                <a class="nav-link">Pending <span class="counter pending-counter">{{ pending_counter|default_if_none:'0' }}</span></a>
             </li>
+            <li class="nav-item" id="li-all">
+                <a class="nav-link">All</a>
+            </li>
+            {% elif faculty_user.admission_role.name|lower == "interviewer" %}
+            <li class="nav-item" id="li-interview">
+                <a class="nav-link">Interview <span class="counter interview-counter">{{ interview_counter|default_if_none:'0' }}</span></a>
+            </li>
+            <li class="nav-item" id="li-all">
+                <a class="nav-link">All</a>
+            </li>
+            {% endif %}
         </ul>
         <div class="table-responsive py-3 table-container">
 
@@ -152,7 +168,11 @@
         }
     }
     $(document).ready(function(){
+        {% if request.user.is_superuser or faculty_user.admission_role.name|lower != "interviewer" %}
         load('pending');
+        {% else %}
+        load('interview');
+        {% endif %}
 
         $('ul.application .nav-item').on('click', function(){
             $('ul.application .nav-item').removeClass('active');

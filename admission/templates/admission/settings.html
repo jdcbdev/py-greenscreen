@@ -11,7 +11,9 @@
             <div class="col-12 col-md-4 col-lg-3">
                 <div class="d-flex align-items-center justify-content-between">
                     <label for="active_school_year" class="form-label">Active School Year<span class="text-muted"></span></label>
+                    {% if request.user.is_superuser or faculty_user.admission_role.id == 1 %}
                     <a class="edit-toggle color-green" type="button" title="Update School Year" data-bs-toggle="modal" data-bs-target="#modal-school-year"><i class="fa-regular fa-pen-to-square"></i></a>
+                    {% endif %}
                 </div>
                 <input type="text" disabled="true" class="form-control" value="{{ sy.concat_year|default_if_none:'' }}" id="active_school_year">
             </div>
@@ -33,10 +35,17 @@
                     </div>
                   </div>
                 {% for auto in autos %}
-                <div class="form-check form-switch col-12 col-md-12">
-                    <input class="form-check-input form-control auto-toggle" type="checkbox" data-code="{{ auto.code }}" id="auto_{{ auto.code|upper }}" name="auto_{{ auto.code|upper }}" {% if auto.autoadmissions.0.automate %}checked{% endif %} disabled>
-                    <label class="form-check-label form-label" for="auto_{{ auto.code|upper }}">Automate Admission Decision for {{ auto.code|upper }}</label>
-                </div>
+                    {% if request.user.is_superuser %}
+                    <div class="form-check form-switch col-12 col-md-12">
+                        <input class="form-check-input form-control auto-toggle" type="checkbox" data-code="{{ auto.code }}" id="auto_{{ auto.code|upper }}" name="auto_{{ auto.code|upper }}" {% if auto.autoadmissions.0.automate %}checked{% endif %} disabled>
+                        <label class="form-check-label form-label" for="auto_{{ auto.code|upper }}">Automate Admission Decision for {{ auto.code|upper }}</label>
+                    </div>
+                    {% elif faculty_user.admission_role.id == 1 and faculty_user.department == auto %}
+                    <div class="form-check form-switch col-12 col-md-12">
+                        <input class="form-check-input form-control auto-toggle" type="checkbox" data-code="{{ auto.code }}" id="auto_{{ auto.code|upper }}" name="auto_{{ auto.code|upper }}" {% if auto.autoadmissions.0.automate %}checked{% endif %} disabled>
+                        <label class="form-check-label form-label" for="auto_{{ auto.code|upper }}">Automate Admission Decision for {{ auto.code|upper }}</label>
+                    </div>
+                    {% endif %}
                 {% endfor %}
             </div>
             <div class="col-12 m-0">
@@ -91,11 +100,6 @@
             });            
         });
 
-        {% if request.user.is_superuser %}
-            $('a.edit-toggle').show()
-        {% else %}
-            $('a.edit-toggle').hide()
-        {% endif %}
     });
     function view_period(){
         var formData = {
@@ -107,11 +111,6 @@
             data: formData,
             success: function(data) {
                 $('#period-container').html(data);
-                {% if request.user.is_superuser %}
-                    $('a.edit-toggle').show()
-                {% else %}
-                    $('a.edit-toggle').hide()
-                {% endif %}
             },
             error: function(xhr, status, error) {
                 console.error(error);
@@ -128,11 +127,6 @@
             data: formData,
             success: function(data) {
                 $('#quota-container').html(data);
-                {% if request.user.is_superuser %}
-                    $('a.edit-toggle').show()
-                {% else %}
-                    $('a.edit-toggle').hide()
-                {% endif %}
             },
             error: function(xhr, status, error) {
                 console.error(error);
@@ -149,11 +143,6 @@
             data: formData,
             success: function(data) {
                 $('#interview-container').html(data);
-                {% if request.user.is_superuser %}
-                    $('a.edit-toggle').show()
-                {% else %}
-                    $('a.edit-toggle').hide()
-                {% endif %}
             },
             error: function(xhr, status, error) {
                 console.error(error);
@@ -170,11 +159,6 @@
             data: formData,
             success: function(data) {
                 $('#criteria-container').html(data);
-                {% if request.user.is_superuser %}
-                    $('a.edit-toggle').show()
-                {% else %}
-                    $('a.edit-toggle').hide()
-                {% endif %}
             },
             error: function(xhr, status, error) {
                 console.error(error);

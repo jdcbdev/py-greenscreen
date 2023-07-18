@@ -268,12 +268,16 @@ def view_settings(request):
             to_attr='autoadmissions'
         )
     )
+    
+    faculty_user = Faculty.objects.filter(user=request.user).first()
+    
     context = {
         'page_title': page_title,
         'page_active': page_active,
         'sy': sy,
         'autos': autos,
-        'current_year': current_year
+        'current_year': current_year,
+        'faculty_user': faculty_user,
     }
     
     return render(request, 'admission/settings.html', context)
@@ -349,6 +353,7 @@ def add_quota(request):
 @require_POST
 def view_quota(request):
     sy = SchoolYear.objects.filter(is_active=True).first()
+    faculty_user = Faculty.objects.filter(user=request.user).first()
     programs = Program.objects.filter(is_active=True).prefetch_related(
         Prefetch(
             'quota_set',
@@ -358,6 +363,7 @@ def view_quota(request):
     )
     context = {
         'programs': programs,
+        'faculty_user': faculty_user,
     }
     
     rendered_html = render(request, 'admission/partials/view_quota.html', context)
@@ -368,6 +374,7 @@ def view_quota(request):
 def view_period(request):
     sy = SchoolYear.objects.filter(is_active=True).first()
     period = AdmissionPeriod.objects.filter(school_year=sy).first()
+    faculty_user = Faculty.objects.filter(user=request.user).first()
     if period.start_date:
         period_start_date = period.start_date
         formatted_date = period_start_date.strftime('%Y-%m-%d')
@@ -378,6 +385,7 @@ def view_period(request):
         period.end_date = formatted_date
     context = {
         'period': period,
+        'faculty_user': faculty_user,
     }
     
     rendered_html = render(request, 'admission/partials/view_period.html', context)
@@ -417,8 +425,12 @@ def view_criteria(request):
             to_attr='criterias'
         )
     )
+    
+    faculty_user = Faculty.objects.filter(user=request.user).first()
+    
     context = {
         'criteria': criteria,
+        'faculty_user': faculty_user,
     }
     
     rendered_html = render(request, 'admission/partials/view_criteria.html', context)
@@ -451,6 +463,8 @@ def faculty(request):
     departments = Program.objects.filter(is_active=True).order_by('code')
     roles = AdmissionRole.objects.all()
     ranks = AcademicRank.objects.all()
+    
+    faculty_user = Faculty.objects.filter(user=request.user).first()
 
     context = {
         'page_title': page_title,
@@ -459,6 +473,7 @@ def faculty(request):
         'departments': departments,
         'roles': roles,
         'ranks': ranks,
+        'faculty_user': faculty_user,
     }
     
     return render(request, 'admission/faculty.html', context)
@@ -470,12 +485,15 @@ def view_faculty(request):
     departments = Program.objects.filter(is_active=True).order_by('code')
     roles = AdmissionRole.objects.all()
     ranks = AcademicRank.objects.all()
+    
+    faculty_user = Faculty.objects.filter(user=request.user).first()
 
     context = {
         'faculties': faculties,
         'departments': departments,
         'roles': roles,
         'ranks': ranks,
+        'faculty_user': faculty_user,
     }
     
     rendered_html = render(request, 'admission/partials/view_faculty.html', context)
@@ -523,8 +541,6 @@ def add_faculty(request):
         user.is_staff = True
         user.set_password(password)
         faculty = form.save(commit=False)
-        if faculty.admission_role.name == "Admission Officer":
-            user.is_superuser = True
         user.save()
         faculty.user = user
         faculty.save()
@@ -544,12 +560,15 @@ def view_edit_faculty_modal(request):
     departments = Program.objects.filter(is_active=True).order_by('code')
     roles = AdmissionRole.objects.all()
     ranks = AcademicRank.objects.all()
+    
+    faculty_user = Faculty.objects.filter(user=request.user).first()
 
     context = {
         'faculty': faculty,
         'departments': departments,
         'roles': roles,
         'ranks': ranks,
+        'faculty_user': faculty_user,
     }
     
     rendered_html = render(request, 'admission/partials/edit_faculty.modal.html', context)
@@ -570,8 +589,6 @@ def edit_faculty(request):
         user.is_active = True
         user.is_staff = True
         faculty = form.save(commit=False)
-        if faculty.admission_role.name == "Admission Officer":
-            user.is_superuser = True
         user.save()
         faculty.user = user
         faculty.save()
@@ -617,12 +634,22 @@ def view_application(request):
     current_year = datetime.datetime.now().year
 
     school_year = SchoolYear.objects.filter(is_active=True).first()
-    pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
-    interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
-    ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
-    waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
-    qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
-    withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
+    faculty_user = Faculty.objects.filter(user=request.user).first()
+    
+    if request.user.is_superuser:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
+        interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
+        ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
+        waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
+        withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
+    else:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending', program=faculty_user.department).count()
+        interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified', program=faculty_user.department).count()
+        ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed', program=faculty_user.department).count()
+        waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list', program=faculty_user.department).count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved', program=faculty_user.department).count()
+        withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn', program=faculty_user.department).count()  
 
     context = {
         'page_title': page_title,
@@ -634,6 +661,7 @@ def view_application(request):
         'waiting_counter': waiting_counter,
         'qualified_counter': qualified_counter,
         'withdrawn_counter': withdrawn_counter,
+        'faculty_user': faculty_user,
     }
     
     return render(request, 'admission/application.html', context)
@@ -642,41 +670,79 @@ def view_application(request):
 @require_POST
 def pending_application(request):
     school_year = SchoolYear.objects.filter(is_active=True).first()
-    pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
-    interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
-    ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
-    waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
-    qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
-    withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
-    programs = Program.objects.filter(is_active=True)
-    students = (
-        Student.objects
-        .annotate(has_admission_application=Exists(
-            AdmissionApplication.objects
-            .filter(student=OuterRef('pk'), status='pending', school_year=school_year)
-        ))
-        .filter(has_admission_application=True)
-        .prefetch_related(
-            Prefetch(
-                'admissionapplication_set',
-                queryset=AdmissionApplication.objects.select_related('student')
-                .filter(status='pending', school_year=school_year)
-            ),
-            Prefetch(
-                'collegeentrancetest_set',
-                queryset=CollegeEntranceTest.objects.select_related('student')
-            ),
-            Prefetch(
-                'schoolbackground_set',
-                queryset=SchoolBackground.objects.select_related('student')
-            ),
-            Prefetch(
-                'contactpoint_set',
-                queryset=ContactPoint.objects.select_related('student')
-            ),
+    faculty_user = Faculty.objects.filter(user=request.user).first()
+    
+    if request.user.is_superuser:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
+        interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
+        ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
+        waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
+        withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
+        programs = Program.objects.filter(is_active=True)
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), status='pending', school_year=school_year)
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(status='pending', school_year=school_year)
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+            )
         )
-    )
-
+    else:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending', program=faculty_user.department).count()
+        interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified', program=faculty_user.department).count()
+        ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed', program=faculty_user.department).count()
+        waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list', program=faculty_user.department).count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved', program=faculty_user.department).count()
+        withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn', program=faculty_user.department).count()  
+        programs = Program.objects.filter(is_active=True, pk=faculty_user.department.id)
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), status='pending', school_year=school_year, program=faculty_user.department)
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(status='pending', school_year=school_year, program=faculty_user.department)
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+            )
+        )
+    
     applications = students
     
     context = {
@@ -861,8 +927,11 @@ def view_interview_slot(request):
         )
     )
     
+    faculty_user = Faculty.objects.filter(user=request.user).first()
+    
     context = {
         'slots': slots,
+        'faculty_user': faculty_user,
     }
     
     rendered_html = render(request, 'admission/partials/view_interview_slot.html', context)
@@ -900,47 +969,91 @@ def add_interview_slot(request):
 @require_POST
 def interview_application(request):
     school_year = SchoolYear.objects.filter(is_active=True).first()
-    pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
-    interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
-    ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
-    waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
-    qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
-    withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
-    programs = Program.objects.filter(is_active=True)
-    students = (
-        Student.objects
-        .annotate(has_admission_application=Exists(
-            AdmissionApplication.objects
-            .filter(student=OuterRef('pk'), status='verified', school_year=school_year)
-        ))
-        .filter(has_admission_application=True)
-        .prefetch_related(
-            Prefetch(
-                'admissionapplication_set',
-                queryset=AdmissionApplication.objects.select_related('student')
-                .filter(status='verified', school_year=school_year)
-                .prefetch_related(
-                    Prefetch(
-                        'interviewlogs_set',
-                        queryset=InterviewLogs.objects.select_related('application')
-                        .order_by('-created_at')
+    faculty_user = Faculty.objects.filter(user=request.user).first()
+    if request.user.is_superuser:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
+        interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
+        ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
+        waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
+        withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
+        programs = Program.objects.filter(is_active=True)
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), status='verified', school_year=school_year)
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(status='verified', school_year=school_year)
+                    .prefetch_related(
+                        Prefetch(
+                            'interviewlogs_set',
+                            queryset=InterviewLogs.objects.select_related('application')
+                            .order_by('-created_at')
+                        )
                     )
-                )
-            ),
-            Prefetch(
-                'collegeentrancetest_set',
-                queryset=CollegeEntranceTest.objects.select_related('student')
-            ),
-            Prefetch(
-                'schoolbackground_set',
-                queryset=SchoolBackground.objects.select_related('student')
-            ),
-            Prefetch(
-                'contactpoint_set',
-                queryset=ContactPoint.objects.select_related('student')
-            ),
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+            )
         )
-    )
+    else:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending', program=faculty_user.department).count()
+        interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified', program=faculty_user.department).count()
+        ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed', program=faculty_user.department).count()
+        waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list', program=faculty_user.department).count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved', program=faculty_user.department).count()
+        withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn', program=faculty_user.department).count()
+        programs = Program.objects.filter(is_active=True, pk=faculty_user.department.id)
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), status='verified', school_year=school_year, program=faculty_user.department)
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(status='verified', school_year=school_year, program=faculty_user.department)
+                    .prefetch_related(
+                        Prefetch(
+                            'interviewlogs_set',
+                            queryset=InterviewLogs.objects.select_related('application')
+                            .order_by('-created_at')
+                        )
+                    )
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+            )
+        )
 
     applications = students
     
@@ -1072,48 +1185,93 @@ def rate_interview(request):
 @require_POST
 def ranking_application(request):
     school_year = SchoolYear.objects.filter(is_active=True).first()
-    pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
-    interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
-    ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
-    waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
-    qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
-    withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
-    programs = Program.objects.filter(is_active=True)
-    students = (
-        Student.objects
-        .annotate(has_admission_application=Exists(
-            AdmissionApplication.objects
-            .filter(student=OuterRef('pk'), status='interviewed', school_year=school_year)
-        ))
-        .filter(has_admission_application=True)
-        .prefetch_related(
-            Prefetch(
-                'admissionapplication_set',
-                queryset=AdmissionApplication.objects.select_related('student')
-                .filter(status='interviewed', school_year=school_year)
-                .prefetch_related(
-                    Prefetch(
-                        'interviewlogs_set',
-                        queryset=InterviewLogs.objects.select_related('application')
-                        .filter(status='interviewed')
-                        .order_by('-created_at')
+    faculty_user = Faculty.objects.filter(user=request.user).first()
+    if request.user.is_superuser:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
+        interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
+        ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
+        waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
+        withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
+        programs = Program.objects.filter(is_active=True)
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), status='interviewed', school_year=school_year)
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(status='interviewed', school_year=school_year)
+                    .prefetch_related(
+                        Prefetch(
+                            'interviewlogs_set',
+                            queryset=InterviewLogs.objects.select_related('application')
+                            .filter(status='interviewed')
+                            .order_by('-created_at')
+                        )
                     )
-                )
-            ),
-            Prefetch(
-                'collegeentrancetest_set',
-                queryset=CollegeEntranceTest.objects.select_related('student')
-            ),
-            Prefetch(
-                'schoolbackground_set',
-                queryset=SchoolBackground.objects.select_related('student')
-            ),
-            Prefetch(
-                'contactpoint_set',
-                queryset=ContactPoint.objects.select_related('student')
-            ),
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+            )
         )
-    )
+    else:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending', program=faculty_user.department).count()
+        interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified', program=faculty_user.department).count()
+        ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed', program=faculty_user.department).count()
+        waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list', program=faculty_user.department).count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved', program=faculty_user.department).count()
+        withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn', program=faculty_user.department).count()
+        programs = Program.objects.filter(is_active=True, pk=faculty_user.department.id)
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), status='interviewed', school_year=school_year, program=faculty_user.department)
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(status='interviewed', school_year=school_year, program=faculty_user.department)
+                    .prefetch_related(
+                        Prefetch(
+                            'interviewlogs_set',
+                            queryset=InterviewLogs.objects.select_related('application')
+                            .filter(status='interviewed')
+                            .order_by('-created_at')
+                        )
+                    )
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+            )
+        )
     
     # Calculate total for each student
     students_with_total = []
@@ -1209,48 +1367,93 @@ def process_application(request):
 @require_POST
 def waiting_application(request):
     school_year = SchoolYear.objects.filter(is_active=True).first()
-    pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
-    interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
-    ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
-    waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
-    qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
-    withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
-    programs = Program.objects.filter(is_active=True)
-    students = (
-        Student.objects
-        .annotate(has_admission_application=Exists(
-            AdmissionApplication.objects
-            .filter(student=OuterRef('pk'), status='waiting-list', school_year=school_year)
-        ))
-        .filter(has_admission_application=True)
-        .prefetch_related(
-            Prefetch(
-                'admissionapplication_set',
-                queryset=AdmissionApplication.objects.select_related('student')
-                .filter(status='waiting-list', school_year=school_year)
-                .prefetch_related(
-                    Prefetch(
-                        'interviewlogs_set',
-                        queryset=InterviewLogs.objects.select_related('application')
-                        .filter(status='interviewed')
-                        .order_by('-created_at')
+    faculty_user = Faculty.objects.filter(user=request.user).first()
+    if request.user.is_superuser:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
+        interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
+        ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
+        waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
+        withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
+        programs = Program.objects.filter(is_active=True)
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), status='waiting-list', school_year=school_year)
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(status='waiting-list', school_year=school_year)
+                    .prefetch_related(
+                        Prefetch(
+                            'interviewlogs_set',
+                            queryset=InterviewLogs.objects.select_related('application')
+                            .filter(status='interviewed')
+                            .order_by('-created_at')
+                        )
                     )
-                )
-            ),
-            Prefetch(
-                'collegeentrancetest_set',
-                queryset=CollegeEntranceTest.objects.select_related('student')
-            ),
-            Prefetch(
-                'schoolbackground_set',
-                queryset=SchoolBackground.objects.select_related('student')
-            ),
-            Prefetch(
-                'contactpoint_set',
-                queryset=ContactPoint.objects.select_related('student')
-            ),
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+            )
         )
-    )
+    else:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending', program=faculty_user.department).count()
+        interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified', program=faculty_user.department).count()
+        ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed', program=faculty_user.department).count()
+        waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list', program=faculty_user.department).count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved', program=faculty_user.department).count()
+        withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn', program=faculty_user.department).count()
+        programs = Program.objects.filter(is_active=True, pk=faculty_user.department.id)
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), status='waiting-list', school_year=school_year, program=faculty_user.department)
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(status='waiting-list', school_year=school_year, program=faculty_user.department)
+                    .prefetch_related(
+                        Prefetch(
+                            'interviewlogs_set',
+                            queryset=InterviewLogs.objects.select_related('application')
+                            .filter(status='interviewed')
+                            .order_by('-created_at')
+                        )
+                    )
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+            )
+        )
     
     # Calculate total for each student
     students_with_total = []
@@ -1307,49 +1510,94 @@ def view_process_waitingstudent_modal(request):
 @require_POST
 def qualified_application(request):
     school_year = SchoolYear.objects.filter(is_active=True).first()
-    pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
-    interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
-    ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
-    waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
-    qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
-    withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
-    programs = Program.objects.filter(is_active=True)
-    students = (
-        Student.objects
-        .annotate(has_admission_application=Exists(
-            AdmissionApplication.objects
-            .filter(student=OuterRef('pk'), status='approved', school_year=school_year)
-        ))
-        .filter(has_admission_application=True)
-        .prefetch_related(
-            Prefetch(
-                'admissionapplication_set',
-                queryset=AdmissionApplication.objects.select_related('student')
-                .filter(status='approved', school_year=school_year)
-                .prefetch_related(
-                    Prefetch(
-                        'interviewlogs_set',
-                        queryset=InterviewLogs.objects.select_related('application')
-                        .filter(status='interviewed')
-                        .order_by('-created_at')
+    faculty_user = Faculty.objects.filter(user=request.user).first()
+    if request.user.is_superuser:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
+        interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
+        ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
+        waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
+        withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
+        programs = Program.objects.filter(is_active=True)
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), status='approved', school_year=school_year)
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(status='approved', school_year=school_year)
+                    .prefetch_related(
+                        Prefetch(
+                            'interviewlogs_set',
+                            queryset=InterviewLogs.objects.select_related('application')
+                            .filter(status='interviewed')
+                            .order_by('-created_at')
+                        )
                     )
-                )
-            ),
-            Prefetch(
-                'collegeentrancetest_set',
-                queryset=CollegeEntranceTest.objects.select_related('student')
-            ),
-            Prefetch(
-                'schoolbackground_set',
-                queryset=SchoolBackground.objects.select_related('student')
-            ),
-            Prefetch(
-                'contactpoint_set',
-                queryset=ContactPoint.objects.select_related('student')
-            ),
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+            )
         )
-    )
-    
+    else:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending', program=faculty_user.department).count()
+        interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified', program=faculty_user.department).count()
+        ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed', program=faculty_user.department).count()
+        waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list', program=faculty_user.department).count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved', program=faculty_user.department).count()
+        withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn', program=faculty_user.department).count()
+        programs = Program.objects.filter(is_active=True, pk=faculty_user.department.id)
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), status='approved', school_year=school_year, program=faculty_user.department)
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(status='approved', school_year=school_year, program=faculty_user.department)
+                    .prefetch_related(
+                        Prefetch(
+                            'interviewlogs_set',
+                            queryset=InterviewLogs.objects.select_related('application')
+                            .filter(status='interviewed')
+                            .order_by('-created_at')
+                        )
+                    )
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+            )
+        )
+        
     # Calculate total for each student
     students_with_total = []
     for student in students:
@@ -1474,54 +1722,105 @@ def decline_application(request):
 @require_POST
 def withdrawn_application(request):
     school_year = SchoolYear.objects.filter(is_active=True).first()
-    pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
-    interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
-    ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
-    waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
-    qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
-    withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
-    programs = Program.objects.filter(is_active=True)
-    students = (
-        Student.objects
-        .annotate(has_admission_application=Exists(
-            AdmissionApplication.objects
-            .filter(student=OuterRef('pk'), status='withdrawn', school_year=school_year)
-        ))
-        .filter(has_admission_application=True)
-        .prefetch_related(
-            Prefetch(
-                'admissionapplication_set',
-                queryset=AdmissionApplication.objects.select_related('student')
-                .filter(status='withdrawn', school_year=school_year)
-                .prefetch_related(
-                    Prefetch(
-                        'interviewlogs_set',
-                        queryset=InterviewLogs.objects.select_related('application')
-                        .filter(status='interviewed')
-                        .order_by('-created_at')
-                    ),
-                    Prefetch(
-                        'applicationstatuslogs_set',
-                        queryset=ApplicationStatusLogs.objects.select_related('application')
-                        .filter(status='withdrawn')
-                        .order_by('-created_at')
+    faculty_user = Faculty.objects.filter(user=request.user).first()
+    if request.user.is_superuser:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
+        interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
+        ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
+        waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
+        withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
+        programs = Program.objects.filter(is_active=True)
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), status='withdrawn', school_year=school_year)
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(status='withdrawn', school_year=school_year)
+                    .prefetch_related(
+                        Prefetch(
+                            'interviewlogs_set',
+                            queryset=InterviewLogs.objects.select_related('application')
+                            .filter(status='interviewed')
+                            .order_by('-created_at')
+                        ),
+                        Prefetch(
+                            'applicationstatuslogs_set',
+                            queryset=ApplicationStatusLogs.objects.select_related('application')
+                            .filter(status='withdrawn')
+                            .order_by('-created_at')
+                        )
                     )
-                )
-            ),
-            Prefetch(
-                'collegeentrancetest_set',
-                queryset=CollegeEntranceTest.objects.select_related('student')
-            ),
-            Prefetch(
-                'schoolbackground_set',
-                queryset=SchoolBackground.objects.select_related('student')
-            ),
-            Prefetch(
-                'contactpoint_set',
-                queryset=ContactPoint.objects.select_related('student')
-            ),
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+            )
         )
-    )
+    else:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending', program=faculty_user.department).count()
+        interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified', program=faculty_user.department).count()
+        ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed', program=faculty_user.department).count()
+        waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list', program=faculty_user.department).count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved', program=faculty_user.department).count()
+        withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn', program=faculty_user.department).count()
+        programs = Program.objects.filter(is_active=True, pk=faculty_user.department.id)
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), status='withdrawn', school_year=school_year, program=faculty_user.department)
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(status='withdrawn', school_year=school_year, program=faculty_user.department)
+                    .prefetch_related(
+                        Prefetch(
+                            'interviewlogs_set',
+                            queryset=InterviewLogs.objects.select_related('application')
+                            .filter(status='interviewed')
+                            .order_by('-created_at')
+                        ),
+                        Prefetch(
+                            'applicationstatuslogs_set',
+                            queryset=ApplicationStatusLogs.objects.select_related('application')
+                            .filter(status='withdrawn')
+                            .order_by('-created_at')
+                        )
+                    )
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+            )
+        )
     
     applications = students
     
@@ -1543,41 +1842,79 @@ def withdrawn_application(request):
 @require_POST
 def all_application(request):
     school_year = SchoolYear.objects.filter(is_active=True).first()
-    pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
-    interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
-    ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
-    waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
-    qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
-    withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
-    programs = Program.objects.filter(is_active=True)
-    students = (
-        Student.objects
-        .annotate(has_admission_application=Exists(
-            AdmissionApplication.objects
-            .filter(student=OuterRef('pk'), school_year=school_year)
-        ))
-        .filter(has_admission_application=True)
-        .prefetch_related(
-            Prefetch(
-                'admissionapplication_set',
-                queryset=AdmissionApplication.objects.select_related('student')
-                .filter(school_year=school_year)
-                .order_by('-created_at')
-            ),
-            Prefetch(
-                'collegeentrancetest_set',
-                queryset=CollegeEntranceTest.objects.select_related('student')
-            ),
-            Prefetch(
-                'schoolbackground_set',
-                queryset=SchoolBackground.objects.select_related('student')
-            ),
-            Prefetch(
-                'contactpoint_set',
-                queryset=ContactPoint.objects.select_related('student')
-            ),
+    faculty_user = Faculty.objects.filter(user=request.user).first()
+    if request.user.is_superuser:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
+        interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified').count()
+        ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed').count()
+        waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list').count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
+        withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn').count()
+        programs = Program.objects.filter(is_active=True)
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), school_year=school_year)
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(school_year=school_year)
+                    .order_by('-created_at')
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+            )
         )
-    )
+    else:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending', program=faculty_user.department).count()
+        interview_counter = AdmissionApplication.objects.filter(school_year=school_year, status='verified', program=faculty_user.department).count()
+        ranking_counter = AdmissionApplication.objects.filter(school_year=school_year, status='interviewed', program=faculty_user.department).count()
+        waiting_counter = AdmissionApplication.objects.filter(school_year=school_year, status='waiting-list', program=faculty_user.department).count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved', program=faculty_user.department).count()
+        withdrawn_counter = AdmissionApplication.objects.filter(school_year=school_year, status='withdrawn', program=faculty_user.department).count()
+        programs = Program.objects.filter(is_active=True, pk=faculty_user.department.id)
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), school_year=school_year, program=faculty_user.department)
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(school_year=school_year, program=faculty_user.department)
+                    .order_by('-created_at')
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+            )
+        )
     
     applications = students
     
@@ -1615,31 +1952,59 @@ def monitoring(request):
 def view_monitoring(request):
     school_year = SchoolYear.objects.all()
     active_year = SchoolYear.objects.filter(is_active=True).first()
-    programs = Program.objects.filter(is_active=True)
-    students = (
-        Student.objects
-        .annotate(has_admission_application=Exists(
-            AdmissionApplication.objects
-            .filter(student=OuterRef('pk'), status='approved')
-        ))
-        .filter(has_admission_application=True)
-        .prefetch_related(
-            Prefetch(
-                'admissionapplication_set',
-                queryset=AdmissionApplication.objects.select_related('student')
-                .filter(status='approved')
-            ),
-            Prefetch(
-                'contactpoint_set',
-                queryset=ContactPoint.objects.select_related('student')
-            ),
-            Prefetch(
-                'ccgrade_set',
-                queryset=CCGrade.objects.select_related('student')
-            ),
+    faculty_user = Faculty.objects.filter(user=request.user).first()
+    if request.user.is_superuser:
+        programs = Program.objects.filter(is_active=True)
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), status='approved')
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(status='approved')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+                Prefetch(
+                    'ccgrade_set',
+                    queryset=CCGrade.objects.select_related('student')
+                ),
+            )
+            .order_by('last_name', 'first_name', 'middle_name')
         )
-        .order_by('last_name', 'first_name', 'middle_name')
-    )
+    else:
+        programs = Program.objects.filter(is_active=True, pk=faculty_user.department.id)
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), status='approved', program=faculty_user.department)
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(status='approved', program=faculty_user.department)
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+                Prefetch(
+                    'ccgrade_set',
+                    queryset=CCGrade.objects.select_related('student')
+                ),
+            )
+            .order_by('last_name', 'first_name', 'middle_name')
+        )
 
     for student in students:
         is_none = True
@@ -1682,6 +2047,7 @@ def view_monitoring(request):
         'active_year': active_year,
         'applications': applications,
         'programs': programs,
+        'faculty_user': faculty_user,
     }
     
     rendered_html = render(request, 'admission/partials/view_monitoring.html', context)

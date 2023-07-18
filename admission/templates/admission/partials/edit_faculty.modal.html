@@ -48,10 +48,18 @@
                             <select type="text" class="form-control form-select" id="department" placeholder="" name="department">
                                 <option value="">--Select--</option>
                                 {% for dept in departments %}
-                                    {% if dept.id == faculty.department.id %}
-                                        <option value="{{ dept.id }}" selected>{{ dept.department_name }}</option>
-                                    {% else %}
-                                        <option value="{{ dept.id }}">{{ dept.department_name }}</option>
+                                    {% if request.user.is_superuser %}
+                                        {% if dept == faculty.department %}
+                                            <option value="{{ dept.id }}" selected>{{ dept.department_name }}</option>
+                                        {% else %}
+                                            <option value="{{ dept.id }}">{{ dept.department_name }}</option>
+                                        {% endif %}
+                                    {% elif faculty_user.admission_role.id == 1 and faculty_user.department == dept %}
+                                        {% if dept == faculty.department %}
+                                            <option value="{{ dept.id }}" selected>{{ dept.department_name }}</option>
+                                        {% else %}
+                                            <option value="{{ dept.id }}">{{ dept.department_name }}</option>
+                                        {% endif %}
                                     {% endif %}
                                 {% endfor %}
                             </select>

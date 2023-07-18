@@ -10,7 +10,7 @@
         <div class="table-responsive py-3 table-container">
             
         </div>
-        {% if request.user.is_superuser %}
+        {% if request.user.is_superuser or faculty_user.admission_role.id == 1 %}
         <a type="button" class="fab" title="Add Faculty" data-bs-toggle="modal" data-bs-target="#add-faculty-modal" id="add-faculty">
             <i class="fa fa-plus"></i>
         </a>
@@ -66,9 +66,9 @@
                             <select type="text" class="form-control form-select" id="department" placeholder="" name="department">
                                 <option value="">--Select--</option>
                                 {% for dept in departments %}
-                                    {% if dept.id == faculty.department %}
-                                        <option value="{{ dept.id }}" selected>{{ dept.department_name }}</option>
-                                    {% else %}
+                                    {% if request.user.is_superuser %}
+                                        <option value="{{ dept.id }}">{{ dept.department_name }}</option>
+                                    {% elif faculty_user.admission_role.id == 1 and faculty_user.department == dept %}
                                         <option value="{{ dept.id }}">{{ dept.department_name }}</option>
                                     {% endif %}
                                 {% endfor %}
