@@ -16,6 +16,7 @@ load_settings()
 
 def home(request):
     page_title = "Home"
+    page_url = request.build_absolute_uri()
     current_year = datetime.datetime.now().year
     profile = None
     student = None
@@ -70,7 +71,8 @@ def home(request):
         'page_title': page_title,
         'page_year': current_year,
         'application': application,
-        'profile': profile
+        'profile': profile,
+        'page_url': page_url,
     }
     return render(request, 'base/home.html', context)
 

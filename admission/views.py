@@ -53,6 +53,7 @@ def signin(request):
         
     page_title = "Sign in"
     success_message = None
+    page_url = request.build_absolute_uri()
     
     if request.method == 'POST':
         form = SignInForm(request.POST)
@@ -79,6 +80,7 @@ def signin(request):
         'page_title': page_title,
         'form': form,
         'success_message': success_message,
+        'page_url': page_url,
     }
     return render(request, 'admission/login.html', context)
 
@@ -92,6 +94,7 @@ def forgot_password(request, reset=None):
         return redirect('home')
     
     page_title = "Forgot Password"
+    page_url = request.build_absolute_uri()
     reset = True
     success_message = None
     
@@ -164,6 +167,7 @@ def forgot_password(request, reset=None):
         'form': form,
         'reset': reset,
         'success_message': success_message,
+        'page_url': page_url,
         'settings': settings
     }
 
@@ -174,6 +178,7 @@ def password_reset(request, uidb64, token):
         return redirect('home')
     
     page_title = "Password Reset"
+    page_url = request.build_absolute_uri()
     success_message = None
     
     try:
@@ -230,6 +235,7 @@ def password_reset(request, uidb64, token):
         'page_title': page_title,
         'form': form,
         'success_message': success_message,
+        'page_url': page_url,
         'settings': settings
     }
 
@@ -243,10 +249,12 @@ def dashboard(request):
     
     page_title = 'Dashboard'
     page_active = 'dashboard'
+    page_url = request.build_absolute_uri()
     
     context = {
         'page_title': page_title,
-        'page_active': page_active
+        'page_active': page_active,
+        'page_url': page_url,
     }
     
     return render(request, 'admission/dashboard.html', context)
@@ -257,6 +265,7 @@ def view_settings(request):
         return redirect('home')
     
     page_title = 'Settings'
+    page_url = request.build_absolute_uri()
     page_active = 'settings'
     current_year = datetime.datetime.now().year
     
@@ -278,6 +287,7 @@ def view_settings(request):
         'autos': autos,
         'current_year': current_year,
         'faculty_user': faculty_user,
+        'page_url': page_url,
     }
     
     return render(request, 'admission/settings.html', context)
@@ -487,6 +497,7 @@ def faculty(request):
         return redirect('home')
     
     page_title = 'Faculty'
+    page_url = request.build_absolute_uri()
     page_active = 'faculty'
     current_year = datetime.datetime.now().year
     
@@ -504,6 +515,7 @@ def faculty(request):
         'roles': roles,
         'ranks': ranks,
         'faculty_user': faculty_user,
+        'page_url': page_url,
     }
     
     return render(request, 'admission/faculty.html', context)
@@ -685,6 +697,7 @@ def view_application(request):
         return redirect('home')
     
     page_title = 'Applications'
+    page_url = request.build_absolute_uri()
     page_active = 'applications'
     current_year = datetime.datetime.now().year
 
@@ -717,6 +730,7 @@ def view_application(request):
         'qualified_counter': qualified_counter,
         'withdrawn_counter': withdrawn_counter,
         'faculty_user': faculty_user,
+        'page_url': page_url,
     }
     
     return render(request, 'admission/application.html', context)
@@ -1187,6 +1201,7 @@ def view_student_profile(request, id):
     sh = StudyHabit.objects.filter(student=student).first()
     
     page_title = 'View Student Profile'
+    page_url = request.build_absolute_uri()
     context = {
         'page_title': page_title,
         'student': student,
@@ -1204,7 +1219,8 @@ def view_student_profile(request, id):
         'economic': economic,
         'pt': pt,
         'sh': sh,
-        'settings': settings
+        'settings': settings,
+        'page_url': page_url,
     }
     
     return render(request, 'admission/student/main.html', context)
@@ -2075,11 +2091,13 @@ def monitoring(request):
         return redirect('home')
     
     page_title = 'Monitoring'
+    page_url = request.build_absolute_uri()
     page_active = 'monitoring'
 
     context = {
         'page_title': page_title,
         'page_active': page_active,
+        'page_url': page_url,
     }
     
     return render(request, 'admission/monitoring.html', context)

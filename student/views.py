@@ -40,6 +40,7 @@ def signin(request):
         return redirect('home')
         
     page_title = "Sign in"
+    page_url = request.build_absolute_uri()
     success_message = None
     if 'google_error' in request.session:
         google_error = request.session['google_error']
@@ -76,6 +77,7 @@ def signin(request):
         'page_title': page_title,
         'form': form,
         'success_message': success_message,
+        'page_url': page_url,
     }
     return render(request, 'student/signin.html', context)
 
@@ -85,8 +87,10 @@ def signup_choose(request):
         return redirect('home')
     
     page_title = "Sign up"
+    page_url = request.build_absolute_uri()
     context = {
         'page_title': page_title,
+        'page_url': page_url,
     }
     return render(request, 'student/signup-choose.html', context)
 
@@ -96,6 +100,7 @@ def signup_new(request):
         return redirect('home')
 
     page_title = "Sign up"
+    page_url = request.build_absolute_uri()
     new = True
     success_message = None
 
@@ -152,7 +157,8 @@ def signup_new(request):
         'form': form,
         'new': new,
         'success_message': success_message,
-        'settings': settings
+        'settings': settings,
+        'page_url': page_url,
     }
 
     return render(request, 'student/signup-new.html', context)
@@ -163,6 +169,7 @@ def signup_old(request):
         return redirect('home')
 
     page_title = "Sign up"
+    page_url = request.build_absolute_uri()
     old = True
     success_message = None
 
@@ -227,7 +234,8 @@ def signup_old(request):
         'form': form,
         'old': old,
         'success_message': success_message,
-        'settings': settings
+        'settings': settings,
+        'page_url': page_url,
     }
 
     return render(request, 'student/signup-old.html', context)
@@ -248,6 +256,7 @@ def forgot_password(request, reset=None):
         return redirect('home')
     
     page_title = "Forgot Password"
+    page_url = request.build_absolute_uri()
     reset = True
     success_message = None
     
@@ -320,7 +329,8 @@ def forgot_password(request, reset=None):
         'form': form,
         'reset': reset,
         'success_message': success_message,
-        'settings': settings
+        'settings': settings,
+        'page_url': page_url,
     }
 
     return render(request, 'student/forgot_password.html', context)
@@ -330,6 +340,7 @@ def password_reset(request, uidb64, token):
         return redirect('home')
     
     page_title = "Password Reset"
+    page_url = request.build_absolute_uri()
     success_message = None
     
     try:
@@ -386,7 +397,8 @@ def password_reset(request, uidb64, token):
         'page_title': page_title,
         'form': form,
         'success_message': success_message,
-        'settings': settings
+        'settings': settings,
+        'page_url': page_url,
     }
 
     return render(request, 'student/password_reset_confirm.html', context)
@@ -526,6 +538,7 @@ def complete_profile(request):
     sh = StudyHabit.objects.filter(student=student).first()
     
     page_title = 'Complete Profile'
+    page_url = request.build_absolute_uri()
     context = {
         'page_title': page_title,
         'student': student,
@@ -543,7 +556,8 @@ def complete_profile(request):
         'economic': economic,
         'pt': pt,
         'sh': sh,
-        'settings': settings
+        'settings': settings,
+        'page_url': page_url,
     }
     return render(request, 'student/profile/main.html', context)
 
@@ -899,7 +913,8 @@ def my_profile(request):
     pt = PersonalityTest.objects.filter(student=student).first()
     sh = StudyHabit.objects.filter(student=student).first()
     
-    page_title = 'Complete Profile'
+    page_title = 'My Profile'
+    page_url = request.build_absolute_uri()
     context = {
         'page_title': page_title,
         'student': student,
@@ -917,7 +932,8 @@ def my_profile(request):
         'economic': economic,
         'pt': pt,
         'sh': sh,
-        'settings': settings
+        'settings': settings,
+        'page_url': page_url,
     }
     return render(request, 'student/profile/main.html', context)
 
@@ -1006,7 +1022,7 @@ def send_application(request):
     return JsonResponse({'message': 'Application Sent!'})
     
 @login_required(login_url='/student/sign-in/')
-def my_application(request, id):
+def my_application(request, id=None):
     if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=False).exists():
         return redirect('complete_profile')
     elif request.user.is_authenticated and request.user.is_staff:
@@ -1041,6 +1057,7 @@ def my_application(request, id):
         total = round(total, 2)
     
     page_title = 'My Application'
+    page_url = request.build_absolute_uri()
     context = {
         'page_title': page_title,
         'student': student,
@@ -1052,7 +1069,8 @@ def my_application(request, id):
         'shs': shs,
         'cet': cet,
         'total': total,
-        'settings': settings
+        'settings': settings,
+        'page_url': page_url,
     }
     return render(request, 'student/my-application/main.html', context)
 

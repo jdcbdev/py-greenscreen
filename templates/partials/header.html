@@ -4,6 +4,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Jaydee C. Ballaho">
+    <meta name="description" content="GreenScreen - An Automated Admission-Decision Support System">
+    <meta name="keywords" content="greenscreen, admission, system, automation, admission decision, support system">
+    <meta name="robots" content="index, follow">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -56,4 +59,11 @@
 
     <title>GreenScreen - {% block title %}{{ page_title }}{% endblock title %}</title>
     <link rel="icon" href="{% static 'img/greenscreen_logo_green.png' %}" type="image/icon type">
+
+    <!-- Open Graph meta tags -->
+    <meta property="og:title" content="GreenScreen - {% block ogtitle %}{{ page_title }}{% endblock ogtitle %}">
+    <meta property="og:description" content="GreenScreen - An Automated Admission-Decision Support System">
+    <meta property="og:image" content="{% static 'img/course-1.png' %}">
+    <meta property="og:image:alt" content="A student wearing virtual glass.">
+    <meta property="og:url" content="{% block url %}{{ page_url }}{% endblock url %}">
 </head>
