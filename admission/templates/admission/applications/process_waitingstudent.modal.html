@@ -39,7 +39,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" value="Save" class="btn btn-primary background-color-green" name="process-student" id="process-student">Update Application Status</button>
+                    <button class="btn btn-primary background-color-green saving-button" type="button" disabled style="display:none;">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Saving...
+                     </button>
+                    <button type="submit" value="Save" class="btn btn-primary background-color-green save-button" name="process-student" id="process-student">Update Application Status</button>
                 </div>
             </form>
         </div>
@@ -58,6 +62,8 @@
 
         $('form#process-waitingstudent').submit(function(e) {
             e.preventDefault();
+            $('.saving-button').show()
+            $('.save-button').hide()
             var formData = new FormData(this);
             formData.append('application_id', '{{application.id}}');
             $.ajax({
@@ -100,6 +106,9 @@
                         load('waiting')
                         $('#process-waitingstudent-modal').modal('hide');
                     }
+
+                    $('.saving-button').hide()
+                    $('.save-button').show()
                 },
             });
         });

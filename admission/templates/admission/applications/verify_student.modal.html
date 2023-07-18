@@ -58,9 +58,13 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary background-color-green" data="{{ application.id }}" id="accept-application">Accept Application</button>
-                <button type="button" class="btn btn-primary background-color-green" data="{{ application.id }}" id="return-application" style="display: none;">Return Application</button>
-                <button type="button" class="btn btn-primary background-color-green" data="{{ application.id }}" id="decline-application" style="display: none;">Decline Application</button>
+                <button class="btn btn-primary background-color-green saving-button" type="button" disabled style="display:none;">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Saving...
+                 </button>
+                <button type="button" class="btn btn-primary background-color-green save-button" data="{{ application.id }}" id="accept-application">Accept Application</button>
+                <button type="button" class="btn btn-primary background-color-green save-button" data="{{ application.id }}" id="return-application" style="display: none;">Return Application</button>
+                <button type="button" class="btn btn-primary background-color-green save-button" data="{{ application.id }}" id="decline-application" style="display: none;">Decline Application</button>
             </div>
         </div>
     </div>
@@ -102,6 +106,8 @@
             showThumbByDefault: false
         });
         $('#accept-application').click(function(){
+            $('.saving-button').show()
+            $('.save-button').hide()
             var formData = {
                 csrfmiddlewaretoken: '{{ csrf_token }}',
                 application_id: $(this).attr('data'),
@@ -115,6 +121,8 @@
                 {
                     load('pending')
                     $('#verify-student-modal').modal('hide');
+                    $('.saving-button').hide()
+                    $('.save-button').show()
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) { 
                     alert("Status: " + textStatus); alert("Error: " + errorThrown); 
@@ -122,6 +130,8 @@
             });
         });
         $('#return-application').click(function(){
+            $('.saving-button').show()
+            $('.save-button').hide()
             var formData = {
                 csrfmiddlewaretoken: '{{ csrf_token }}',
                 application_id: $(this).attr('data'),
@@ -152,10 +162,15 @@
                         load('pending')
                         $('#verify-student-modal').modal('hide');
                     }
+
+                    $('.saving-button').hide()
+                    $('#return-application').show()
                 } 
             });
         });
         $('#decline-application').click(function(){
+            $('.saving-button').show()
+            $('.save-button').hide()
             var formData = {
                 csrfmiddlewaretoken: '{{ csrf_token }}',
                 application_id: $(this).attr('data'),
@@ -186,6 +201,9 @@
                         load('pending')
                         $('#verify-student-modal').modal('hide');
                     }
+
+                    $('.saving-button').hide()
+                    $('#decline-application').show()
                 } 
             });
         });

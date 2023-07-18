@@ -44,8 +44,12 @@
                     {% if ongoing_application or is_admitted or invalid_application or not period_allowed or cet_criteria.score > student_cet.overall_percentile_rank or slot_taken > quota.number %}
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     {% else %}
-                    <a class="btn btn-lg btn-success background-color-green btn-apply btn-font mx-auto" id="send_application">Send Application</a>
+                    <a class="btn btn-lg btn-success background-color-green btn-apply btn-font mx-auto save-button" id="send_application">Send Application</a>
                     {% endif %}
+                    <button class="btn btn-lg btn-success background-color-green btn-apply btn-font mx-auto saving-button" type="button" disabled style="display:none;">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Sending Application...
+                    </button>
                 </div>
             </form>
         </div>
@@ -54,6 +58,8 @@
 <script>
     $(document).ready(function(){
         $('#send_application').click(function() {
+            $('.saving-button').show()
+            $('.save-button').hide()
             var formData = {
                 program_id: '{{ program.id }}',
                 csrfmiddlewaretoken: '{{ csrf_token }}',
@@ -63,7 +69,6 @@
                 url: "{% url 'send_application' %}",
                 data: formData,
                 success: function(data) {
-                    $('#apply-admission-modal').modal('hide');
                     window.location.href = "{% url 'my_application' %}";
                 },
             });

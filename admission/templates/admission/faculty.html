@@ -67,9 +67,9 @@
                                 <option value="">--Select--</option>
                                 {% for dept in departments %}
                                     {% if dept.id == faculty.department %}
-                                        <option value="{{ dept.id }}" selected>{{ dept.name }}</option>
+                                        <option value="{{ dept.id }}" selected>{{ dept.department_name }}</option>
                                     {% else %}
-                                        <option value="{{ dept.id }}">{{ dept.name }}</option>
+                                        <option value="{{ dept.id }}">{{ dept.department_name }}</option>
                                     {% endif %}
                                 {% endfor %}
                             </select>
@@ -95,7 +95,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" value="Save Faculty" name="Save Faculty" class="btn btn-primary background-color-green">Save Faculty</button>
+                    <button class="btn btn-primary background-color-green saving-button" type="button" disabled style="display:none;">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Saving...
+                    </button>
+                    <button type="submit" value="Save Faculty" name="Save Faculty" class="btn btn-primary background-color-green save-button">Save Faculty</button>
                 </div>  
             </form>
         </div>
@@ -165,8 +169,9 @@
         });
 
         $('form#add-faculty-form').submit(function(e) {
-            console.log('here')
             e.preventDefault();
+            $('.saving-button').show()
+            $('.save-button').hide()
             var formData = new FormData(this);
             formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
             $.ajax({
@@ -257,6 +262,9 @@
                         load('pending')
                         $('#add-faculty-modal').modal('hide');
                     }
+
+                    $('.saving-button').hide()
+                    $('.save-button').show()
                 },
             });
         });  

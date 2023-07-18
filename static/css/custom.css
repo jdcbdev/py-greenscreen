@@ -290,7 +290,7 @@ p.justify{
 
 .background-color-green{
     background-color: #107869 !important;
-    border-color: #107869;
+    border-color: #107869 !important;
 }
 
 .btn-login{

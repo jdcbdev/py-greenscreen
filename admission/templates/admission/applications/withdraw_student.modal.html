@@ -28,7 +28,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" value="Save" class="btn btn-primary background-color-green" name="withdraw-student" id="withdraw-student">Withdraw Application</button>
+                    <button class="btn btn-primary background-color-green saving-button" type="button" disabled style="display:none;">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Saving...
+                    </button>
+                    <button type="submit" value="Save" class="btn btn-primary background-color-green save-button" name="withdraw-student" id="withdraw-student">Withdraw Application</button>
                 </div>
             </form>
         </div>
@@ -39,11 +43,13 @@
 
         $('form#withdraw-student').submit(function(e) {
             e.preventDefault();
+            $('.saving-button').show()
+            $('.save-button').hide()
             var formData = new FormData(this);
             formData.append('application_id', '{{application.id}}');
             $.ajax({
                 type: 'POST',
-                url: "{% url 'withdraw_application' %}",
+                url: "{% url 'admin_withdraw_application' %}",
                 data: formData,
                 processData: false,
                 contentType: false,
@@ -69,6 +75,9 @@
                         load('qualified')
                         $('#withdraw-student-modal').modal('hide');
                     }
+
+                    $('.saving-button').hide()
+                    $('.save-button').show()
                 },
             });
         });

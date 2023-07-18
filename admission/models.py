@@ -23,6 +23,7 @@ class Program(models.Model):
     duration = models.IntegerField(default=4)
     level = models.CharField(max_length=100, default='bachelor')
     is_active = models.BooleanField(default=True)
+    department_name = models.CharField(max_length=255, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -99,7 +100,7 @@ class Faculty(models.Model):
     last_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     academic_rank = models.ForeignKey(AcademicRank, on_delete=models.CASCADE)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    department = models.ForeignKey(Program, on_delete=models.CASCADE)
     admission_role = models.ForeignKey(AdmissionRole, on_delete=models.CASCADE)
 
 class DocumentaryRequirement(models.Model):

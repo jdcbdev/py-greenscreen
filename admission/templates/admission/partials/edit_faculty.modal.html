@@ -49,9 +49,9 @@
                                 <option value="">--Select--</option>
                                 {% for dept in departments %}
                                     {% if dept.id == faculty.department.id %}
-                                        <option value="{{ dept.id }}" selected>{{ dept.name }}</option>
+                                        <option value="{{ dept.id }}" selected>{{ dept.department_name }}</option>
                                     {% else %}
-                                        <option value="{{ dept.id }}">{{ dept.name }}</option>
+                                        <option value="{{ dept.id }}">{{ dept.department_name }}</option>
                                     {% endif %}
                                 {% endfor %}
                             </select>

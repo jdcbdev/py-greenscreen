@@ -24,9 +24,11 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from datetime import date
-from admission.models import Program, SchoolYear, AdmissionPeriod, DocumentaryRequirement, InterviewSlot, Criteria, Quota
+from admission.models import Program, SchoolYear, AdmissionPeriod, DocumentaryRequirement, InterviewSlot, Criteria, Quota, Faculty
 from django.http import HttpResponse
 from decimal import Decimal
+from django.core.mail import EmailMultiAlternatives
+from django.utils.html import strip_tags
 
 load_settings()
 
@@ -928,6 +930,7 @@ def view_apply_modal(request):
 @login_required(login_url='/student/sign-in/')
 @ensure_csrf_cookie
 @require_POST
+@transaction.atomic
 def send_application(request):
     student = Student.objects.get(account=request.user)
     program = Program.objects.get(pk=request.POST.get('program_id'))
@@ -939,6 +942,27 @@ def send_application(request):
         school_year=school_year,
         status='pending'
     )
+    
+    #send to student
+    title = f"New {program.code.upper()} Application"
+    receiver = student.first_name
+    mail_subject = f"New {program.code.upper()} Application - GreenScreen Admission System"
+    domain = get_current_site(request).domain
+    application_url = reverse('my_application')
+    message = f"""We have received your application for the <b>{program.name}</b> program in the GreenScreen Admission System.
+                Our team is currently reviewing your application, and we will notify you of the outcome soon. 
+                You can view the status of your application <a class="color-green" href="{domain}{application_url}">here</a>.
+                <br><br>Thank you for choosing our program."""
+    to_email = request.user.email
+    student_send_email(title, receiver, mail_subject, message, to_email)
+    
+    #send to AO
+    receiver = "Admission Officer"
+    mail_subject = f"New {program.code.upper()} Application - GreenScreen Admission System"
+    message = f"""We have received a new application for the <b>{program.name}</b> program in the GreenScreen Admission System. 
+                <br><br>Please review and process the application promptly."""
+    to_email = list(Faculty.objects.filter(department=program, admission_role_id=1).values_list('email', flat=True))
+    student_send_email(title, receiver, mail_subject, message, to_email)
     
     return JsonResponse({'message': 'Application Sent!'})
     
@@ -1002,6 +1026,27 @@ def cancel_application(request):
         if logs:
             logs.status = application.status
             logs.save()
+        
+        #send to student
+        title = f"{application.program.code.upper()} Application Status - Cancelled"
+        receiver = application.student.first_name
+        mail_subject = f"{application.program.code.upper()} Application Status (Cancelled) - GreenScreen Admission System"
+        domain = get_current_site(request).domain
+        application_url = reverse('my_application')
+        message = f"""Your application for the <b>{application.program.name}</b> program has been cancelled. 
+                    You can view the status of your application <a class="color-green" href="{domain}{application_url}">here</a>.
+                    <br><br>We wish you good luck on your academic journey."""
+        to_email = list(ContactPoint.objects.filter(student=application.student).values_list('contact_email', flat=True))
+        student_send_email(title, receiver, mail_subject, message, to_email)
+        
+        #send to AO
+        receiver = "Admission Officer"
+        mail_subject = f"{application.program.code.upper()} Application Status (Cancelled) - GreenScreen Admission System"
+        message = f"""Applicant <b>{application.student.first_name} {application.student.last_name}</b> of 
+                    <b>{application.program.name}</b> program has cancelled their application in the GreenScreen Admission System. 
+                    """
+        to_email = list(Faculty.objects.filter(department=application.program, admission_role_id=1).values_list('email', flat=True))
+        student_send_email(title, receiver, mail_subject, message, to_email)
     
     return JsonResponse({'message': 'Application Cancelled.'})
 
@@ -1023,7 +1068,46 @@ def withdraw_application(request):
                 application = application,
                 processed_by = request.user
             )
+            
+            #send to student
+            title = f"{application.program.code.upper()} Application Status - Withdrawn"
+            receiver = application.student.first_name
+            mail_subject = f"{application.program.code.upper()} Application Status (Withdrawn) - GreenScreen Admission System"
+            domain = get_current_site(request).domain
+            application_url = reverse('my_application')
+            message = f"""Your application for the <b>{application.program.name}</b> program has been withdrawn. 
+                        You can view the status of your application <a class="color-green" href="{domain}{application_url}">here</a>.
+                        <br><br>We wish you good luck on your academic journey."""
+            to_email = list(ContactPoint.objects.filter(student=application.student).values_list('contact_email', flat=True))
+            student_send_email(title, receiver, mail_subject, message, to_email)
+            
+            #send to AO
+            receiver = "Admission Officer"
+            mail_subject = f"{application.program.code.upper()} Application Status (Withdrawn) - GreenScreen Admission System"
+            message = f"""Applicant <b>{application.student.first_name} {application.student.last_name}</b> of 
+                        <b>{application.program.name}</b> program has withdrawn their application in the GreenScreen Admission System. 
+                        """
+            to_email = list(Faculty.objects.filter(department=application.program, admission_role_id=1).values_list('email', flat=True))
+            student_send_email(title, receiver, mail_subject, message, to_email)
         
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+def student_send_email(title, receiver, mail_subject, message, to_email):
+    from_email = settings.DEFAULT_FROM_EMAIL
+
+    html_content = render_to_string("student_send_email.html", {
+        'title': title,
+        'receiver': receiver,
+        'message': mark_safe(message),
+    })
+    
+    if not isinstance(to_email, (list, tuple)):
+        to_email = [to_email]
+        
+    text_content = strip_tags(html_content)
+
+    email = EmailMultiAlternatives(mail_subject, text_content, from_email, to=to_email)
+    email.attach_alternative(html_content, "text/html")
+    email.send()
+    

@@ -37,6 +37,7 @@ import datetime
 from base.models import SHSStrand, ClassRoomOrganization, StudentSupremeGovernment, ClassRank, AcademicAwards, AcademicDegree, EmploymentStatus
 from decimal import Decimal
 from student.forms import WithdrawApplicationForm
+from student.views import student_send_email
 import pickle
 
 # Create your views here.
@@ -447,7 +448,7 @@ def faculty(request):
     page_active = 'faculty'
     current_year = datetime.datetime.now().year
     
-    departments = Department.objects.all()
+    departments = Program.objects.filter(is_active=True).order_by('code')
     roles = AdmissionRole.objects.all()
     ranks = AcademicRank.objects.all()
 
@@ -466,7 +467,7 @@ def faculty(request):
 @require_POST
 def view_faculty(request):
     faculties = Faculty.objects.all().order_by('last_name', 'first_name')
-    departments = Department.objects.all()
+    departments = Program.objects.filter(is_active=True).order_by('code')
     roles = AdmissionRole.objects.all()
     ranks = AcademicRank.objects.all()
 
@@ -540,7 +541,7 @@ def add_faculty(request):
 @require_POST
 def view_edit_faculty_modal(request):
     faculty = Faculty.objects.get(pk=request.POST.get('faculty_id'))
-    departments = Department.objects.all()
+    departments = Program.objects.filter(is_active=True).order_by('code')
     roles = AdmissionRole.objects.all()
     ranks = AcademicRank.objects.all()
 
@@ -769,6 +770,30 @@ def accept_application(request):
                 comments = 'Automated: skipped interview'
                 application.status = 'interviewed'
                 
+                #send to student
+                title = f"{application.program.code.upper()} Application Status - Ranking"
+                receiver = application.student.first_name
+                mail_subject = f"{application.program.code.upper()} Application Status (Ranking) - GreenScreen Admission System"
+                domain = get_current_site(request).domain
+                application_url = reverse('my_application')
+                message = f"""Your application for the <b>{application.program.name}</b> program is now for ranking. 
+                            You can view the status of your application <a class="color-green" href="{domain}{application_url}">here</a>.
+                            <br><br>Thank you for choosing our program."""
+                to_email = list(ContactPoint.objects.filter(student=application.student).values_list('contact_email', flat=True))
+                student_send_email(title, receiver, mail_subject, message, to_email)
+            else:
+                #send to student
+                title = f"{application.program.code.upper()} Application Status - Scheduled for Interview"
+                receiver = application.student.first_name
+                mail_subject = f"{application.program.code.upper()} Application Status (Scheduled for Interview) - GreenScreen Admission System"
+                domain = get_current_site(request).domain
+                application_url = reverse('my_application')
+                message = f"""Your application for the <b>{application.program.name}</b> program is now scheduled for an interview. 
+                            You can view the status of your application <a class="color-green" href="{domain}{application_url}">here</a>.
+                            <br><br>Thank you for choosing our program."""
+                to_email = list(ContactPoint.objects.filter(student=application.student).values_list('contact_email', flat=True))
+                student_send_email(title, receiver, mail_subject, message, to_email)
+                
             application.prediction = predict[0]
             application.save() 
         
@@ -803,6 +828,18 @@ def return_application(request):
                 comments=form.cleaned_data['details'],
                 processed_by=request.user
             )
+            
+            #send to student
+            title = f"{application.program.code.upper()} Application Status - Returned"
+            receiver = application.student.first_name
+            mail_subject = f"{application.program.code.upper()} Application Status (Returned) - GreenScreen Admission System"
+            domain = get_current_site(request).domain
+            application_url = reverse('my_application')
+            message = f"""Your application for the <b>{application.program.name}</b> program has been returned for correction. 
+                        You can view the status of your application <a class="color-green" href="{domain}{application_url}">here</a>.
+                        <br><br>Thank you for choosing our program."""
+            to_email = list(ContactPoint.objects.filter(student=application.student).values_list('contact_email', flat=True))
+            student_send_email(title, receiver, mail_subject, message, to_email)
         
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
@@ -1015,6 +1052,18 @@ def rate_interview(request):
                     application = application,
                     processed_by = request.user
                 )
+                
+                #send to student
+                title = f"{application.program.code.upper()} Application Status - Ranking"
+                receiver = application.student.first_name
+                mail_subject = f"{application.program.code.upper()} Application Status (Ranking) - GreenScreen Admission System"
+                domain = get_current_site(request).domain
+                application_url = reverse('my_application')
+                message = f"""Your application for the <b>{application.program.name}</b> program is now for ranking. 
+                            You can view the status of your application <a class="color-green" href="{domain}{application_url}">here</a>.
+                            <br><br>Thank you for choosing our program."""
+                to_email = list(ContactPoint.objects.filter(student=application.student).values_list('contact_email', flat=True))
+                student_send_email(title, receiver, mail_subject, message, to_email)
         
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
@@ -1134,6 +1183,24 @@ def process_application(request):
                 application = application,
                 processed_by = request.user
             )
+            
+            #send to student
+            status = application.status.lower()
+            if status == "waiting-list":
+                status = "moved to waiting list"
+            last_msg = "Thank you for choosing our program."
+            if status == "declined":
+                last_msg = "We wish you good luck on your academic journey."
+            title = f"{application.program.code.upper()} Application Status - {status.capitalize()}"
+            receiver = application.student.first_name
+            mail_subject = f"{application.program.code.upper()} Application Status ({status.capitalize()}) - GreenScreen Admission System"
+            domain = get_current_site(request).domain
+            application_url = reverse('my_application')
+            message = f"""Your application for the <b>{application.program.name}</b> program has been {status}. 
+                        You can view the status of your application <a class="color-green" href="{domain}{application_url}">here</a>.
+                        <br><br>{last_msg}"""
+            to_email = list(ContactPoint.objects.filter(student=application.student).values_list('contact_email', flat=True))
+            student_send_email(title, receiver, mail_subject, message, to_email)
         
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
@@ -1353,6 +1420,18 @@ def withdraw_application(request):
                 application = application,
                 processed_by = request.user
             )
+            
+            #send to student
+            title = f"{application.program.code.upper()} Application Status - Withdrawn"
+            receiver = application.student.first_name
+            mail_subject = f"{application.program.code.upper()} Application Status (Withdrawn) - GreenScreen Admission System"
+            domain = get_current_site(request).domain
+            application_url = reverse('my_application')
+            message = f"""Your application for the <b>{application.program.name}</b> program has been withdrawn. 
+                        You can view the status of your application <a class="color-green" href="{domain}{application_url}">here</a>.
+                        <br><br>We wish you good luck on your academic journey."""
+            to_email = list(ContactPoint.objects.filter(student=application.student).values_list('contact_email', flat=True))
+            student_send_email(title, receiver, mail_subject, message, to_email)
         
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
@@ -1375,6 +1454,18 @@ def decline_application(request):
                 comments=form.cleaned_data['details'],
                 processed_by=request.user
             )
+            
+            #send to student
+            title = f"{application.program.code.upper()} Application Status - Declined"
+            receiver = application.student.first_name
+            mail_subject = f"{application.program.code.upper()} Application Status (Declined) - GreenScreen Admission System"
+            domain = get_current_site(request).domain
+            application_url = reverse('my_application')
+            message = f"""Your application for the <b>{application.program.name}</b> program has been declined. 
+                        You can view the status of your application <a class="color-green" href="{domain}{application_url}">here</a>.
+                        <br><br>We wish you good luck on your academic journey."""
+            to_email = list(ContactPoint.objects.filter(student=application.student).values_list('contact_email', flat=True))
+            student_send_email(title, receiver, mail_subject, message, to_email)
         
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)

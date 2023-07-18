@@ -69,7 +69,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                    <button type="submit" value="Cancel Application" name="cancel_application" class="btn btn-primary background-color-green">Yes</button>
+                    <button class="btn btn-primary background-color-green saving-button" type="button" disabled style="display:none;">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Cancelling...
+                    </button>
+                    <button type="submit" value="Cancel Application" name="cancel_application" class="save-button btn btn-primary background-color-green">Yes</button>
                 </div>  
             </form>
         </div>
@@ -85,6 +89,8 @@
 
         $('form#cancel-application').submit(function(e) {
             e.preventDefault();
+            $('.saving-button').show()
+            $('.save-button').hide()
             var formData = new FormData(this);
             formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
             formData.append('application_id', '{{ application.id }}');
@@ -96,7 +102,6 @@
                 contentType: false,
     
                 success: function(data) {
-                    $('#cancel-application-modal').modal('hide');
                     window.location.href = "{% url 'my_application' %}"
                 },
             });
