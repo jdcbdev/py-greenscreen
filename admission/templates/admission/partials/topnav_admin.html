@@ -15,10 +15,35 @@
                 <i class="fa-solid fa-circle-user color-green"></i>
             </a>
             <ul class="dropdown-menu text-small dropdown-user">
-                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li><a class="dropdown-item" id="user-profile">Profile</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="{% url 'logout' %}">Sign out</a></li>
             </ul>
         </div>
     </div>
 </header>
+<div class="user-container"></div>
+<script>
+    $(document).ready(function(){
+        $('#user-profile').click(function(){
+            var formData = {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            };
+            $.ajax({
+                url: "{% url 'view_profile_modal' %}",
+                type: 'POST',
+                data: formData,
+                success: function(data) {
+                    $('.user-container').html(data);
+                    $('#user-profile-modal').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                      }).modal('show');
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        })
+    });
+</script>

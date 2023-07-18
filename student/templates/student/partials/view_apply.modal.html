@@ -20,7 +20,7 @@
                     {% elif invalid_application %}
                     <p class="text-center message">
                         You have already applied for the <b>{{program.name}}</b> program, and your application has been <span class="color-orange">{{invalid_application.status}}</span>.
-                        You may choose another program or <a class="color-green" href="{% url 'my_application' %}">View My Previous Application</a>.
+                        You may choose another program or <a class="color-green" href="{% url 'my_application' invalid_application.id %}">View My Previous Application</a>.
                     </p>                    
                     {% elif not period_allowed %}
                     <p class="text-center message">

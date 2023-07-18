@@ -547,11 +547,14 @@ def complete_profile(request):
     }
     return render(request, 'student/profile/main.html', context)
 
+@login_required(login_url='/student/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def complete_personal_information(request):
-
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('home')
+    
     form = PersonalInfoForm(request.POST, request.FILES)
     if form.is_valid():
         # Update user's first name and last name
@@ -596,10 +599,13 @@ def complete_personal_information(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/student/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def complete_college_entrance_test(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('home')
     
     student = Student.objects.get(account=request.user)
     try:
@@ -622,11 +628,14 @@ def complete_college_entrance_test(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/student/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def complete_school_background(request):
-
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('home')
+    
     form = SchoolBackgroundForm(request.POST, request.FILES)
     if form.is_valid():
         
@@ -675,10 +684,13 @@ def complete_school_background(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/student/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def complete_economic_status(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('home')
     
     student = Student.objects.get(account=request.user)
     try:
@@ -699,10 +711,13 @@ def complete_economic_status(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/student/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def complete_personality_test_1(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('home')
     
     form = PersonalityTestForm1(request.POST)
     if form.is_valid():
@@ -718,10 +733,13 @@ def complete_personality_test_1(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/student/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def complete_personality_test_2(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('home')
     
     form = PersonalityTestForm2(request.POST)
     if form.is_valid():
@@ -737,10 +755,13 @@ def complete_personality_test_2(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/student/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def complete_personality_test_3(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('home')
     
     form = PersonalityTestForm3(request.POST)
     if form.is_valid():
@@ -756,10 +777,13 @@ def complete_personality_test_3(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/student/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def complete_personality_test_4(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('home')
     
     form = PersonalityTestForm4(request.POST)
     if form.is_valid():
@@ -778,10 +802,13 @@ def complete_personality_test_4(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/student/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def complete_study_habit_1(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('home')
     
     form = StudyHabitForm1(request.POST)
     if form.is_valid():
@@ -797,10 +824,13 @@ def complete_study_habit_1(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/student/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def complete_study_habit_2(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('home')
     
     form = StudyHabitForm2(request.POST)
     if form.is_valid():
@@ -816,10 +846,13 @@ def complete_study_habit_2(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/student/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def complete_study_habit_3(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('home')
     
     form = StudyHabitForm3(request.POST)
     if form.is_valid():
@@ -892,6 +925,9 @@ def my_profile(request):
 @ensure_csrf_cookie
 @require_POST
 def view_apply_modal(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('home')
+    
     program = Program.objects.get(code=request.POST.get('program_code'))
     school_year = SchoolYear.objects.filter(is_active=True).first()
     period = AdmissionPeriod.objects.filter(school_year=school_year, program=program, is_active=True).first()
@@ -932,6 +968,9 @@ def view_apply_modal(request):
 @require_POST
 @transaction.atomic
 def send_application(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('home')
+    
     student = Student.objects.get(account=request.user)
     program = Program.objects.get(pk=request.POST.get('program_id'))
     school_year = SchoolYear.objects.filter(is_active=True).first()
@@ -967,7 +1006,7 @@ def send_application(request):
     return JsonResponse({'message': 'Application Sent!'})
     
 @login_required(login_url='/student/sign-in/')
-def my_application(request):
+def my_application(request, id):
     if request.user.is_authenticated and not request.user.is_staff and Student.objects.filter(account=request.user, is_profile_complete=False).exists():
         return redirect('complete_profile')
     elif request.user.is_authenticated and request.user.is_staff:
@@ -975,7 +1014,11 @@ def my_application(request):
     
     student = Student.objects.filter(account=request.user).first()
     school_year = SchoolYear.objects.filter(is_active=True).first()
-    application = AdmissionApplication.objects.filter(student=student, school_year=school_year).order_by('-created_at').first()
+    if id:
+        application = AdmissionApplication.objects.filter(pk=id, student=student, school_year=school_year).order_by('-created_at').first()
+    else:
+        application = AdmissionApplication.objects.filter(student=student, school_year=school_year).order_by('-created_at').first()
+        
     appstatus = ApplicationStatusLogs.objects.filter(application=application).order_by('-created_at').first()
     interview = InterviewLogs.objects.filter(application=application).order_by('-created_at').first()
     documents = DocumentaryRequirement.objects.all()
@@ -1018,6 +1061,9 @@ def my_application(request):
 @require_POST
 @transaction.atomic
 def cancel_application(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('home')
+    
     application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
     if application:
         application.status = 'cancelled'
@@ -1055,6 +1101,9 @@ def cancel_application(request):
 @require_POST
 @transaction.atomic
 def withdraw_application(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('home')
+    
     application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
     form = WithdrawApplicationForm(request.POST)
     if form.is_valid():

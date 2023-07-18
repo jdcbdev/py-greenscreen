@@ -21,7 +21,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from .models import SchoolYear, AdmissionPeriod, Program, Quota, AutoAdmission, Criteria, Department, AcademicRank, AdmissionRole, Faculty, InterviewSlot
-from .forms import SchoolYearForm, AdmissionPeriodForm, QuotaForm, CriteriaForm, AddFacultyForm, ReturnApplicationForm, InterviewSlotForm, RateInterviewForm, ProcessApplicationForm, MonitoringForm
+from .forms import SchoolYearForm, AdmissionPeriodForm, QuotaForm, CriteriaForm, AddFacultyForm, ReturnApplicationForm, InterviewSlotForm, RateInterviewForm, ProcessApplicationForm, MonitoringForm, UpdateUserProfileForm
 from django.http import JsonResponse
 from django.db.models import Prefetch
 from django.contrib.auth.password_validation import validate_password
@@ -282,10 +282,14 @@ def view_settings(request):
     
     return render(request, 'admission/settings.html', context)
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def add_school_year(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     form = SchoolYearForm(request.POST)
     if form.is_valid():
         # Create or update the new school year
@@ -304,10 +308,14 @@ def add_school_year(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def add_admission_period(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     form = AdmissionPeriodForm(request.POST)
     if form.is_valid():
         # Create or update
@@ -331,10 +339,14 @@ def add_admission_period(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def add_quota(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     form = QuotaForm(request.POST)
     if form.is_valid():
         # Create or update
@@ -349,9 +361,13 @@ def add_quota(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def view_quota(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     sy = SchoolYear.objects.filter(is_active=True).first()
     faculty_user = Faculty.objects.filter(user=request.user).first()
     programs = Program.objects.filter(is_active=True).prefetch_related(
@@ -369,9 +385,13 @@ def view_quota(request):
     rendered_html = render(request, 'admission/partials/view_quota.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def view_period(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     sy = SchoolYear.objects.filter(is_active=True).first()
     period = AdmissionPeriod.objects.filter(school_year=sy).first()
     faculty_user = Faculty.objects.filter(user=request.user).first()
@@ -391,10 +411,13 @@ def view_period(request):
     rendered_html = render(request, 'admission/partials/view_period.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def add_auto(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
     
     # Create or update
     sy = SchoolYear.objects.filter(is_active=True).first()
@@ -417,6 +440,9 @@ def add_auto(request):
 @ensure_csrf_cookie
 @require_POST
 def view_criteria(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     sy = SchoolYear.objects.filter(is_active=True).first()
     criteria = Program.objects.filter(is_active=True).prefetch_related(
         Prefetch(
@@ -436,10 +462,14 @@ def view_criteria(request):
     rendered_html = render(request, 'admission/partials/view_criteria.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def add_criteria(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     form = CriteriaForm(request.POST)
     
     if form.is_valid():
@@ -478,9 +508,13 @@ def faculty(request):
     
     return render(request, 'admission/faculty.html', context)
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def view_faculty(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     faculties = Faculty.objects.all().order_by('last_name', 'first_name')
     departments = Program.objects.filter(is_active=True).order_by('code')
     roles = AdmissionRole.objects.all()
@@ -508,6 +542,7 @@ def generate_strong_password():
         return generate_strong_password()
     return password
 
+@login_required(login_url='/admin/sign-in/')
 def send_faculty_email(first_name, to_email, password, domain, protocol):
     
     mail_subject = "New Faculty Account - GreenScreen Admission System"
@@ -525,10 +560,14 @@ def send_faculty_email(first_name, to_email, password, domain, protocol):
     email.content_subtype = 'html'
     email.send()
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def add_faculty(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     form = AddFacultyForm(request.POST)
     if form.is_valid():
         email = form.cleaned_data['email']
@@ -553,9 +592,13 @@ def add_faculty(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def view_edit_faculty_modal(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     faculty = Faculty.objects.get(pk=request.POST.get('faculty_id'))
     departments = Program.objects.filter(is_active=True).order_by('code')
     roles = AdmissionRole.objects.all()
@@ -574,10 +617,14 @@ def view_edit_faculty_modal(request):
     rendered_html = render(request, 'admission/partials/edit_faculty.modal.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def edit_faculty(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     pk=request.POST.get('faculty_id')
     faculty = Faculty.objects.get(pk=pk)
     form = AddFacultyForm(request.POST, instance=faculty)
@@ -596,9 +643,13 @@ def edit_faculty(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def view_delete_faculty_modal(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     faculty = Faculty.objects.get(pk=request.POST.get('faculty_id'))
 
     context = {
@@ -608,10 +659,14 @@ def view_delete_faculty_modal(request):
     rendered_html = render(request, 'admission/partials/delete_faculty.modal.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def delete_faculty(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     if request.method == 'POST':
         pk=request.POST.get('faculty_id')
         faculty = Faculty.objects.get(pk=pk)
@@ -666,9 +721,13 @@ def view_application(request):
     
     return render(request, 'admission/application.html', context)
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def pending_application(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     school_year = SchoolYear.objects.filter(is_active=True).first()
     faculty_user = Faculty.objects.filter(user=request.user).first()
     
@@ -759,9 +818,13 @@ def pending_application(request):
     rendered_html = render(request, 'admission/applications/pending.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def view_verify_student_modal(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     has_slot = False
     interview = None
     current_datetime = timezone.now()
@@ -802,10 +865,13 @@ def view_verify_student_modal(request):
         rendered_html = render(request, 'admission/applications/need_interview_slot.modal.html', context)
         return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def accept_application(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
     
     application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
     slot = InterviewSlot.objects.get(pk=request.POST.get('interview_id'))
@@ -876,10 +942,14 @@ def accept_application(request):
     
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def return_application(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     pk=request.POST.get('application_id')
     application = AdmissionApplication.objects.get(pk=pk)
     form = ReturnApplicationForm(request.POST)
@@ -910,9 +980,13 @@ def return_application(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def view_interview_slot(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     sy = SchoolYear.objects.filter(is_active=True).first()
     slots = (
         Program.objects
@@ -937,9 +1011,13 @@ def view_interview_slot(request):
     rendered_html = render(request, 'admission/partials/view_interview_slot.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def view_interview_slot_modal(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     program = Program.objects.get(pk=request.POST.get('program_id'))
 
     context = {
@@ -949,10 +1027,14 @@ def view_interview_slot_modal(request):
     rendered_html = render(request, 'admission/partials/add_interview.modal.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def add_interview_slot(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     form = InterviewSlotForm(request.POST)
     if form.is_valid():
         school_year = SchoolYear.objects.filter(is_active=True).first()
@@ -965,9 +1047,13 @@ def add_interview_slot(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def interview_application(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     school_year = SchoolYear.objects.filter(is_active=True).first()
     faculty_user = Faculty.objects.filter(user=request.user).first()
     if request.user.is_superuser:
@@ -1123,9 +1209,13 @@ def view_student_profile(request, id):
     
     return render(request, 'admission/student/main.html', context)
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def view_rate_interview_modal(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
     
     context = {
@@ -1135,10 +1225,14 @@ def view_rate_interview_modal(request):
     rendered_html = render(request, 'admission/applications/interview_student.modal.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def rate_interview(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
     form = RateInterviewForm(request.POST)
     if form.is_valid():
@@ -1181,9 +1275,13 @@ def rate_interview(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def ranking_application(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     school_year = SchoolYear.objects.filter(is_active=True).first()
     faculty_user = Faculty.objects.filter(user=request.user).first()
     if request.user.is_superuser:
@@ -1312,9 +1410,13 @@ def ranking_application(request):
     rendered_html = render(request, 'admission/applications/ranking.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def view_process_student_modal(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
     
     context = {
@@ -1324,10 +1426,14 @@ def view_process_student_modal(request):
     rendered_html = render(request, 'admission/applications/process_student.modal.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def process_application(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
     form = ProcessApplicationForm(request.POST)
     if form.is_valid():
@@ -1363,9 +1469,13 @@ def process_application(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def waiting_application(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     school_year = SchoolYear.objects.filter(is_active=True).first()
     faculty_user = Faculty.objects.filter(user=request.user).first()
     if request.user.is_superuser:
@@ -1494,9 +1604,13 @@ def waiting_application(request):
     rendered_html = render(request, 'admission/applications/waiting.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def view_process_waitingstudent_modal(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
     
     context = {
@@ -1509,6 +1623,9 @@ def view_process_waitingstudent_modal(request):
 @ensure_csrf_cookie
 @require_POST
 def qualified_application(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     school_year = SchoolYear.objects.filter(is_active=True).first()
     faculty_user = Faculty.objects.filter(user=request.user).first()
     if request.user.is_superuser:
@@ -1637,9 +1754,13 @@ def qualified_application(request):
     rendered_html = render(request, 'admission/applications/qualified.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def view_withdraw_modal(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
     program = Program.objects.get(pk=request.POST.get('program_id'))
     
@@ -1651,10 +1772,14 @@ def view_withdraw_modal(request):
     rendered_html = render(request, 'admission/applications/withdraw_student.modal.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def withdraw_application(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     application = AdmissionApplication.objects.get(pk=request.POST.get('application_id'))
     form = WithdrawApplicationForm(request.POST)
     if form.is_valid():
@@ -1684,10 +1809,14 @@ def withdraw_application(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def decline_application(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     pk=request.POST.get('application_id')
     application = AdmissionApplication.objects.get(pk=pk)
     form = ReturnApplicationForm(request.POST)
@@ -1718,9 +1847,13 @@ def decline_application(request):
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def withdrawn_application(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     school_year = SchoolYear.objects.filter(is_active=True).first()
     faculty_user = Faculty.objects.filter(user=request.user).first()
     if request.user.is_superuser:
@@ -1838,9 +1971,13 @@ def withdrawn_application(request):
     rendered_html = render(request, 'admission/applications/withdrawn.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def all_application(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     school_year = SchoolYear.objects.filter(is_active=True).first()
     faculty_user = Faculty.objects.filter(user=request.user).first()
     if request.user.is_superuser:
@@ -1947,9 +2084,13 @@ def monitoring(request):
     
     return render(request, 'admission/monitoring.html', context)
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def view_monitoring(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     school_year = SchoolYear.objects.all()
     active_year = SchoolYear.objects.filter(is_active=True).first()
     faculty_user = Faculty.objects.filter(user=request.user).first()
@@ -2053,9 +2194,13 @@ def view_monitoring(request):
     rendered_html = render(request, 'admission/partials/view_monitoring.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 def view_monitoring_modal(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     student = Student.objects.get(pk=request.POST.get('student_id'))
     ccgrade = CCGrade.objects.filter(student=student).first()
     
@@ -2067,10 +2212,14 @@ def view_monitoring_modal(request):
     rendered_html = render(request, 'admission/partials/monitor_student.modal.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
+@login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
 @transaction.atomic
 def save_monitoring(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
     student = Student.objects.get(pk=request.POST.get('student_id'))
     form = MonitoringForm(request.POST)
     if form.is_valid():
@@ -2410,3 +2559,49 @@ def predict_programming_success(application):
     prediction = model.predict(input_data)
 
     return prediction
+
+@login_required(login_url='/admin/sign-in/')
+@ensure_csrf_cookie
+@require_POST
+def view_profile_modal(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
+    faculty = Faculty.objects.filter(user=request.user).first()
+
+    if not faculty:
+        faculty = request.user
+            
+    context = {
+        'faculty': faculty,
+    }
+    
+    rendered_html = render(request, 'admission/partials/user_profile.modal.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')
+
+@login_required(login_url='/admin/sign-in/')
+@ensure_csrf_cookie
+@require_POST
+@transaction.atomic
+def update_user_profile(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
+    faculty = Faculty.objects.filter(user=request.user).first()
+    form = UpdateUserProfileForm(request.POST, instance=request.user)
+    print(form.is_valid())
+    if form.is_valid():
+        user = request.user
+        user.email = form.cleaned_data['email']
+        user.first_name = form.cleaned_data['first_name']
+        user.last_name = form.cleaned_data['last_name']
+        user.save()
+        
+        if faculty:
+            faculty.first_name = user.first_name
+            faculty.last_name = user.last_name
+            faculty.email = user.email
+            faculty.save()
+        
+    errors = form.errors.as_json()
+    return JsonResponse(errors, safe=False)

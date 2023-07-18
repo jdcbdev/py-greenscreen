@@ -1,0 +1,122 @@
+<!-- Modal -->
+<div class="modal fade" id="user-profile-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">My Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="needs-validation" action="" method="post" name="profile-form" id="profile-form">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label for="first_name" class="form-label">First Name<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="first_name" placeholder="" disabled name="first_name" value="{{faculty.first_name}}">
+                            <div class="invalid-feedback d-none first_name">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="last_name" class="form-label">Last Name<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="last_name" placeholder="" disabled name="last_name" value="{{faculty.last_name}}">
+                            <div class="invalid-feedback d-none last_name">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="email" class="form-label">School or Personal Email<span class="text-muted"></span></label>
+                            <input type="email" class="form-control" id="email" placeholder="" disabled name="email" value="{{faculty.email}}">
+                            <div class="invalid-feedback d-none email">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="academic_rank" class="form-label">Academic Rank<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="academic_rank" placeholder="" disabled name="academic_rank" value="{{faculty.academic_rank.name}}">
+                            <div class="invalid-feedback d-none academic_rank">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="department" class="form-label">Department<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="department" placeholder="" disabled name="department" value="{{faculty.department.department_name}}">
+                            <div class="invalid-feedback d-none department">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="admission_role" class="form-label">Admission Role<span class="text-muted"></span></label>
+                            <input type="text" class="form-control" id="admission_role" placeholder="" disabled name="admission_role" value="{{faculty.admission_role.name}}">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" value="Save Faculty" name="edit_faculty-{{faculty.id}}" class="btn btn-primary background-color-green d-none">Update Profile</button>
+                </div>  
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $('div.modal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+    
+        $('form#profile-form').submit(function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'update_user_profile' %}",
+                data: formData,
+                processData: false,
+                contentType: false,
+    
+                success: function(data) {
+                    var errors = JSON.parse(data);
+                    has_error = false;
+    
+                    $('div.first_name').empty().removeClass('d-block');
+                    $('#first_name').removeClass('is-invalid');
+                    $('div.last_name').empty().removeClass('d-block');
+                    $('#last_name').removeClass('is-invalid');
+                    $('div.email').empty().removeClass('d-block');
+                    $('#email').removeClass('is-invalid');
+    
+                    if (errors.first_name) {
+                        $('#first_name').addClass('is-invalid');
+                        $('div.first_name').removeClass('d-none');
+                        $('div.first_name').addClass('d-block');
+                        $.each(errors.first_name, function(index, error) {
+                            $('div.first_name').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+    
+                    if (errors.last_name) {
+                        $('#last_name').addClass('is-invalid');
+                        $('div.last_name').removeClass('d-none');
+                        $('div.last_name').addClass('d-block');
+                        $.each(errors.last_name, function(index, error) {
+                            $('div.last_name').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+    
+                    if (errors.email) {
+                        $('#email').addClass('is-invalid');
+                        $('div.email').removeClass('d-none');
+                        $('div.email').addClass('d-block');
+                        $.each(errors.email, function(index, error) {
+                            $('div.email').append('<span>' + error.message + '</span>');
+                        });
+                        has_error = true
+                    }
+    
+                    if (!has_error) {
+                        $('#user-profile-modal').modal('hide');
+                    }
+                },
+            });
+        });  
+    });
+</script>

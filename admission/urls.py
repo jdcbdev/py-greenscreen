@@ -51,4 +51,6 @@ urlpatterns = [
     path('monitoring/view/', views.view_monitoring, name="view_monitoring"),
     path('monitoring/view/modal', views.view_monitoring_modal, name="view_monitoring_modal"),
     path('monitoring/save-monitoring/', views.save_monitoring, name="save_monitoring"),
+    path('my-profile/', views.view_profile_modal, name='view_profile_modal'),
+    path('my-profile/update', views.update_user_profile, name='update_user_profile'),
 ]

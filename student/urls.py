@@ -27,6 +27,7 @@ urlpatterns = [
     path('view-application/', views.view_apply_modal, name='view_apply_modal'),
     path('send-application/', views.send_application, name='send_application'),
     path('my-application/', views.my_application, name='my_application'),
+    path('my-application/<int:id>', views.my_application, name='my_application'),
     path('cancel-application/', views.cancel_application, name='cancel_application'),
     path('withdraw-application/', views.withdraw_application, name='withdraw_application'),
 ]

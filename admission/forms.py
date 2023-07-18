@@ -193,3 +193,36 @@ class MonitoringForm(forms.Form):
         cleaned_data = super().clean()
 
         return cleaned_data
+
+class UpdateUserProfileForm(forms.ModelForm):
+    class Meta:
+        model = get_user_model()
+        fields = ['first_name', 'last_name', 'email']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'required': True}),
+            'last_name': forms.TextInput(attrs={'required': True}),
+            'email': forms.EmailInput(attrs={'required': True}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.instance = kwargs.get('instance')
+        super().__init__(*args, **kwargs)
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+
+        if email and self.instance:
+            if email == self.instance.email:
+                return email
+
+        queryset = User.objects.filter(email=email)
+        if queryset.exists():
+            raise forms.ValidationError('This email is already in use.')
+
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        return cleaned_data
+
