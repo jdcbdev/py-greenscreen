@@ -9,43 +9,43 @@
         <div class="col d-flex flex-column">
             <div class="card flex-grow-1">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title card-title-total">Total Applications</h5>
-                    <p class="card-text card-text-number">500</p>
-                    <p class="mb-0 mt-auto">
-                        <a class="view-all" href="">View All</a>
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="col d-flex flex-column">
-            <div class="card flex-grow-1">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title card-title-total">Accepted Applications</h5>
-                    <p class="card-text card-text-number">250</p>
-                    <p class="mb-0 mt-auto">
-                        <a class="view-all" href="">View All</a>
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="col d-flex flex-column">
-            <div class="card flex-grow-1">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title card-title-total">Rejected Applications</h5>
-                    <p class="card-text card-text-number">100</p>
-                    <p class="mb-0">
-                        <a class="view-all" href="">View All</a>
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="col d-flex flex-column">
-            <div class="card flex-grow-1">
-                <div class="card-body d-flex flex-column">
                     <h5 class="card-title card-title-total">Pending Applications</h5>
-                    <p class="card-text card-text-number">150</p>
+                    <p class="card-text card-text-number"><span class="status-pending p-2">{{ pending_counter }}</span></p>
                     <p class="mb-0">
-                        <a class="view-all" href="">Review Now</a>
+                        <a class="view-all" href="{% url 'view_application' %}">Review Now</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col d-flex flex-column">
+            <div class="card flex-grow-1">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title card-title-total">Approved Applications</h5>
+                    <p class="card-text card-text-number"><span class="status-qualified p-2">{{ qualified_counter }}</span></p>
+                    <p class="mb-0 mt-auto">
+                        <a class="view-all" href="{% url 'view_application' %}">View All</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col d-flex flex-column">
+            <div class="card flex-grow-1">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title card-title-total">Declined Applications</h5>
+                    <p class="card-text card-text-number"><span class="status-declined p-2">{{ declined_counter }}</span></p>
+                    <p class="mb-0">
+                        <a class="view-all" href="{% url 'view_application' %}">View All</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col d-flex flex-column">
+            <div class="card flex-grow-1">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title card-title-total">Total Applications</h5>
+                    <p class="card-text card-text-number"><span class="status-withdrawn p-2">{{ all_counter }}</span></p>
+                    <p class="mb-0 mt-auto">
+                        <a class="view-all" href="{% url 'view_application' %}">View All</a>
                     </p>
                 </div>
             </div>
@@ -55,7 +55,7 @@
         <div class="col-12 col-md-4 my-4 d-flex flex-column">
             <div class="card flex-grow-1">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title card-title-total">Total Predictions</h5>
+                    <h5 class="card-title card-title-total">Total Predictions<span class="text-muted ms-1" data-bs-toggle="tooltip" title="Predictions of Approved Students"><i class="fa fa-info-circle"></i></span></h5>
                     <canvas id="status-chart-1"></canvas>
                     <p class="mb-0 mt-auto">
                         <a class="view-all" href="">View Report</a>
@@ -66,7 +66,7 @@
         <div class="col-12 col-md-8 mb-4 mt-0 d-flex flex-column mt-md-4">
             <div class="card flex-grow-1">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title card-title-total">Prediction VS Actual</h5>
+                    <h5 class="card-title card-title-total">Prediction VS Actual<span class="text-muted ms-1" data-bs-toggle="tooltip" title="Comparison of Prediction VS Actual of Approved Students"><i class="fa fa-info-circle"></i></span></h5>
                     <canvas id="status-chart-2"></canvas>
                     <p class="mb-0 mt-auto">
                         <a class="view-all" href="">View Report</a>
@@ -79,7 +79,7 @@
         <div class="col-12 col-md-6 mb-4 d-flex flex-column">
             <div class="card flex-grow-1">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title card-title-total">CET OAPR</h5>
+                    <h5 class="card-title card-title-total">CET OAPR<span class="text-muted ms-1" data-bs-toggle="tooltip" title="CET OAPR of Approved Students"><i class="fa fa-info-circle"></i></span></h5>
                     <canvas id="myChart"></canvas>
                     <p class="mb-0 mt-auto">
                         <a class="view-all" href="">View Report</a>
@@ -90,7 +90,7 @@
         <div class="col-12 col-md-6 mb-4 mt-0 d-flex flex-column">
             <div class="card flex-grow-1">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title card-title-total">SHS GPA</h5>
+                    <h5 class="card-title card-title-total">SHS GPA<span class="text-muted ms-1" data-bs-toggle="tooltip" title="SHS GPA of Approved Students"><i class="fa fa-info-circle"></i></span></h5>
                     <canvas id="status-chart-3"></canvas>
                     <p class="mb-0 mt-auto">
                         <a class="view-all" href="">View Report</a>
@@ -100,101 +100,34 @@
         </div>
     </div>
     <div class="row">
+        <h5 class="col-12 fw-bold mb-1 mt-3 mt-md-0 color-green">10 Most Recent (Latest) Approved Applications</h5>
         <div class="table-responsive">
             <table class="table table-hover responsive" id="table-dashboard-student">
                 <thead>
                     <tr>
-                        <th scope="col">No.</th>
                         <th scope="col">Name</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">CET</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Program</th>
+                        <th scope="col">CET OAPR</th>
                         <th scope="col">SHS GPA</th>
+                        <th scope="col">Email Address</th>
+                        <th scope="col">Phone Number</th>
                         <th scope="col">Application Date</th>
-                        <th scope="col">Status</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for application in applications %}
                     <tr>
-                        <td>1.</td>
-                        <td>Smith, John A.</td>
-                        <td>john.smith@abc.com</td>
-                        <td>87.4</td>
-                        <td>90.1</td>
-                        <td>Jun 12, 2023</td>
-                        <td><span class="approved">Approved</span></td>
+                        <td>{{ application.last_name }}, {{ application.first_name }} {{ application.middle_name }}</td>
+                        <td>{{ application.student_type_name|capfirst }}</td>
+                        <td>{{ application.admissionapplication_set.first.program.code }}</td>
+                        <td>{{ application.collegeentrancetest_set.first.overall_percentile_rank }}</td>
+                        <td>{{ application.schoolbackground_set.first.combined_gpa }}</td>
+                        <td>{{ application.contactpoint_set.first.contact_email }}</td>
+                        <td>{{ application.contactpoint_set.first.contact_number }}</td>
+                        <td>{{ application.admissionapplication_set.first.created_at }}</td>
                     </tr>
-                    <tr>
-                        <td>2.</td>
-                        <td>Lee, Jennifer S.</td>
-                        <td>jennifer.lee@xyz.com</td>
-                        <td>92.8</td>
-                        <td>87.9</td>
-                        <td>Aug 23, 2023</td>
-                        <td><span class="pending">Pending</span></td>
-                    </tr>
-                    <tr>
-                        <td>3.</td>
-                        <td>Garcia, Juan D.</td>
-                        <td>juan.garcia@mno.com</td>
-                        <td>88.2</td>
-                        <td>86.5</td>
-                        <td>May 17, 2023</td>
-                        <td><span class="pending">Pending</span></td>
-                    </tr>
-                    <tr>
-                        <td>4.</td>
-                        <td>Chung, Hyejin L.</td>
-                        <td>hyejin.chung@pqr.com</td>
-                        <td>95.0</td>
-                        <td>92.1</td>
-                        <td>Jul 19, 2023</td>
-                        <td><span class="approved">Approved</span></td>
-                    </tr>
-                    <tr>
-                        <td>5.</td>
-                        <td>Tanaka, Hiroshi K.</td>
-                        <td>hiroshi.tanaka@def.com</td>
-                        <td>86.3</td>
-                        <td>89.7</td>
-                        <td>May 29, 2023</td>
-                        <td><span class="interview">For Interview</span></td>
-                    </tr>
-                    <tr>
-                        <td>6.</td>
-                        <td>Kim, Minji H.</td>
-                        <td>minji.kim@lmn.com</td>
-                        <td>91.7</td>
-                        <td>90.5</td>
-                        <td>Jun 30, 2023</td>
-                        <td><span class="pending">Pending</span></td>
-                    </tr>
-                    <tr>
-                        <td>7.</td>
-                        <td>Nguyen, Minh T.</td>
-                        <td>minh.nguyen@rst.com</td>
-                        <td>93.5</td>
-                        <td>89.3</td>
-                        <td>Aug 08, 2023</td>
-                        <td><span class="interview">For Interview</span></td>
-                    </tr>
-                    <tr>
-                        <td>8.</td>
-                        <td>Sato, Yukihiro</td>
-                        <td>yukihiro.sato@uvw.com</td>
-                        <td>89.1</td>
-                        <td>87.2</td>
-                        <td>Jul 15, 2023</td>
-                        <td><span class="interview">For Interview</span></td>
-                    </tr>
-                    <tr>
-                        <td>9.</td>
-                        <td>Hernandez, Maria L.</td>
-                        <td>maria.hernandez@xyz.com</td>
-                        <td>94.2</td>
-                        <td>91.8</td>
-                        <td>May 11, 2023</td>
-                        <td><span class="pending">Pending</span></td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -203,6 +136,7 @@
 <script>
     $(document).ready(function() {
         var table = $('#table-dashboard-student').DataTable({
+            ordering: false,
             responsive: true,
             fixedHeader: true,
             "dom": 'rt'
@@ -214,7 +148,7 @@
             data: {
             labels: ['Will Succeed', 'Will Struggle'],
                 datasets: [{
-                    data: [295, 124],
+                    data: ['{{will_succeed}}', '{{will_struggle}}'],
                     backgroundColor: ['#3A98B9', '#EB455F'],
                 }]
                 },
@@ -227,19 +161,57 @@
         // CET Line Graph
         var data = {
             labels: ['41-50', '51-60', '61-70', '71-80', '81-90', '91-100'],
-                datasets: [{
-                    label: 'BSCS',
-                    data: [0, 0, 40, 27, 32, 15],
-                    borderColor: '#3A98B9',
-                    fill: false
-                },
-                {
-                    label: 'BSIT',
-                    data: [0, 0, 28, 53, 28, 7],
-                    borderColor: '#0E8388',
-                    fill: false
-                }]
-        };
+            {% if request.user.is_superuser %}
+            datasets: [
+              {
+                label: 'BSCS',
+                data: [
+                  {% for range_str, count in bscs_cet_counters.items %}
+                    {{ count }},
+                  {% endfor %}
+                ],
+                borderColor: '#3A98B9',
+                fill: false
+              },
+              {
+                label: 'BSIT',
+                data: [
+                  {% for range_str, count in bsit_cet_counters.items %}
+                    {{ count }},
+                  {% endfor %}
+                ],
+                borderColor: '#0E8388',
+                fill: false
+              }
+            ]
+            {% elif faculty_user.department.code == 'BSCS' %}
+            datasets: [
+              {
+                label: 'BSCS',
+                data: [
+                  {% for range_str, count in bscs_cet_counters.items %}
+                    {{ count }},
+                  {% endfor %}
+                ],
+                borderColor: '#3A98B9',
+                fill: false
+              }
+            ]
+            {% elif faculty_user.department.code == 'BSIT' %}
+            datasets: [
+              {
+                label: 'BSIT',
+                data: [
+                  {% for range_str, count in bsit_cet_counters.items %}
+                    {{ count }},
+                  {% endfor %}
+                ],
+                borderColor: '#0E8388',
+                fill: false
+              }
+            ]
+            {% endif %}
+          };          
 
         // Get the canvas element
         var ctx = document.getElementById('myChart').getContext('2d');
@@ -272,7 +244,7 @@
             labels: ['Successful (Predicted)', 'Successful (Actual)', 'Struggling (Predicted)', 'Struggling (Actual)'],
                     datasets: [{
                         label: 'Predicted VS Actual',
-                        data: [95, 88, 23, 30],
+                        data: ['{{will_succeed}}', '{{actual_successful}}', '{{will_struggle}}', '{{actual_struggling}}'],
                         backgroundColor: ['#3A98B9', '#3E54AC', '#EB455F', '#EB4747'],
                     }]
                 },
@@ -300,18 +272,56 @@
         // Define your data
         var data = {
             labels: ['75-80', '81-85', '86-90', '91-95', '96-100'],
-                datasets: [{
+            {% if request.user.is_superuser %}
+            datasets: [
+                {
                     label: 'BSCS',
-                    data: [2, 14, 55, 24, 34, 15],
+                    data: [
+                    {% for range_str, count in bscs_gpa_counters.items %}
+                        {{ count }},
+                    {% endfor %}
+                    ],
                     borderColor: '#3A98B9',
                     fill: false
                 },
                 {
                     label: 'BSIT',
-                    data: [3, 11, 27, 46, 19, 8],
+                    data: [
+                    {% for range_str, count in bsit_gpa_counters.items %}
+                        {{ count }},
+                    {% endfor %}
+                    ],
                     borderColor: '#0E8388',
                     fill: false
-                }]
+                }
+            ]
+            {% elif faculty_user.department.code == 'BSCS' %}
+            datasets: [
+                {
+                    label: 'BSCS',
+                    data: [
+                    {% for range_str, count in bscs_gpa_counters.items %}
+                        {{ count }},
+                    {% endfor %}
+                    ],
+                    borderColor: '#3A98B9',
+                    fill: false
+                }
+            ]
+            {% elif faculty_user.department.code == 'BSIT' %}
+            datasets: [
+                {
+                    label: 'BSIT',
+                    data: [
+                    {% for range_str, count in bsit_gpa_counters.items %}
+                        {{ count }},
+                    {% endfor %}
+                    ],
+                    borderColor: '#0E8388',
+                    fill: false
+                }
+            ]
+            {% endif %}
         };
 
         // Get the canvas element

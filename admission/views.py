@@ -251,10 +251,203 @@ def dashboard(request):
     page_active = 'dashboard'
     page_url = request.build_absolute_uri()
     
+    school_year = SchoolYear.objects.filter(is_active=True).first()
+    faculty_user = Faculty.objects.filter(user=request.user).first()
+    
+    if request.user.is_superuser:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending').count()
+        declined_counter = AdmissionApplication.objects.filter(school_year=school_year, status='declined').count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved').count()
+        all_counter = AdmissionApplication.objects.filter(school_year=school_year).count()
+        programs = Program.objects.filter(is_active=True)
+        will_succeed = AdmissionApplication.objects.filter(school_year=school_year, status='approved', prediction=True).count()
+        will_struggle = AdmissionApplication.objects.filter(school_year=school_year, status='approved', prediction=False).count()
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), school_year=school_year, status='approved')
+                .order_by('-created_at')
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(school_year=school_year, status='approved')
+                    .order_by('-created_at')
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+                Prefetch(
+                    'ccgrade_set',
+                    queryset=CCGrade.objects.select_related('student')
+                ),
+            )
+            .order_by('last_name', 'first_name', 'middle_name')
+        )
+    else:
+        pending_counter = AdmissionApplication.objects.filter(school_year=school_year, status='pending', program=faculty_user.department).count()
+        declined_counter = AdmissionApplication.objects.filter(school_year=school_year, status='declined', program=faculty_user.department).count()
+        qualified_counter = AdmissionApplication.objects.filter(school_year=school_year, status='approved', program=faculty_user.department).count()
+        all_counter = AdmissionApplication.objects.filter(school_year=school_year, program=faculty_user.department).count()
+        programs = Program.objects.filter(is_active=True, pk=faculty_user.department.id)
+        will_succeed = AdmissionApplication.objects.filter(school_year=school_year, status='approved', prediction=True, program=faculty_user.department).count()
+        will_struggle = AdmissionApplication.objects.filter(school_year=school_year, status='approved', prediction=False, program=faculty_user.department).count()
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), school_year=school_year, status='approved', program=faculty_user.department)
+                .order_by('-created_at')
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(school_year=school_year, status='approved', program=faculty_user.department)
+                    .order_by('-created_at')
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+                Prefetch(
+                    'ccgrade_set',
+                    queryset=CCGrade.objects.select_related('student')
+                ),
+            )
+            .order_by('last_name', 'first_name', 'middle_name')
+        )
+    
+    actual_successful = 0
+    actual_struggling = 0
+    
+    # Assuming you have the ranges as a list:
+    cet_ranges = ['41-50', '51-60', '61-70', '71-80', '81-90', '91-100']
+    gpa_ranges = ['75-80', '81-85', '86-90', '91-95', '96-100']
+
+    # Initialize counters for each range and each program
+    bscs_cet_counters = {range_str: 0 for range_str in cet_ranges}
+    bsit_cet_counters = {range_str: 0 for range_str in cet_ranges}
+
+    bscs_gpa_counters = {range_str: 0 for range_str in gpa_ranges}
+    bsit_gpa_counters = {range_str: 0 for range_str in gpa_ranges}
+
+    for student in students:
+        is_none = True
+        is_successful = False
+
+        try:
+            ccgrade = student.ccgrade_set.first()
+            cet_opar = student.collegeentrancetest_set.first().overall_percentile_rank
+            gpa = student.schoolbackground_set.first().combined_gpa
+            
+            if cet_opar is not None:
+                cet_opar = round(cet_opar)
+
+            if gpa is not None:
+                gpa = round(gpa)
+
+            if ccgrade is not None:
+                cc101 = ccgrade.cc101
+                cc102 = ccgrade.cc102
+
+                if cc101 is None or cc101 == "":
+                    is_none = True
+                elif cc102 is None or cc102 == "":
+                    is_none = True
+                else:
+                    is_none = False
+                    if cc101 == 'INC' or cc101 == 'AW' or cc101 == 'UW':
+                        is_successful = False
+                        actual_struggling += 1
+                    elif cc102 == 'INC' or cc102 == 'AW' or cc102 == 'UW':
+                        is_successful = False
+                        actual_struggling += 1
+                    else:
+                        cc101 = float(ccgrade.cc101)
+                        cc102 = float(ccgrade.cc102)
+                        average = (cc101 + cc102) / 2
+                        if average <= 2.0:
+                            is_successful = True
+                            actual_successful += 1
+                        else:
+                            is_successful = False
+                            actual_struggling += 1
+
+                    # Increment the appropriate range counter based on cet_opar
+                    if cet_opar:
+                        for i, range_str in enumerate(cet_ranges):
+                            min_rank, max_rank = map(int, range_str.split('-'))
+                            if min_rank <= cet_opar <= max_rank:
+                                if student.admissionapplication_set.first().program.code == 'BSIT':
+                                    program_cet_counters = bsit_cet_counters
+                                elif student.admissionapplication_set.first().program.code == 'BSCS':
+                                    program_cet_counters = bscs_cet_counters
+
+                                program_cet_counters[range_str] += 1
+                                break
+
+                    # Increment the appropriate range counter based on gpa
+                    if gpa:
+                        for i, range_str in enumerate(gpa_ranges):
+                            min_gpa, max_gpa = map(float, range_str.split('-'))
+                            if min_gpa <= gpa <= max_gpa:
+                                if student.admissionapplication_set.first().program.code == 'BSIT':
+                                    program_gpa_counters = bsit_gpa_counters
+                                elif student.admissionapplication_set.first().program.code == 'BSCS':
+                                    program_gpa_counters = bscs_gpa_counters
+
+                                program_gpa_counters[range_str] += 1
+                                break
+
+        except CCGrade.DoesNotExist:
+            is_none = True
+
+        student.is_none = is_none
+        student.is_successful = is_successful
+
+    applications = students.filter(admissionapplication__status='approved').order_by('-admissionapplication__created_at')[:10]
+
     context = {
         'page_title': page_title,
         'page_active': page_active,
         'page_url': page_url,
+        'faculty_user': faculty_user,
+        'applications': applications,
+        'pending_counter': pending_counter,
+        'declined_counter': declined_counter,
+        'qualified_counter': qualified_counter,
+        'all_counter': all_counter,
+        'programs': programs,
+        'will_succeed': will_succeed,
+        'will_struggle': will_struggle,
+        'actual_successful': actual_successful,
+        'actual_struggling': actual_struggling,
+        'bscs_cet_counters': bscs_cet_counters,
+        'bsit_cet_counters': bsit_cet_counters,
+        'bscs_gpa_counters': bscs_gpa_counters,
+        'bsit_gpa_counters': bsit_gpa_counters,
     }
     
     return render(request, 'admission/dashboard.html', context)
