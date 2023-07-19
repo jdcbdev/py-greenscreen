@@ -5,6 +5,10 @@
 {% block content %}
 
 <main class="col-md-9 ms-sm-auto col-lg-9 col-xl-10 p-md-4 mt-3 mt-md-0">
+    <div class="overlay justify-content-center align-items-center col-md-9 ms-sm-auto col-lg-9 col-xl-10">
+        <div class="custom-spinner spinner-border color-green" role="status">
+        </div>
+    </div>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 align-items-stretch">
         <div class="col d-flex flex-column">
             <div class="card flex-grow-1">
@@ -58,7 +62,7 @@
                     <h5 class="card-title card-title-total">Total Predictions<span class="text-muted ms-1" data-bs-toggle="tooltip" title="Predictions of Approved Students"><i class="fa fa-info-circle"></i></span></h5>
                     <canvas id="status-chart-1"></canvas>
                     <p class="mb-0 mt-auto">
-                        <a class="view-all" href="">View Report</a>
+                        <a class="view-all" href="{% url 'reports' %}">View Report</a>
                     </p>
                 </div>
             </div>
@@ -69,7 +73,7 @@
                     <h5 class="card-title card-title-total">Prediction VS Actual<span class="text-muted ms-1" data-bs-toggle="tooltip" title="Comparison of Prediction VS Actual of Approved Students"><i class="fa fa-info-circle"></i></span></h5>
                     <canvas id="status-chart-2"></canvas>
                     <p class="mb-0 mt-auto">
-                        <a class="view-all" href="">View Report</a>
+                        <a class="view-all" href="{% url 'reports' %}">View Report</a>
                     </p>
                 </div>
             </div>
@@ -82,7 +86,7 @@
                     <h5 class="card-title card-title-total">CET OAPR<span class="text-muted ms-1" data-bs-toggle="tooltip" title="CET OAPR of Approved Students"><i class="fa fa-info-circle"></i></span></h5>
                     <canvas id="myChart"></canvas>
                     <p class="mb-0 mt-auto">
-                        <a class="view-all" href="">View Report</a>
+                        <a class="view-all" href="{% url 'reports' %}">View Report</a>
                     </p>
                 </div>
             </div>
@@ -93,7 +97,7 @@
                     <h5 class="card-title card-title-total">SHS GPA<span class="text-muted ms-1" data-bs-toggle="tooltip" title="SHS GPA of Approved Students"><i class="fa fa-info-circle"></i></span></h5>
                     <canvas id="status-chart-3"></canvas>
                     <p class="mb-0 mt-auto">
-                        <a class="view-all" href="">View Report</a>
+                        <a class="view-all" href="{% url 'reports' %}">View Report</a>
                     </p>
                 </div>
             </div>
@@ -135,6 +139,8 @@
 </main>
 <script>
     $(document).ready(function() {
+        $('main').addClass('loading');
+
         var table = $('#table-dashboard-student').DataTable({
             ordering: false,
             responsive: true,
@@ -151,7 +157,7 @@
                     data: ['{{will_succeed}}', '{{will_struggle}}'],
                     backgroundColor: ['#3A98B9', '#EB455F'],
                 }]
-                },
+            },
             options: {
                 responsive: true,
                 maintainAspectRatio: true
@@ -347,7 +353,8 @@
                 }
             }
         });
-
+        
+        $('main').removeClass('loading');
     });
 </script>
 

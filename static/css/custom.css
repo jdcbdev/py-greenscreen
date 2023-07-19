@@ -1245,6 +1245,31 @@ span.table-struggling{
     align-items: center;
 }
 
+.overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+    display: none;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    outline: 0;
+}
+
+.overlay .spinner-border {
+    position: relative;
+}
+
+.loading .overlay {
+    display: flex;
+}
+
+.report-ready .overlay {
+    display: none;
+}
+
 @media (min-width: 576px) {
     .shortcut{
         display: block;

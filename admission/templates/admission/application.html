@@ -5,6 +5,10 @@
 {% block content %}
 
 <main class="col-md-9 ms-sm-auto col-lg-9 col-xl-10 p-md-4">
+    <div class="overlay justify-content-center align-items-center col-md-9 ms-sm-auto col-lg-9 col-xl-10">
+        <div class="custom-spinner spinner-border color-green" role="status">
+        </div>
+    </div>
     <div class="w-100">
         <h5 class="col-12 fw-bold mb-3 mt-3 mt-md-0">Applications</h5>
         <ul class="nav nav-tabs application">
@@ -64,6 +68,7 @@
                 success: function(result)
                 {
                     $('div.table-responsive').html(result);
+                    $('main').removeClass('loading');
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) { 
                     alert("Status: " + textStatus); alert("Error: " + errorThrown); 
@@ -80,6 +85,7 @@
                 success: function(result)
                 {
                     $('div.table-responsive').html(result);
+                    $('main').removeClass('loading');
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) { 
                     alert("Status: " + textStatus); alert("Error: " + errorThrown); 
@@ -96,6 +102,7 @@
                 success: function(result)
                 {
                     $('div.table-responsive').html(result);
+                    $('main').removeClass('loading');
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) { 
                     alert("Status: " + textStatus); alert("Error: " + errorThrown); 
@@ -112,6 +119,7 @@
                 success: function(result)
                 {
                     $('div.table-responsive').html(result);
+                    $('main').removeClass('loading');
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) { 
                     alert("Status: " + textStatus); alert("Error: " + errorThrown); 
@@ -128,6 +136,7 @@
                 success: function(result)
                 {
                     $('div.table-responsive').html(result);
+                    $('main').removeClass('loading');
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) { 
                     alert("Status: " + textStatus); alert("Error: " + errorThrown); 
@@ -144,6 +153,7 @@
                 success: function(result)
                 {
                     $('div.table-responsive').html(result);
+                    $('main').removeClass('loading');
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) { 
                     alert("Status: " + textStatus); alert("Error: " + errorThrown); 
@@ -160,6 +170,7 @@
                 success: function(result)
                 {
                     $('div.table-responsive').html(result);
+                    $('main').removeClass('loading');
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) { 
                     alert("Status: " + textStatus); alert("Error: " + errorThrown); 
@@ -168,6 +179,8 @@
         }
     }
     $(document).ready(function(){
+        $('main').addClass('loading');
+
         {% if request.user.is_superuser or faculty_user.admission_role.name|lower != "interviewer" %}
         load('pending');
         {% else %}

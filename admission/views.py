@@ -38,6 +38,7 @@ from base.models import SHSStrand, ClassRoomOrganization, StudentSupremeGovernme
 from decimal import Decimal
 from student.forms import WithdrawApplicationForm
 from student.views import student_send_email
+from ph_geography.models import Region, Province, Municipality, Barangay
 import pickle
 
 # Create your views here.
@@ -1135,6 +1136,18 @@ def accept_application(request):
                 
             application.prediction = predict[0]
             application.save() 
+        else:
+            #send to student
+            title = f"{application.program.code.upper()} Application Status - Scheduled for Interview"
+            receiver = application.student.first_name
+            mail_subject = f"{application.program.code.upper()} Application Status (Scheduled for Interview) - GreenScreen Admission System"
+            domain = get_current_site(request).domain
+            application_url = reverse('my_application')
+            message = f"""Your application for the <b>{application.program.name}</b> program is now scheduled for an interview. 
+                        You can view the status of your application <a class="color-green" href="{domain}{application_url}">here</a>.
+                        <br><br>Thank you for choosing our program."""
+            to_email = list(ContactPoint.objects.filter(student=application.student).values_list('contact_email', flat=True))
+            student_send_email(title, receiver, mail_subject, message, to_email)
         
         InterviewLogs.objects.create(
             application=application,
@@ -2816,3 +2829,225 @@ def update_user_profile(request):
         
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
+
+@login_required(login_url='/admin/sign-in/')
+def reports(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
+    page_title = 'Reports'
+    page_url = request.build_absolute_uri()
+    page_active = 'reports'
+    
+    context = {
+        'page_title': page_title,
+        'page_active': page_active,
+        'page_url': page_url,
+    }
+    
+    return render(request, 'admission/reports/main.html', context)
+
+@login_required(login_url='/admin/sign-in/')
+@ensure_csrf_cookie
+@require_POST
+def view_report(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
+    school_year = SchoolYear.objects.all()
+    active_year = SchoolYear.objects.filter(is_active=True).first()
+    faculty_user = Faculty.objects.filter(user=request.user).first()
+    strands = SHSStrand.objects.all().order_by('name')
+    
+    if request.user.is_superuser:
+        programs = Program.objects.filter(is_active=True)
+        faculties = Faculty.objects.all().order_by('last_name', 'first_name')
+    else:
+        programs = Program.objects.filter(is_active=True, pk=faculty_user.department.id)
+        faculties = Faculty.objects.filter(department=faculty_user.department).order_by('last_name', 'first_name')
+    
+    if request.user.is_superuser:
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'))
+                .order_by('-created_at')
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .order_by('-created_at')
+                    .prefetch_related(
+                        Prefetch(
+                            'interviewlogs_set',
+                            queryset=InterviewLogs.objects.select_related('application')
+                            .order_by('-created_at')
+                        )
+                    )
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+                Prefetch(
+                    'ccgrade_set',
+                    queryset=CCGrade.objects.select_related('student')
+                ),
+                Prefetch(
+                    'personaladdress_set',
+                    queryset=PersonalAddress.objects.select_related('student')
+                ),
+            )
+            .order_by('last_name', 'first_name', 'middle_name')
+        )
+    else:
+        students = (
+            Student.objects
+            .annotate(has_admission_application=Exists(
+                AdmissionApplication.objects
+                .filter(student=OuterRef('pk'), program=faculty_user.department)
+            ))
+            .filter(has_admission_application=True)
+            .prefetch_related(
+                Prefetch(
+                    'admissionapplication_set',
+                    queryset=AdmissionApplication.objects.select_related('student')
+                    .filter(program=faculty_user.department)
+                    .prefetch_related(
+                        Prefetch(
+                            'interviewlogs_set',
+                            queryset=InterviewLogs.objects.select_related('application')
+                            .order_by('-created_at')
+                        )
+                    )
+                ),
+                Prefetch(
+                    'collegeentrancetest_set',
+                    queryset=CollegeEntranceTest.objects.select_related('student')
+                ),
+                Prefetch(
+                    'schoolbackground_set',
+                    queryset=SchoolBackground.objects.select_related('student')
+                ),
+                Prefetch(
+                    'contactpoint_set',
+                    queryset=ContactPoint.objects.select_related('student')
+                ),
+                Prefetch(
+                    'ccgrade_set',
+                    queryset=CCGrade.objects.select_related('student')
+                ),
+                Prefetch(
+                    'personaladdress_set',
+                    queryset=PersonalAddress.objects.select_related('student')
+                ),
+            )
+            .order_by('last_name', 'first_name', 'middle_name')
+        )
+
+    for student in students:
+        
+        #address query
+        barangay = Barangay.objects.get(code=student.personaladdress_set.first().barangay).name
+        student.barangay = barangay
+        
+        city = Municipality.objects.get(code=student.personaladdress_set.first().city).name
+        student.city = city
+        
+        province = Province.objects.get(code=student.personaladdress_set.first().province).name
+        student.province = province
+        
+        region = Region.objects.get(code=student.personaladdress_set.first().region).name
+        student.region = region
+        
+        #cet
+        cet = student.collegeentrancetest_set.first().overall_percentile_rank
+        if cet >= 41 and cet < 51:
+            student.cet = '41-50'
+        elif cet >= 51 and cet < 61:
+            student.cet = '51-60'
+        elif cet >= 61 and cet < 71:
+            student.cet = '61-70'
+        elif cet >= 71 and cet < 81:
+            student.cet = '71-80'
+        elif cet >= 81 and cet < 91:
+            student.cet = '81-90'
+        elif cet >= 91 and cet <= 100:
+            student.cet = '91-100'
+        else:
+            student.cet = 'Less than 40'
+            
+        #gpa
+        gpa = student.schoolbackground_set.first().combined_gpa
+        if gpa >= 75 and gpa <= 80:
+            student.gpa = '75-80'
+        elif gpa > 80 and gpa <= 85:
+            student.gpa = '81-85'
+        elif gpa > 85 and gpa <= 90:
+            student.gpa = '86-90'
+        elif gpa > 90 and gpa <= 95:
+            student.gpa = '91-95'
+        elif gpa > 95 and gpa <= 100:
+            student.gpa = '96-100'
+        else:
+            student.gpa = 'N/A'
+        
+        is_none = True
+        is_successful = False
+        
+        try:
+            ccgrade = student.ccgrade_set.first()
+            
+            if ccgrade is not None:
+                cc101 = ccgrade.cc101
+                cc102 = ccgrade.cc102
+                
+                if cc101 is None or cc101 == "":
+                    is_none = True
+                elif cc102 is None or cc102 == "":
+                    is_none = True
+                else:
+                    is_none = False
+                    if cc101 == 'INC' or cc101 == 'AW' or cc101 == 'UW':
+                        is_successful = False
+                    elif cc102 == 'INC' or cc102 == 'AW' or cc102 == 'UW':
+                        is_successful = False
+                    else:
+                        cc101 = float(ccgrade.cc101)
+                        cc102 = float(ccgrade.cc102)
+                        average = (cc101 + cc102) / 2
+                        if average <= 2.0:
+                            is_successful = True
+                        else:
+                            is_successful = False
+        except CCGrade.DoesNotExist:
+            is_none = True
+        
+        student.is_none = is_none
+        student.is_successful = is_successful
+    
+    
+    applications = students
+    context = {
+        'school_year': school_year,
+        'active_year': active_year,
+        'applications': applications,
+        'programs': programs,
+        'faculty_user': faculty_user,
+        'faculties': faculties,
+        'strands': strands,
+    }
+    
+    rendered_html = render(request, 'admission/reports/view_report.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')

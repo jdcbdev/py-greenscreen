@@ -5,6 +5,10 @@
 {% block content %}
 
 <main class="col-md-9 ms-sm-auto col-lg-9 col-xl-10 p-md-4">
+    <div class="overlay justify-content-center align-items-center col-md-9 ms-sm-auto col-lg-9 col-xl-10">
+        <div class="custom-spinner spinner-border color-green" role="status">
+        </div>
+    </div>
     <div class="w-100">
         <h5 class="col-12 fw-bold mb-1 mt-3 mt-md-0">Faculty</h5>
         <div class="table-responsive py-3 table-container">
@@ -155,6 +159,7 @@
                         var status = $(this).val();
                         dataTable.columns([5]).search(status).draw();
                     });
+                    $('main').removeClass('loading');
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) { 
                     alert("Status: " + textStatus); alert("Error: " + errorThrown); 
@@ -163,6 +168,7 @@
         }
     }
     $(document).ready(function(){
+        $('main').addClass('loading');
         $('div.modal').modal({
             backdrop: 'static',
             keyboard: false

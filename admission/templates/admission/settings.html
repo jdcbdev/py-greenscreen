@@ -5,6 +5,10 @@
 {% block content %}
 
 <main class="col-md-9 ms-sm-auto col-lg-9 col-xl-10 p-md-4 settings">
+    <div class="overlay justify-content-center align-items-center col-md-9 ms-sm-auto col-lg-9 col-xl-10">
+        <div class="custom-spinner spinner-border color-green" role="status">
+        </div>
+    </div>
     <div class="w-100">
         <div class="row g-2 mt-1">
             <h5 class="col-12 fw-bold mb-3 mt-3 mt-md-0">School Year & Admission Period</h5>
@@ -63,6 +67,7 @@
 
 <script>
     $(document).ready(function(){
+        $('main').addClass('loading');
         view_period()
         view_quota()
         view_interview_slot()
@@ -159,6 +164,7 @@
             data: formData,
             success: function(data) {
                 $('#criteria-container').html(data);
+                $('main').removeClass('loading');
             },
             error: function(xhr, status, error) {
                 console.error(error);

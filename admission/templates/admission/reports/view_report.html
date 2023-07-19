@@ -1,101 +1,600 @@
-<div class="row g-2 mb-2">
-    <div id="MyButtons" class="d-flex mb-md-2 mb-lg-0 col-12 col-md-auto"></div>
-    <div class="input-group search-keyword col-12 flex-lg-grow-1 ms-lg-auto">
-        <input type="text" name="keyword" id="keyword" placeholder="Search Student" class="form-control">
-        <button class="btn btn-outline-secondary background-color-green" type="button"><i class="fas fa-search white"></i></button>
+<h5 class="col-12 fw-bold mb-1 mt-3 mt-md-0">Reports</h5>
+<div class="card mt-3">
+    <div class="card-header">
+        Filter Report
+    </div>
+    <div class="card-body p-3">
+        <div class="row g-2">
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
+                <label for="schoolyear" class="form-label">School Year<span class="text-muted"></span></label>
+                <select name="schoolyear" id="schoolyear" class="form-select me-md-2">
+                    <option value="">All School Year</option>
+                    {% for sy in school_year %}
+                    <option value="{{ sy.concat_year }}">{{ sy.concat_year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
+                <label for="program" class="form-label">Program<span class="text-muted"></span></label>
+                <select name="program" id="program" class="form-select me-md-2">
+                    <option value="">All Program</option>
+                    {% for program in programs %}
+                    <option value="{{ program.code }}">{{ program.code }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
+                <label for="admission_status" class="form-label">Admission Status<span class="text-muted"></span></label>
+                <select name="admission_status" id="admission_status" class="form-select me-md-2">
+                    <option value="">All Admission Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Interview">Interview</option>
+                    <option value="Ranking">Ranking</option>
+                    <option value="Waiting List">Waiting List</option>
+                    <option value="Qualified">Qualified</option>
+                    <option value="Withdrawn">Withdrawn</option>
+                    <option value="Cancelled">Cancelled</option>
+                    <option value="Returned">Returned</option>
+                </select>
+            </div>
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
+                <label for="interviewer" class="form-label">Interviewer<span class="text-muted"></span></label>
+                <select name="interviewer" id="interviewer" class="form-select me-md-2">
+                    <option value="">All Interviewer</option>
+                    {% for faculty in faculties %}
+                    <option value="{{ faculty.first_name }} {{faculty.last_name}}">{{ faculty.first_name }} {{faculty.last_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
+                <label for="student_type" class="form-label">Student Type<span class="text-muted"></span></label>
+                <select name="student_type" id="student_type" class="form-select me-md-2">
+                    <option value="">All Student Type</option>
+                    <option value="Freshman">Freshman</option>
+                    <option value="Shiftee">Shiftee</option>
+                    <option value="Transferee">Transferee</option>
+                </select>
+            </div>
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
+                <label for="shsstrand" class="form-label">SHS Strand<span class="text-muted"></span></label>
+                <select class="form-control form-select" id="strand" placeholder="" name="strand">
+                    <option value="">All Strands</option>
+                    {% for strand in strands %}
+                        <option value="{{ strand.code }}">{{ strand.code }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
+                <label for="cet" class="form-label">CET OAPR<span class="text-muted"></span></label>
+                <select class="form-control form-select" id="cet" name="cet">
+                    <option value="">All CET OAPR</option>
+                    <option value="41-50">41-50</option>
+                    <option value="51-60">51-60</option>
+                    <option value="61-70">61-70</option>
+                    <option value="71-80">71-80</option>
+                    <option value="81-90">81-90</option>
+                    <option value="91-100">91-100</option>
+                </select>                                                                           
+            </div>
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
+                <label for="shsgpa" class="form-label">SHS GPA<span class="text-muted"></span></label>
+                <select class="form-control form-select" id="shsgpa" placeholder="" name="shsgpa">
+                    <option value="">All SHS GPA</option>
+                    <option value="75-80">75-80</option>
+                    <option value="81-85">81-85</option>
+                    <option value="86-90">86-90</option>
+                    <option value="91-95">91-95</option>
+                    <option value="96-100">96-100</option>
+                </select>        
+            </div>
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
+                <label for="prediction" class="form-label">Prediction<span class="text-muted"></span></label>
+                <select name="prediction" id="prediction" class="form-select me-md-2">
+                    <option value="">All Prediction</option>
+                    <option value="Successful">Successful</option>
+                    <option value="Struggling">Struggling</option>
+                </select>
+            </div>
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
+                <label for="actual" class="form-label">Actual Results<span class="text-muted"></span></label>
+                <select name="actual" id="actual" class="form-select me-md-2">
+                    <option value="">All Prediction</option>
+                    <option value="Successful">Successful</option>
+                    <option value="Struggling">Struggling</option>
+                </select>
+            </div>
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
+                <label for="cc101" class="form-label">CC101 Grade<span class="text-muted"></span></label>
+                <select name="cc101" id="cc101" class="form-select me-md-2">
+                    <option value="">All CC101 Grade</option>
+                    <option value="1.0">1.0</option>
+                    <option value="1.25">1.25</option>
+                    <option value="1.50">1.50</option>
+                    <option value="1.75">1.75</option>
+                    <option value="1.0">2.0</option>
+                    <option value="1.0">2.25</option>
+                    <option value="1.0">2.50</option>
+                    <option value="1.0">2.75</option>
+                    <option value="1.0">3.0</option>
+                    <option value="1.0">5.0</option>
+                    <option value="1.0">INC</option>
+                    <option value="1.0">AW</option>
+                    <option value="1.0">UW</option>
+                </select>
+            </div>
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
+                <label for="cc102" class="form-label">CC102 Grade<span class="text-muted"></span></label>
+                <select name="cc102" id="cc102" class="form-select me-md-2">
+                    <option value="">All CC102 Grade</option>
+                    <option value="1.0">1.0</option>
+                    <option value="1.25">1.25</option>
+                    <option value="1.50">1.50</option>
+                    <option value="1.75">1.75</option>
+                    <option value="1.0">2.0</option>
+                    <option value="1.0">2.25</option>
+                    <option value="1.0">2.50</option>
+                    <option value="1.0">2.75</option>
+                    <option value="1.0">3.0</option>
+                    <option value="1.0">5.0</option>
+                    <option value="1.0">INC</option>
+                    <option value="1.0">AW</option>
+                    <option value="1.0">UW</option>
+                </select>
+            </div>
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
+                <label for="sex" class="form-label">Sex<span class="text-muted"></span></label>
+                <select name="sex" id="sex" class="form-select me-md-2">
+                    <option value="">All Sex</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
+                <label for="region" class="form-label">All Region<span class="text-muted"></span></label>
+                <select name="region" id="region" class="form-select me-md-2">
+                    <option value="">All Region</option>
+                </select>
+            </div>
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
+                <label for="province" class="form-label">Province<span class="text-muted"></span></label>
+                <select class="form-control form-select" id="province" placeholder="" name="province">
+                    <option value="">All Province</option>
+                </select>
+            </div>
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
+                <label for="city" class="form-label">City/Municipality<span class="text-muted"></span></label>
+                <select class="form-control form-select" id="city" placeholder="" name="city">
+                    <option value="">All City</option>
+                </select>
+            </div>
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
+                <label for="barangay" class="form-label">Barangay<span class="text-muted"></span></label>
+                <select class="form-control form-select" id="barangay" placeholder="" name="barangay">
+                    <option value="">All Barangay</option>
+                </select>
+            </div>
+            <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2 d-flex">
+                <a class="report-reset col-12 mt-auto btn btn-secondary">Reset Filter</a>
+            </div>
+        </div>
     </div>
 </div>
-<table class="table table-hover responsive" id="table-reports">
-    <thead>
-        <tr>
-            <th scope="col">Action</th>
-            <th scope="col">Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">Student Type</th>
-            <th scope="col">Program</th>
-            <th scope="col">School Year</th>
-            <th scope="col">Admission Status</th>
-            <th scope="col">Interviewer</th>
-            <th scope="col">Prediction</th>
-            <th scope="col">Actual Result</th>
-            <th scope="col">CC101 Grade</th>
-            <th scope="col">CC102 Grade</th>
-            <th scope="col">CET OAPR</th>
-            <th scope="col">Sex</th>
-            <th scope="col">Address</th>
-            <th scope="col">SHS Strand</th>
-            <th scope="col">SHS GPA</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>
-                <div class="action-button">
-                    <a title="View Profile" href="" class="me-2 green"><i class="fa-solid fa-eye"></i></a>
-                </div>
-            </td>
-            <td>Ballaho, Jaydee C.</td>
-            <td>jaydee.ballaho@wmsu.edu.ph</td>
-            <td>New Student</td>
-            <td>BSCS</td>
-            <td>2021-2022</td>
-            <td>Admitted</td>
-            <td>Gon Freecs</td>
-            <td><span class="table-successful">Successful</span></td>
-            <td><span class="table-successful">Successful</span></td>
-            <td>1.25</td>
-            <td>1.50</td>
-            <td>94.60</td>
-            <td>Male</td>
-            <td>Fernandez, Pasonanca, Zamboanga City, Zamboanga del Sur</td>
-            <td>STEM</td>
-            <td>91.0</td>
-        </tr>
-        <tr>
-            <td>
-                <div class="action-button">
-                    <a title="View Profile" href="" class="me-2 green"><i class="fa-solid fa-eye"></i></a>
-                </div>
-            </td>
-            <td>Smith, John</td>
-            <td>sj@wmsu.edu.ph</td>
-            <td>New Student</td>
-            <td>BSIT</td>
-            <td>2021-2022</td>
-            <td>Admitted</td>
-            <td>Gon Freecs</td>
-            <td><span class="table-struggling">Struggling</span></td>
-            <td><span class="table-successful">Successful</span></td>
-            <td>1.50</td>
-            <td>1.25</td>
-            <td>89.50</td>
-            <td>Male</td>
-            <td>Maharlike, Talon-Talon, Zamboanga City, Zamboanga del Sur</td>
-            <td>GAS</td>
-            <td>95.0</td>
-        </tr>
-        <tr>
-            <td>
-                <div class="action-button">
-                    <a title="View Profile" href="" class="me-2 green"><i class="fa-solid fa-eye"></i></a>
-                </div>
-            </td>
-            <td>Milby, Ken</td>
-            <td>mk@wmsu.edu.ph</td>
-            <td>New Student</td>
-            <td>BSCS</td>
-            <td>2021-2022</td>
-            <td>Admitted</td>
-            <td>Jaydee Ballaho</td>
-            <td><span class="table-successful">Successful</span></td>
-            <td><span class="table-successful">Successful</span></td>
-            <td>1.25</td>
-            <td>1.50</td>
-            <td>87.20</td>
-            <td>Male</td>
-            <td>Maharlike, Talon-Talon, Zamboanga City, Zamboanga del Sur</td>
-            <td>STEM</td>
-            <td>92.0</td>
-        </tr>
-    </tbody>
-</table>
+<div class="table-responsive py-3 table-container">
+    <div class="row g-2 mb-2">
+        <div id="MyButtons" class="d-flex mb-md-2 mb-lg-0 col-12 col-md-auto"></div>
+        <div class="input-group search-keyword col-12 flex-lg-grow-1 ms-lg-auto">
+            <input type="text" name="keyword" id="keyword" placeholder="Search Student" class="form-control">
+            <button class="btn btn-outline-secondary background-color-green" type="button"><i class="fas fa-search white"></i></button>
+        </div>
+    </div>
+    <table class="table table-hover responsive" id="table-reports">
+        <thead>
+            <tr>
+                <th scope="col">Action</th>
+                <th scope="col">Name</th>
+                <th scope="col">Sex</th>
+                <th scope="col">SHS Strand</th>
+                <th scope="col">Student Type</th>
+                <th scope="col">Program</th>
+                <th scope="col">CET OAPR</th>
+                <th scope="col">SHS GPA</th>
+                <th scope="col">School Year</th>
+                <th scope="col">Status</th>
+                <th scope="col">Prediction</th>
+                <th scope="col">CC101 Grade</th>
+                <th scope="col">CC102 Grade</th>
+                <th scope="col">Actual Result</th>
+                <th scope="col">Interviewer</th>
+                <th scope="col">Address</th>
+                <th scope="col">Email</th>
+                <th scope="col">CET</th>
+                <th scope="col">GPA</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for application in applications %}
+            <tr>
+                <td>
+                    <div class="action-button">
+                        <a title="View Student Profile" class="me-2 green view-profile" data="{{ application.id }}" href="{% url 'view_student_profile' application.id %}" target="_blank"><i class="fa-solid fa-eye"></i></a>
+                    </div>
+                </td>
+                <td>{{ application.last_name }}, {{ application.first_name }} {{ application.middle_name }}</td>
+                <td>{{ application.sex }}</td>
+                <td>{{ application.schoolbackground_set.first.strand }}</td>
+                <td>{{ application.student_type_name|capfirst }}</td>
+                <td>{{ application.admissionapplication_set.first.program.code }}</td>
+                <td>{{ application.collegeentrancetest_set.first.overall_percentile_rank }}</td>
+                <td>{{ application.schoolbackground_set.first.combined_gpa }}</td>
+                <td>{{ application.admissionapplication_set.first.school_year.concat_year }}</td>
+                <td>
+                    {% if application.admissionapplication_set.first.status == "pending" %}
+                      <span class="status-pending">Pending</span>
+                    {% elif application.admissionapplication_set.first.status == "cancelled" %}
+                      <span class="status-cancelled">Cancelled</span>
+                    {% elif application.admissionapplication_set.first.status == "returned" %}
+                      <span class="status-returned">Returned</span>
+                    {% elif application.admissionapplication_set.first.status == "verified" %}
+                      <span class="status-verified">For Interview</span>
+                    {% elif application.admissionapplication_set.first.status == "interviewed" %}
+                      <span class="status-interviewed">For Ranking</span>
+                    {% elif application.admissionapplication_set.first.status == "approved" %}
+                      <span class="status-approved">Qualified</span>
+                    {% elif application.admissionapplication_set.first.status == "declined" %}
+                      <span class="status-declined">Declined</span>
+                    {% elif application.admissionapplication_set.first.status == "withdrawn" %}
+                      <span class="status-withdrawn">Withdrawn</span>
+                    {% elif application.admissionapplication_set.first.status == "waiting-list" %}
+                      <span class="status-waiting-list">Waiting List</span>
+                    {% endif %}
+                </td>
+                {% if application.admissionapplication_set.first.prediction == True %}
+                    <td><span class="table-successful">Successful</span></td>
+                {% elif application.admissionapplication_set.first.prediction == False %}
+                    <td><span class="table-struggling">Struggling</span></td>
+                {% else %}
+                    <td>---</td>
+                {% endif %}
+                <td>{{ application.ccgrade_set.first.cc101|default:'---' }}</td>
+                <td>{{ application.ccgrade_set.first.cc102|default:'---' }}</td>
+                {% if application.is_none %}
+                <td>---</td>
+                {% elif application.is_successful %}
+                <td><span class="table-successful">Successful</span></td>
+                {% else %}
+                <td><span class="table-struggling">Struggling</span></td>
+                {% endif %}
+                <td>
+                    {{application.admissionapplication_set.first.interviewlogs_set.first.processed_by.first_name|default:'---'}} 
+                    {{application.admissionapplication_set.first.interviewlogs_set.first.processed_by.last_name}}
+                </td>
+                <td>{{application.barangay}}, {{application.city}}, {{application.province}}, {{application.region}}</td>
+                <td>{{ application.contactpoint_set.first.contact_email }}</td>
+                <td>{{application.cet}}</td>
+                <td>{{application.gpa}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function(){
+        dataTable = $("#table-reports").DataTable({
+            dom: 'Brtp',
+            responsive: true,
+            fixedHeader: true,
+            pageLength: 10,
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Excel',
+                    className: 'border-white'
+                },
+                {
+                    extend: 'pdf',
+                    text: 'PDF',
+                    className: 'border-white'
+                },
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    className: 'border-white'
+                }
+            ],
+        });
+        dataTable.column(17).visible(false);
+        dataTable.column(18).visible(false);
+        
+        dataTable.buttons().container().appendTo($('#MyButtons'));
+
+        var table = dataTable;
+        var filter = createFilter(table, [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]);
+
+        function createFilter(table, columns) {
+            var input = $('input#keyword').on("keyup", function() {
+                table.draw();
+            });
+          
+            $.fn.dataTable.ext.search.push(function(
+                settings,
+                searchData,
+                index,
+                rowData,
+                counter
+            ) {
+                var val = input.val().toLowerCase();
+            
+                for (var i = 0, ien = columns.length; i < ien; i++) {
+                    if (searchData[columns[i]].toLowerCase().indexOf(val) !== -1) {
+                    return true;
+                    }
+                }
+          
+                return false;
+            });
+          
+            return input;
+        }
+
+        $('#schoolyear').change(function() {
+            var value = $(this).val();
+            dataTable.columns([8]).search(value).draw();
+        });
+    
+        $('#program').change(function() {
+            var value = $(this).val();
+            dataTable.columns([5]).search(value).draw();
+        });
+    
+        $('#admission_status').change(function() {
+            var value = $(this).val();
+            dataTable.columns([9]).search(value).draw();
+        });
+    
+        $('#interviewer').change(function() {
+            var value = $(this).val();
+            dataTable.columns([14]).search(value).draw();
+        });
+    
+        $('#prediction').change(function() {
+            var value = $(this).val();
+            dataTable.columns([10]).search(value).draw();
+        });
+    
+        $('#actual').change(function() {
+            var value = $(this).val();
+            dataTable.columns([13]).search(value).draw();
+        });
+    
+        $('#cc101').change(function() {
+            var value = $(this).val();
+            dataTable.columns([11]).search(value).draw();
+        });
+    
+        $('#cc102').change(function() {
+            var value = $(this).val();
+            dataTable.columns([12]).search(value).draw();
+        });
+    
+        $('#student_type').change(function() {
+            var value = $(this).val();
+            dataTable.columns([4]).search(value).draw();
+        });
+    
+        $('#sex').change(function() {
+            var value = $(this).val();
+            dataTable.columns([2]).search(value).draw();
+        });
+    
+        $('#strand').change(function() {
+            var value = $(this).val();
+            dataTable.columns([3]).search(value).draw();
+        });
+    
+        $('#shsgpa').change(function() {
+            var value = $(this).val();
+            dataTable.columns([18]).search(value).draw();
+        });
+    
+        $('#cet').change(function() {
+            var value = $(this).val();
+            dataTable.columns([17]).search(value).draw();
+        });
+    
+        $('.report-reset').click(function() {
+            $('select.form-select').val('');
+        });
+
+        $('#schoolyear').val('{{active_year.concat_year}}');
+
+        var formData = {
+            action: 'region',
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        };
+        $.ajax({
+            type: 'POST',
+            url: '/student/complete-profile/select-address/',
+            data: formData,
+            success: function(data) {
+                $('#region').empty().append('<option value="">All Region</option>');
+                $.each(data, function(index, region) {
+                  var option = $('<option value="' + region.code + '">' + region.name + '</option>');
+                  if (region.code === '{{ address.region|default_if_none:"090000000"|default:"090000000" }}') {
+                    option.prop('selected', true);
+                  }
+                  $('#region').append(option);
+                });
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert('Error: ' + textStatus);
+            }
+        });
+        var formData = {
+            filter: '{{ address.region|default_if_none:"090000000"|default:"090000000" }}',
+            action: 'province',
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        };
+        $.ajax({
+            type: 'POST',
+            url: '/student/complete-profile/select-address/',
+            data: formData,
+            success: function(data) {
+                $('#province').empty().append('<option value="">All Province</option>');
+                $.each(data, function(index, province) {
+                    var option = $('<option value="' + province.code + '">' + province.name + '</option>');
+                    if (province.code === '{{ address.province|default_if_none:"097300000"|default:"097300000" }}') {
+                        option.prop('selected', true);
+                    }
+                    $('#province').append(option);
+                });
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert('Error: ' + textStatus);
+            }
+        });
+        var formData = {
+            filter: '{{ address.province|default_if_none:"097300000"|default:"097300000" }}',
+            action: 'city',
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        };
+        $.ajax({
+            type: 'POST',
+            url: '/student/complete-profile/select-address/',
+            data: formData,
+            success: function(data) {
+                $('#city').empty().append('<option value="">All City</option>');
+                $.each(data, function(index, city) {
+                    var option = $('<option value="' + city.code + '">' + city.name + '</option>');
+                    if (city.code === '{{ address.city|default_if_none:"097332000"|default:"097332000" }}') {
+                        option.prop('selected', true);
+                    }
+                    $('#city').append(option);
+                });
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert('Error: ' + textStatus);
+            }
+        });
+        var formData = {
+            filter: '{{ address.city|default_if_none:"097332000"|default:"097332000" }}',
+            action: 'barangay',
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        };
+        $.ajax({
+            type: 'POST',
+            url: '/student/complete-profile/select-address/',
+            data: formData,
+            success: function(data) {
+                $('#barangay').empty().append('<option value="">All Barangay</option>');
+                $.each(data, function(index, barangay) {
+                    var option = $('<option value="' + barangay.code + '">' + barangay.name + '</option>');
+                    if (barangay.code === '{{ address.barangay }}') {
+                        option.prop('selected', true);
+                    }
+                    $('#barangay').append(option);
+                });
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert('Error: ' + textStatus);
+            }
+        });
+        $('#region').on('change', function(){
+            var value = $(this).find(":selected").text();
+            if (value === 'All Region'){
+                value = ''
+            }
+            dataTable.columns([15]).search(value).draw();
+
+            if ($('#region').val() === '') {
+                return;
+            }
+            var formData = {
+                filter: $("#region").val(),
+                action: 'province',
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/student/complete-profile/select-address/',
+                data: formData,
+                success: function(data) {
+                    $('#province').empty().append('<option value="">All Province</option>');
+                    $.each(data, function(index, province) {
+                        $('#province').append('<option value="' + province.code + '">' + province.name + '</option>');
+                    });
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert('Error: ' + textStatus);
+                }
+            });
+        });
+        $('#province').on('change', function(){
+            var value = $(this).find(":selected").text();
+            if (value === 'All Province'){
+                value = ''
+            }
+            dataTable.columns([15]).search(value).draw();
+
+            if ($('#province').val() === '') {
+                return;
+            }
+            var formData = {
+                filter: $("#province").val(),
+                action: 'city',
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/student/complete-profile/select-address/',
+                data: formData,
+                success: function(data) {
+                    $('#city').empty().append('<option value="">All City</option>');
+                    $.each(data, function(index, city) {
+                        $('#city').append('<option value="' + city.code + '">' + city.name + '</option>');
+                    });
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert('Error: ' + textStatus);
+                }
+            });
+        });
+        $('#city').on('change', function(){
+            var value = $(this).find(":selected").text();
+            if (value === 'All City'){
+                value = ''
+            }
+            dataTable.columns([15]).search(value).draw();
+
+            if ($('#city').val() === '') {
+                return;
+            }
+            var formData = {
+                filter: $("#city").val(),
+                action: 'barangay',
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/student/complete-profile/select-address/',
+                data: formData,
+                success: function(data) {
+                    $('#barangay').empty().append('<option value="">All Barangay</option>');
+                    $.each(data, function(index, barangay) {
+                        $('#barangay').append('<option value="' + barangay.code + '">' + barangay.name + '</option>');
+                    });
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert('Error: ' + textStatus);
+                }
+            });
+        });
+
+        $('#barangay').change(function(){
+            var value = $(this).find(":selected").text();
+            if (value === 'All Barangay'){
+                value = ''
+            }
+            dataTable.columns([15]).search(value).draw();
+        });
+    });
+</script>
