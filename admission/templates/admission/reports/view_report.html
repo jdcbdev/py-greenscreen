@@ -145,8 +145,8 @@
                 <label for="sex" class="form-label">Sex<span class="text-muted"></span></label>
                 <select name="sex" id="sex" class="form-select me-md-2">
                     <option value="">All Sex</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
                 </select>
             </div>
             <div class="form-group col-6 col-sm-4 col-md-3 col-lg-2">
@@ -207,8 +207,9 @@
                 <th scope="col">Interviewer</th>
                 <th scope="col">Address</th>
                 <th scope="col">Email</th>
-                <th scope="col">CET</th>
-                <th scope="col">GPA</th>
+                <th scope="col">CET Hidden</th>
+                <th scope="col">GPA Hidden</th>
+                <th scope="col">Sex Hidden</th>
             </tr>
         </thead>
         <tbody>
@@ -270,8 +271,9 @@
                 </td>
                 <td>{{application.barangay}}, {{application.city}}, {{application.province}}, {{application.region}}</td>
                 <td>{{ application.contactpoint_set.first.contact_email }}</td>
-                <td>{{application.cet}}</td>
-                <td>{{application.gpa}}</td>
+                <td>{{ application.cet }}</td>
+                <td>{{ application.gpa }}</td>
+                <td>{{ application.sex|slice:":1" }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -304,6 +306,7 @@
         });
         dataTable.column(17).visible(false);
         dataTable.column(18).visible(false);
+        dataTable.column(19).visible(false);
         
         dataTable.buttons().container().appendTo($('#MyButtons'));
 
@@ -383,7 +386,7 @@
     
         $('#sex').change(function() {
             var value = $(this).val();
-            dataTable.columns([2]).search(value).draw();
+            dataTable.columns([19]).search(value).draw();
         });
     
         $('#strand').change(function() {
@@ -402,7 +405,7 @@
         });
     
         $('.report-reset').click(function() {
-            $('select.form-select').val('');
+            $('select.form-select').val('').trigger('change');
         });
 
         $('#schoolyear').val('{{active_year.concat_year}}');
