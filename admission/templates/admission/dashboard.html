@@ -122,14 +122,14 @@
                 <tbody>
                     {% for application in applications %}
                     <tr>
-                        <td>{{ application.last_name }}, {{ application.first_name }} {{ application.middle_name }}</td>
-                        <td>{{ application.student_type_name|capfirst }}</td>
-                        <td>{{ application.admissionapplication_set.first.program.code }}</td>
-                        <td>{{ application.collegeentrancetest_set.first.overall_percentile_rank }}</td>
-                        <td>{{ application.schoolbackground_set.first.combined_gpa }}</td>
-                        <td>{{ application.contactpoint_set.first.contact_email }}</td>
-                        <td>{{ application.contactpoint_set.first.contact_number }}</td>
-                        <td>{{ application.admissionapplication_set.first.created_at }}</td>
+                        <td>{{ application.student.last_name }}, {{ application.student.first_name }} {{ application.student.middle_name }}</td>
+                        <td>{{ application.student.student_type_name|capfirst }}</td>
+                        <td>{{ application.program.code }}</td>
+                        <td>{{ application.student.collegeentrancetest_set.first.overall_percentile_rank }}</td>
+                        <td>{{ application.student.schoolbackground_set.first.combined_gpa }}</td>
+                        <td>{{ application.student.contactpoint_set.first.contact_email }}</td>
+                        <td>{{ application.student.contactpoint_set.first.contact_number }}</td>
+                        <td>{{ application.created_at }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

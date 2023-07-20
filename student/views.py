@@ -915,6 +915,7 @@ def my_profile(request):
     
     page_title = 'My Profile'
     page_url = request.build_absolute_uri()
+    lock = True
     context = {
         'page_title': page_title,
         'student': student,
@@ -934,7 +935,13 @@ def my_profile(request):
         'sh': sh,
         'settings': settings,
         'page_url': page_url,
+        'lock': lock,
     }
+    application = AdmissionApplication.objects.filter(student=student, status__in=['verified', 'interviewed', 'waiting-list', 'approved'])
+    
+    if application:
+        return render(request, 'admission/student/main.html', context)
+    
     return render(request, 'student/profile/main.html', context)
 
 @login_required(login_url='/student/sign-in/')
@@ -991,12 +998,12 @@ def send_application(request):
     program = Program.objects.get(pk=request.POST.get('program_id'))
     school_year = SchoolYear.objects.filter(is_active=True).first()
 
-    AdmissionApplication.objects.create(
-        student=student,
-        program=program,
-        school_year=school_year,
-        status='pending'
-    )
+    application, _ = AdmissionApplication.objects.get_or_create(student=student,program=program,school_year=school_year)
+    application.student=student
+    application.program=program
+    application.school_year=school_year
+    application.status='pending'
+    application.save()
     
     #send to student
     title = f"New {program.code.upper()} Application"
