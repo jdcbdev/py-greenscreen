@@ -101,3 +101,19 @@ def ph_address(request):
     else:
         return redirect('home')
 
+def view_privacy(request):
+    page_title = "Data Privacy Policy"
+    page_url = request.build_absolute_uri()
+    current_year = datetime.datetime.now().year
+    student = None
+    
+    if request.user.is_authenticated and not request.user.is_staff:
+        student = Student.objects.filter(account=request.user).first()
+        
+    context = {
+        'page_title': page_title,
+        'page_year': current_year,
+        'page_url': page_url,
+        'student': student
+    }
+    return render(request, 'base/privacy_page.html', context)

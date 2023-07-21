@@ -1274,6 +1274,76 @@ table th {
     white-space: nowrap;
 }
 
+.text-justify{
+    text-align: justify;
+}
+
+.privacy h2{
+    font-weight: 600;
+    text-align: center;
+}
+
+.privacy div p{
+    font-size: 1.15rem;
+    text-align: justify;
+}
+
+.privacy-title{
+    margin-top: 4.4rem;
+}
+
+.privacy ul li{
+    font-size: 1.15rem;
+}
+
+.privacy .bg-1{
+    background-color: #1A5653;
+    display: flex;
+    align-content: center;
+}
+
+.privacy.container{
+    margin: 0;
+    max-width: 100%;
+}
+
+.privacy .image-set{
+    background-size: contain;
+    width: 100%;
+    height: 150px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.privacy .image-1{
+    background-image: url('../img/information.png');
+}
+
+.privacy .image-2{
+    background-image: url('../img/search.png');
+}
+
+.privacy .image-3{
+    background-image: url('../img/file-sharing.png');
+}
+
+.privacy .image-4{
+    background-image: url('../img/encrypted.png');
+}
+
+.privacy .image-5{
+    background-image: url('../img/human-rights.png');
+}
+
+.privacy .image-6{
+    background-image: url('../img/file.png');
+}
+
+.privacy .image-7{
+    background-image: url('../img/email.png');
+}
+
+
 @media (min-width: 576px) {
     .shortcut{
         display: block;
@@ -1314,6 +1384,12 @@ table th {
 }
 
 @media (min-width: 768px) {
+    .privacy h2{
+        font-size: 1.8rem;
+        font-weight: 600;
+        text-align: left;
+    }
+
     .progress-bar-application p{
         font-size: 14px;
     }
@@ -1364,6 +1440,10 @@ table th {
 }
 
 @media (min-width: 992px) {
+    .privacy .bg-1{
+        height: 220px;
+    }
+
     .search-keyword{
         width: auto;
         max-width: 200px;
