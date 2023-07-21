@@ -2661,6 +2661,7 @@ def view_report(request):
     if request.user.is_authenticated and not request.user.is_staff:
         return redirect('home')
     
+    date_today = datetime.datetime.now().strftime("%Y-%m-%d")
     school_year = SchoolYear.objects.all()
     active_year = SchoolYear.objects.filter(is_active=True).first()
     faculty_user = Faculty.objects.filter(user=request.user).first()
@@ -2830,6 +2831,7 @@ def view_report(request):
         'faculty_user': faculty_user,
         'faculties': faculties,
         'strands': strands,
+        'date_today': date_today,
     }
     
     rendered_html = render(request, 'admission/reports/view_report.html', context)

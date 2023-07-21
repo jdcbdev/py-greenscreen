@@ -1,3 +1,5 @@
+{% load static %}
+
 <h5 class="col-12 fw-bold mb-1 mt-3 mt-md-0">Reports</h5>
 <div class="card mt-3">
     <div class="card-header">
@@ -267,8 +269,7 @@
                 <td><span class="table-struggling">Struggling</span></td>
                 {% endif %}
                 <td>
-                    {{application.interviewlogs_set.first.processed_by.first_name|default:'---'}} 
-                    {{application.interviewlogs_set.first.processed_by.last_name}}
+                    {{application.interviewlogs_set.first.processed_by.first_name|default:'---'}} {{application.interviewlogs_set.first.processed_by.last_name}}
                 </td>
                 <td>{{application.student.barangay}}, {{application.student.city}}, {{application.student.province}}, {{application.student.region}}</td>
                 <td>{{ application.student.contactpoint_set.first.contact_email }}</td>
@@ -289,22 +290,109 @@
             pageLength: 10,
             buttons: [
                 {
-                    extend: 'excel',
+                    extend: 'excelHtml5',
                     text: 'Excel',
-                    className: 'border-white'
+                    className: 'border-white',
+                    exportOptions: {
+                        columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+                        header: true,
+                    },
+                    customize: function (xlsx) {
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+        
+                        $('c[r="A1"] t', sheet).text('ADMISSION APPLICATION REPORT');
+                        $('row:first c', sheet).attr('s','47');
+
+                        $(sheet).find('c[r^="J"]').each(function () {
+                            var cellValue = $('is t', this).text();
+                            if (cellValue === 'Successful') {
+                                $(this).attr('s', '20');
+                            } else if (cellValue === 'Struggling') {
+                                $(this).attr('s', '10');
+                            }
+                        });
+        
+                        $(sheet).find('c[r^="M"]').each(function () {
+                            var cellValue = $('is t', this).text();
+                            if (cellValue === 'Successful') {
+                                $(this).attr('s', '20');
+                            } else if (cellValue === 'Struggling') {
+                                $(this).attr('s', '10');
+                            }
+                        });
+                        var headerCells = $(sheet).find('worksheet > sheetData > row:nth-child(2) c');
+                        headerCells.each(function () {
+                            $(this).attr('s', '42');
+                        });
+
+                    }
                 },
                 {
-                    extend: 'pdf',
+                    extend: 'pdfHtml5',
                     text: 'PDF',
-                    className: 'border-white'
-                },
-                {
-                    extend: 'print',
-                    text: 'Print',
-                    className: 'border-white'
+                    className: 'border-white',
+                    download: 'open',
+                    exportOptions: {
+                        columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+                        header: true,
+                    },
+                    orientation: 'landscape',
+                    pageSize: 'LEGAL',
+                    customize: function (doc) {
+                        doc.content.splice(0, 1);
+                        var now = new Date();
+                        var jsDate = (now.getMonth() + 1) + '-' + now.getDate() + '-' + now.getFullYear();
+                        doc.pageMargins = [20, 60, 20, 30];
+                        doc.defaultStyle.fontSize = 7;
+                        doc.styles.tableHeader.fontSize = 7;
+                        doc['header'] = function (currentPage, pageCount, pageSize) {
+                            return {
+                                columns: [
+                                    {
+                                        stack: [
+                                            {
+                                                alignment: 'left',
+                                                text: 'Admission Application Report',
+                                                fontSize: 14,
+                                                bold: true,
+                                                margin: [0, 5]
+                                            },
+                                        ],
+                                        width: '*'
+                                    },
+                                    {
+                                        alignment: 'right',
+                                        text: 'Created on: ' + jsDate.toString(),
+                                        width: '*'
+                                    }
+                                ],
+                                margin: 20
+                            };
+                        };
+                        doc['footer'] = function (currentPage, pageCount) {
+                            return {
+                                columns: [
+                                    {
+                                        alignment: 'left',
+                                        text: ['page ', { text: currentPage.toString() }, ' of ', { text: pageCount.toString() }]
+                                    }
+                                ],
+                                margin: 20
+                            };
+                        };
+                        var objLayout = {};
+                        objLayout['hLineWidth'] = function (i) { return .5; };
+                        objLayout['vLineWidth'] = function (i) { return .5; };
+                        objLayout['hLineColor'] = function (i) { return '#aaa'; };
+                        objLayout['vLineColor'] = function (i) { return '#aaa'; };
+                        objLayout['paddingLeft'] = function (i) { return 4; };
+                        objLayout['paddingRight'] = function (i) { return 4; };
+                        doc.content[0].layout = objLayout;
+                    }
                 }
             ],
         });
+        
         dataTable.column(17).visible(false);
         dataTable.column(18).visible(false);
         dataTable.column(19).visible(false);

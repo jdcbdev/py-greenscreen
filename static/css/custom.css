@@ -1270,6 +1270,10 @@ span.table-struggling{
     display: none;
 }
 
+table th {
+    white-space: nowrap;
+}
+
 @media (min-width: 576px) {
     .shortcut{
         display: block;

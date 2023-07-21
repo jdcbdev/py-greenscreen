@@ -9,6 +9,14 @@
         </select>
     </div>
     <div class="form-group col-12 col-sm-auto flex-sm-grow-1 flex-lg-grow-0">
+        <select name="student_type" id="student_type" class="form-select me-md-2">
+            <option value="">All Type</option>
+            <option value="Freshman">Freshman</option>
+            <option value="Shiftee">Shiftee</option>
+            <option value="Transferee">Transferee</option>
+        </select>
+    </div>
+    <div class="form-group col-12 col-sm-auto flex-sm-grow-1 flex-lg-grow-0">
         <select name="program" id="program" class="form-select me-md-2">
             <option value="">All Program</option>
             {% for program in programs %}
@@ -35,6 +43,7 @@
             <th scope="col">Action</th>
             {% endif %}
             <th scope="col">Name</th>
+            <th scope="col">Type</th>
             <th scope="col">Program</th>
             <th scope="col">Admission Year</th>
             <th scope="col">Prediction</th>
@@ -42,6 +51,7 @@
             <th scope="col">CC 102</th>
             <th scope="col">Actual Result</th>
             <th scope="col">Email Address</th>
+            <th scope="col">Contact Number</th>
         </tr>
     </thead>
     <tbody>
@@ -56,6 +66,7 @@
             </td>
             {% endif %}
             <td>{{ application.student.last_name }}, {{ application.student.first_name }} {{ application.student.middle_name }}</td>
+            <td>{{ application.student.student_type_name|capfirst }}</td>
             <td>{{ application.program.code }}</td>
             <td>{{ application.school_year.concat_year }}</td>
             {% if application.prediction == True %}
@@ -75,6 +86,7 @@
             <td><span class="table-struggling">Struggling</span></td>
             {% endif %}
             <td>{{ application.student.contactpoint_set.first.contact_email }}</td>
+            <td>{{ application.student.contactpoint_set.first.contact_number }}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -90,26 +102,112 @@
             pageLength: 10,
             buttons: [
                 {
-                    extend: 'excel',
+                    extend: 'excelHtml5',
                     text: 'Excel',
-                    className: 'border-white'
+                    className: 'border-white',
+                    exportOptions: {
+                        columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                        header: true,
+                    },
+                    customize: function (xlsx) {
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+        
+                        $('c[r="A1"] t', sheet).text('STUDENT MONITORING REPORT');
+                        $('row:first c', sheet).attr('s','47');
+
+                        $(sheet).find('c[r^="E"]').each(function () {
+                            var cellValue = $('is t', this).text();
+                            if (cellValue === 'Successful') {
+                                $(this).attr('s', '20');
+                            } else if (cellValue === 'Struggling') {
+                                $(this).attr('s', '10');
+                            }
+                        });
+        
+                        $(sheet).find('c[r^="H"]').each(function () {
+                            var cellValue = $('is t', this).text();
+                            if (cellValue === 'Successful') {
+                                $(this).attr('s', '20');
+                            } else if (cellValue === 'Struggling') {
+                                $(this).attr('s', '10');
+                            }
+                        });
+                        var headerCells = $(sheet).find('worksheet > sheetData > row:nth-child(2) c');
+                        headerCells.each(function () {
+                            $(this).attr('s', '42');
+                        });
+
+                    }
                 },
                 {
-                    extend: 'pdf',
+                    extend: 'pdfHtml5',
                     text: 'PDF',
-                    className: 'border-white'
-                },
-                {
-                    extend: 'print',
-                    text: 'Print',
-                    className: 'border-white'
+                    className: 'border-white',
+                    download: 'open',
+                    exportOptions: {
+                        columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                        header: true,
+                    },
+                    orientation: 'portrait',
+                    pageSize: 'LEGAL',
+                    customize: function (doc) {
+                        doc.content.splice(0, 1);
+                        var now = new Date();
+                        var jsDate = (now.getMonth() + 1) + '-' + now.getDate() + '-' + now.getFullYear();
+                        doc.pageMargins = [20, 60, 20, 30];
+                        doc.defaultStyle.fontSize = 8;
+                        doc.styles.tableHeader.fontSize = 8;
+                        doc['header'] = function (currentPage, pageCount, pageSize) {
+                            return {
+                                columns: [
+                                    {
+                                        stack: [
+                                            {
+                                                alignment: 'left',
+                                                text: 'Student Monitoring Report',
+                                                fontSize: 16,
+                                                bold: true,
+                                                margin: [0, 5]
+                                            },
+                                        ],
+                                        width: '*'
+                                    },
+                                    {
+                                        alignment: 'right',
+                                        text: 'Created on: ' + jsDate.toString(),
+                                        width: '*'
+                                    }
+                                ],
+                                margin: 20
+                            };
+                        };
+                        doc['footer'] = function (currentPage, pageCount) {
+                            return {
+                                columns: [
+                                    {
+                                        alignment: 'left',
+                                        text: ['page ', { text: currentPage.toString() }, ' of ', { text: pageCount.toString() }]
+                                    }
+                                ],
+                                margin: 20
+                            };
+                        };
+                        var objLayout = {};
+                        objLayout['hLineWidth'] = function (i) { return .5; };
+                        objLayout['vLineWidth'] = function (i) { return .5; };
+                        objLayout['hLineColor'] = function (i) { return '#aaa'; };
+                        objLayout['vLineColor'] = function (i) { return '#aaa'; };
+                        objLayout['paddingLeft'] = function (i) { return 4; };
+                        objLayout['paddingRight'] = function (i) { return 4; };
+                        doc.content[0].layout = objLayout;
+                    }
                 }
             ],
         });
         dataTable.buttons().container().appendTo($('#MyButtons'));
 
         var table = dataTable;
-        var filter = createFilter(table, [1,2,3,4,5,6,7,8]);
+        var filter = createFilter(table, [1,2,3,4,5,6,7,8,9,10]);
 
         function createFilter(table, columns) {
             var input = $('input#keyword').on("keyup", function() {
@@ -139,15 +237,19 @@
 
         $('select#prediction').on('change', function(e){
             var status = $(this).val();
-            dataTable.columns([4]).search(status).draw();
+            dataTable.columns([5]).search(status).draw();
         });
-        $('select#program').on('change', function(e){
+        $('select#student_type').on('change', function(e){
             var status = $(this).val();
             dataTable.columns([2]).search(status).draw();
         });
-        $('select#schoolyear').on('change', function(e){
+        $('select#program').on('change', function(e){
             var status = $(this).val();
             dataTable.columns([3]).search(status).draw();
+        });
+        $('select#schoolyear').on('change', function(e){
+            var status = $(this).val();
+            dataTable.columns([4]).search(status).draw();
         });
         $('#schoolyear').val('{{active_year.concat_year}}')
 
