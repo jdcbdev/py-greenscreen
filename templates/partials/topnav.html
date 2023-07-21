@@ -24,9 +24,19 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'home_faculty' %}" id="faculty">Faculty</a>
             </li>
-            {% if not user.is_authenticated %}
+            {% if user.is_authenticated %}
             <li class="nav-item d-md-none">
-                <a class="nav-link" href="{% url 'signin' %}" id="signin">Sign in</a>
+              <a class="nav-link" href="{% url 'my_application' %}">Application</a>
+            </li>
+            <li class="nav-item d-md-none">
+              <a class="nav-link" href="{% url 'my_profile' %}">Profile</a>
+            </li>
+            <li class="nav-item d-md-none">
+              <a class="nav-link" href="{% url 'signout' %}">Sign out</a></li>
+            </li>
+            {% else %}
+            <li class="nav-item d-md-none">
+              <a class="nav-link" href="{% url 'signin' %}" id="signin">Sign in</a>
             </li>
             {% endif %}
           </ul>
