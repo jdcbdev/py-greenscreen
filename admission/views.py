@@ -717,33 +717,6 @@ def view_faculty(request):
     rendered_html = render(request, 'admission/partials/view_faculty.html', context)
     return HttpResponse(rendered_html, content_type='text/html')
 
-def generate_strong_password():
-    password = get_random_string(length=8)  # Generates a random string of length 12
-    try:
-        validate_password(password)  # Validate the generated password
-    except ValidationError as e:
-        # If the generated password does not meet the password requirements, generate a new one
-        return generate_strong_password()
-    return password
-
-@login_required(login_url='/admin/sign-in/')
-def send_faculty_email(first_name, to_email, password, domain, protocol):
-    
-    mail_subject = "New Faculty Account - GreenScreen Admission System"
-
-    html_message  = mark_safe(render_to_string("email_add_faculty.html", {
-        'user': first_name,
-        'domain': domain,
-        'email': to_email,
-        'password': password,
-        "protocol": protocol
-    }))
-    
-    from_email = settings.DEFAULT_FROM_EMAIL
-    email = EmailMessage(mail_subject, html_message, from_email, to=[to_email])
-    email.content_subtype = 'html'
-    email.send()
-
 @login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
 @require_POST
@@ -775,6 +748,32 @@ def add_faculty(request):
         
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
+
+def generate_strong_password():
+    password = get_random_string(length=8)  # Generates a random string of length 12
+    try:
+        validate_password(password)  # Validate the generated password
+    except ValidationError as e:
+        # If the generated password does not meet the password requirements, generate a new one
+        return generate_strong_password()
+    return password
+
+def send_faculty_email(first_name, to_email, password, domain, protocol):
+    
+    mail_subject = "New Faculty Account - GreenScreen Admission System"
+
+    html_message  = mark_safe(render_to_string("email_add_faculty.html", {
+        'user': first_name,
+        'domain': domain,
+        'email': to_email,
+        'password': password,
+        "protocol": protocol
+    }))
+    
+    from_email = settings.DEFAULT_FROM_EMAIL
+    email = EmailMessage(mail_subject, html_message, from_email, to=[to_email])
+    email.content_subtype = 'html'
+    email.send()
 
 @login_required(login_url='/admin/sign-in/')
 @ensure_csrf_cookie
