@@ -3,3 +3,4 @@ env
 *.pyc
 *.vscode
 media/
+greenscreen/settings.py
