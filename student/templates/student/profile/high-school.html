@@ -161,13 +161,17 @@
                             </a>
                         </div>
                         <div class="col-6 text-end m-0">
-                            <button class="btn btn-lg btn-success background-color-green w-100 next-button btn-font m-0" type="submit" value="Next" name="shs" id="shs">
+                            <button class="btn btn-lg btn-success background-color-green w-100 next-button btn-font m-0 save-button" type="submit" value="Next" name="shs" id="shs">
                                 {% if student.is_profile_complete %}
                                 Save
                                 {% else %}
                                 Next
                                 {% endif %}
                                 <i class="ps-1 fa-solid fa-arrow-right-long"></i>
+                            </button>
+                            <button class="btn btn-lg btn-success background-color-green w-100 next-button btn-font m-0 saving-button" type="button" disabled style="display:none;">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Saving...
                             </button>
                         </div>
                     </div>
@@ -280,7 +284,8 @@
 
         $('form#shs').submit(function(e){
             e.preventDefault();
-
+            $('.saving-button').show()
+            $('.save-button').hide()
             var formData = new FormData(this);
             if ($('#shiftee').is(':checked')) {
                 formData.append('student_type_name', 'shiftee');
@@ -477,6 +482,8 @@
                     $('html,body').animate({
                       scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
                   }
+                  $('.saving-button').hide()
+                  $('.save-button').show()
               },
             });
   

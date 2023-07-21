@@ -567,17 +567,21 @@
                             </a>
                         </div>
                         <div class="col-6 text-end m-0 next-button next-button-1">
-                            <button class="btn btn-lg btn-success background-color-green w-100 next-button next-button-1 btn-font m-0" type="submit" value="Next" name="study-habits" id="study-habits">
+                            <button class="btn btn-lg btn-success background-color-green w-100 next-button next-button-1 btn-font m-0 save-button" type="submit" value="Next" name="study-habits" id="study-habits">
                                 {% if student.is_profile_complete %}
                                 Save
                                 {% else %}
                                 Next
                                 {% endif %}
                                 <i class="ps-1 fa-solid fa-arrow-right-long"></i>
+                            </button>
+                            <button class="btn btn-lg btn-success background-color-green w-100 next-button next-button-1 btn-font m-0 saving-button" type="button" disabled style="display:none;">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Saving...
                             </button>
                         </div>
                         <div class="col-6 text-end m-0 next-button next-button-2">
-                            <button class="btn btn-lg btn-success background-color-green w-100 next-button next-button-2 btn-font m-0" type="submit" value="Next" name="study-habits" id="study-habits">
+                            <button class="btn btn-lg btn-success background-color-green w-100 next-button next-button-2 btn-font m-0 save-button" type="submit" value="Next" name="study-habits" id="study-habits">
                                 {% if student.is_profile_complete %}
                                 Save
                                 {% else %}
@@ -585,15 +589,23 @@
                                 {% endif %}
                                 <i class="ps-1 fa-solid fa-arrow-right-long"></i>
                             </button>
+                            <button class="btn btn-lg btn-success background-color-green w-100 next-button next-button-2 btn-font m-0 saving-button" type="button" disabled style="display:none;">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Saving...
+                            </button>
                         </div>
                         <div class="col-6 text-end m-0 next-button next-button-3">
-                            <button class="btn btn-lg btn-success background-color-green next-button next-button-3 btn-font m-0 submit" type="submit" value="Submit" name="study-habits" id="study-habits">
+                            <button class="btn btn-lg btn-success background-color-green next-button next-button-3 btn-font m-0 submit save-button" type="submit" value="Submit" name="study-habits" id="study-habits">
                                 {% if student.is_profile_complete %}
                                 Save
                                 {% else %}
                                 Submit
                                 {% endif %}
                                 <i class="ps-1 fa-solid fa-arrow-right-long"></i>
+                            </button>
+                            <button class="btn btn-lg btn-success background-color-green next-button next-button-3 btn-font m-0 saving-button" type="button" disabled style="display:none;">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Saving...
                             </button>
                         </div>
                     </div>
@@ -655,6 +667,8 @@
         });
         $('#study-habits.next-button-1').click(function(e){
             e.preventDefault();
+            $('#study-habits.next-button-1.saving-button').show()
+            $('#study-habits.next-button-1.save-button').hide()
             var formData = new FormData($('form#study-habits')[0]);
             $.ajax({
                 type: 'POST',
@@ -708,6 +722,8 @@
                         $('html,body').animate({
                             scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
                     }
+                    $('#study-habits.next-button-1.save-button').show()
+                    $('#study-habits.next-button-1.saving-button').hide()
               },
             });
         });
@@ -725,6 +741,8 @@
         });
         $('#study-habits.next-button-2').click(function(e){
             e.preventDefault();
+            $('#study-habits.next-button-2.saving-button').show()
+            $('#study-habits.next-button-2.save-button').hide()
             var formData = new FormData($('form#study-habits')[0]);
             $.ajax({
                 type: 'POST',
@@ -777,6 +795,8 @@
                         $('html,body').animate({
                             scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
                     }
+                    $('#study-habits.next-button-2.save-button').show()
+                    $('#study-habits.next-button-2.saving-button').hide()
               },
             });
         });
@@ -794,6 +814,8 @@
         });
         $('#study-habits.next-button-3').click(function(e){
             e.preventDefault();
+            $('#study-habits.next-button-3.saving-button').show()
+            $('#study-habits.next-button-3.save-button').hide()
             var formData = new FormData($('form#study-habits')[0]);
             $.ajax({
                 type: 'POST',
@@ -852,6 +874,8 @@
                         $('html,body').animate({
                             scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
                     }
+                    $('#study-habits.next-button-3.save-button').show()
+                    $('#study-habits.next-button-3.saving-button').hide()
               },
             });
         });

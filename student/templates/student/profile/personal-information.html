@@ -137,13 +137,17 @@
                             </a>
                         </div>
                         <div class="col-6 text-end m-0">
-                            <button class="btn btn-lg btn-success background-color-green w-100 next-button btn-font m-0" type="submit" value="Next" name="personal" id="personal">
+                            <button class="btn btn-lg btn-success background-color-green w-100 next-button btn-font m-0 save-button" type="submit" value="Next" name="personal" id="personal">
                                 {% if student.is_profile_complete %}
                                 Save
                                 {% else %}
                                 Next
                                 {% endif %}
                                 <i class="ps-1 fa-solid fa-arrow-right-long"></i>
+                            </button>
+                            <button class="btn btn-lg btn-success background-color-green w-100 next-button btn-font m-0 saving-button" type="button" disabled style="display:none;">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Saving...
                             </button>
                         </div>
                     </div>
@@ -364,7 +368,8 @@
         });         
         $('form#personal-info').submit(function(e){
             e.preventDefault();
-  
+            $('.saving-button').show()
+            $('.save-button').hide()            
             var formData = new FormData(this);
             formData.append('contact_email', $('#contact_email').val());
             formData.append('profile_photo', file);
@@ -528,7 +533,7 @@
                     $('div.identification_card').append('<span>' + 'Please upload a photo of your ID.' + '</span>');
                     has_error = true
                   }
-  
+
                   if (!has_error) {
                     $('div.profile-screen').hide();
                     $('div#cet').show();
@@ -552,6 +557,8 @@
                     $('html,body').animate({
                       scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
                   }
+                  $('.saving-button').hide()
+                  $('.save-button').show()
               },
             });
   

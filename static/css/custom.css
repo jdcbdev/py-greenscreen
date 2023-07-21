@@ -172,7 +172,7 @@ footer p a:hover{
 }
 
 button.next-button, a.back-button{
-    max-width: 100px;
+    max-width: 115px;
 }
 
 button.next-button.submit{
@@ -1343,6 +1343,15 @@ table th {
     background-image: url('../img/email.png');
 }
 
+form.needs-validation div.text-end .spinner-border{
+    display: none;
+}
+
+@media (min-width: 340px) {
+    form.needs-validation div.text-end .spinner-border{
+        display: inline-block;
+    }
+}
 
 @media (min-width: 576px) {
     .shortcut{
@@ -1407,7 +1416,7 @@ table th {
     }
 
     button.next-button, a.back-button{
-        max-width: 100px;
+        max-width: 115px;
     }
 
     button.next-button.submit{
