@@ -39,6 +39,7 @@ from decimal import Decimal
 from student.forms import WithdrawApplicationForm
 from student.views import student_send_email
 from ph_geography.models import Region, Province, Municipality, Barangay
+import os
 import pickle
 
 # Create your views here.
@@ -2267,7 +2268,10 @@ def save_monitoring(request):
     return JsonResponse(errors, safe=False)
 
 def load_model():
-    with open('model.pkl', 'rb') as file:
+    model_file = 'model.pkl'
+    model_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', model_file)
+    print(model_path)
+    with open(model_path, 'rb') as file:
         model = pickle.load(file)
     return model
 
