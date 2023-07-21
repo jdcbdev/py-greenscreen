@@ -4,3 +4,4 @@ env
 *.vscode
 media/
 greenscreen/settings.py
+settings.py
