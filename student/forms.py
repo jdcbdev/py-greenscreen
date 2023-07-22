@@ -226,6 +226,7 @@ class PersonalInfoForm(forms.Form):
 
 class CollegeEntranceTestForm(forms.ModelForm):
     report_of_rating = forms.FileField(required=False)
+
     class Meta:
         model = CollegeEntranceTest
         fields = [
@@ -238,26 +239,73 @@ class CollegeEntranceTestForm(forms.ModelForm):
             'quantitative_skills',
             'abstract_thinking_skills',
         ]
-    
+
     def clean_report_of_rating(self):
         report_of_rating = self.cleaned_data.get('report_of_rating', False)
 
         if not report_of_rating:
             return report_of_rating
 
-        max_size = 5 * 1024 * 1024  # 2MB in bytes
+        max_size = 5 * 1024 * 1024  # 5MB in bytes
         if report_of_rating.size > max_size:
             raise forms.ValidationError('The file size exceeds the maximum allowed limit of 5MB.')
 
         allowed_formats = ['image/jpeg', 'image/jpg', 'image/png']
         if report_of_rating.content_type not in allowed_formats:
-            raise forms.ValidationError('The selected file format is not supported. Please choose a JPEG, or PNG.')
+            raise forms.ValidationError('The selected file format is not supported. Please choose a JPEG or PNG.')
 
         return report_of_rating
-    
+
+    def clean_overall_percentile_rank(self):
+        overall_percentile_rank = self.cleaned_data.get('overall_percentile_rank', 0)
+
+        if overall_percentile_rank < 0 or overall_percentile_rank > 100:
+            raise forms.ValidationError('Overall percentile rank must be between 0 and 100.')
+
+        return overall_percentile_rank
+
+    def clean_english_proficiency_skills(self):
+        proficiency_skills = self.cleaned_data.get('english_proficiency_skills', 0)
+
+        if proficiency_skills < 0 or proficiency_skills > 100:
+            raise forms.ValidationError('English proficiency skills must be between 0 and 100.')
+
+        return proficiency_skills
+
+    def clean_reading_comprehension_skills(self):
+        comprehension_skills = self.cleaned_data.get('reading_comprehension_skills', 0)
+
+        if comprehension_skills < 0 or comprehension_skills > 100:
+            raise forms.ValidationError('Reading comprehension skills must be between 0 and 100.')
+
+        return comprehension_skills
+
+    def clean_science_process_skills(self):
+        science_skills = self.cleaned_data.get('science_process_skills', 0)
+
+        if science_skills < 0 or science_skills > 100:
+            raise forms.ValidationError('Science process skills must be between 0 and 100.')
+
+        return science_skills
+
+    def clean_quantitative_skills(self):
+        quantitative_skills = self.cleaned_data.get('quantitative_skills', 0)
+
+        if quantitative_skills < 0 or quantitative_skills > 100:
+            raise forms.ValidationError('Quantitative skills must be between 0 and 100.')
+
+        return quantitative_skills
+
+    def clean_abstract_thinking_skills(self):
+        abstract_thinking_skills = self.cleaned_data.get('abstract_thinking_skills', 0)
+
+        if abstract_thinking_skills < 0 or abstract_thinking_skills > 100:
+            raise forms.ValidationError('Abstract thinking skills must be between 0 and 100.')
+
+        return abstract_thinking_skills
+
     def clean(self):
         cleaned_data = super().clean()
-           
         return cleaned_data
 
 class SchoolBackgroundForm(forms.Form):
@@ -319,6 +367,22 @@ class SchoolBackgroundForm(forms.Form):
             raise forms.ValidationError('The selected file format is not supported. Please choose a JPEG, or PNG.')
 
         return photo_grade
+    
+    def clean_gpa_first_semester(self):
+        gpa_first_semester = self.cleaned_data.get('gpa_first_semester')
+
+        if gpa_first_semester is not None and (gpa_first_semester < 0 or gpa_first_semester > 100):
+            raise forms.ValidationError('GPA for the first semester must be between 0 and 100.')
+
+        return gpa_first_semester
+
+    def clean_gpa_second_semester(self):
+        gpa_second_semester = self.cleaned_data.get('gpa_second_semester')
+
+        if gpa_second_semester is not None and (gpa_second_semester < 0 or gpa_second_semester > 100):
+            raise forms.ValidationError('GPA for the second semester must be between 0 and 100.')
+
+        return gpa_second_semester
     
     def clean(self):
         cleaned_data = super().clean()
