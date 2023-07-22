@@ -66,7 +66,7 @@
                     text: 'Excel',
                     className: 'border-white',
                     exportOptions: {
-                        columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                        columns: [1, 2, 3, 4, 5, 6],
                         header: true,
                     },
                     customize: function (xlsx) {
@@ -83,7 +83,7 @@
                     className: 'border-white',
                     download: 'open',
                     exportOptions: {
-                        columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                        columns: [1, 2, 3, 4, 5, 6],
                         header: true,
                     },
                     orientation: 'portrait',
@@ -93,8 +93,8 @@
                         var now = new Date();
                         var jsDate = (now.getMonth() + 1) + '-' + now.getDate() + '-' + now.getFullYear();
                         doc.pageMargins = [20, 60, 20, 30];
-                        doc.defaultStyle.fontSize = 8;
-                        doc.styles.tableHeader.fontSize = 8;
+                        doc.defaultStyle.fontSize = 10;
+                        doc.styles.tableHeader.fontSize = 10;
                         doc['header'] = function (currentPage, pageCount, pageSize) {
                             return {
                                 columns: [
@@ -145,7 +145,7 @@
         dataTable.buttons().container().appendTo($('#MyButtons'));
 
         var table = dataTable;
-        var filter = createFilter(table, [1,2,3,4,5,6,7,8,9,10, 11]);
+        var filter = createFilter(table, [1,2,3,4,5,6]);
 
         function createFilter(table, columns) {
             var input = $('input#keyword').on("keyup", function() {
