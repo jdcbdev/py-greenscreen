@@ -812,6 +812,22 @@
             $('html,body').animate({
                 scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
         });
+        $('.view-student div#step-6.profile-progress-container').click(function(){
+            $('div.profile-screen').hide();
+            $('div#study-habits').show();
+
+            $('.question-group-study').hide();
+            $('.question-group-study-1').show();
+            $('.question-group-study-2').show();
+            $('#study-habits div.back-button').hide();
+            $('#study-habits div.next-button').hide();
+            $('#study-habits div.back-button-1').show();
+            $('#study-habits div.next-button-1').show();
+
+            $('span.progress-counter').text('6');
+            $('html,body').animate({
+                scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+        })
         $('#study-habits.next-button-3').click(function(e){
             e.preventDefault();
             $('#study-habits.next-button-3.saving-button').show()

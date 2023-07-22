@@ -146,7 +146,14 @@
             $('html,body').animate({
                 scrollTop:$('div.profile-screen').offset().top -400}, 'fast');
         });
-
+        $('.view-student div#step-2.profile-progress-container').click(function(){
+          $('div.profile-screen').hide();
+            $('div#cet').show();
+  
+            $('span.progress-counter').text('2');
+            $('html,body').animate({
+                scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+          })
         $('form#cet').submit(function(e){
             e.preventDefault();
             $('.saving-button').show()

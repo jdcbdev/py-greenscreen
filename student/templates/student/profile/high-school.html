@@ -281,7 +281,15 @@
             $('html,body').animate({
                 scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
         });
-
+        $('.view-student div#step-3.profile-progress-container').click(function(){
+            $('div.profile-screen').hide();
+            $('div#shs').show();
+  
+            $('span.progress-counter').text('3');
+            $('html,body').animate({
+                scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+        })
+        
         $('form#shs').submit(function(e){
             e.preventDefault();
             $('.saving-button').show()

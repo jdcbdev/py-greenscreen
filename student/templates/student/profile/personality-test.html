@@ -1460,6 +1460,22 @@
             $('html,body').animate({
                 scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
         });
+        $('.view-student div#step-5.profile-progress-container').click(function(){
+            $('div.profile-screen').hide();
+            $('div#personality-test').show();
+
+            $('.question-group').hide();
+            $('.question-group-1').show();
+            $('.question-group-2').show();
+            $('#personality-test div.back-button').hide();
+            $('#personality-test div.next-button').hide();
+            $('#personality-test div.back-button-1').show();
+            $('#personality-test div.next-button-1').show();
+  
+            $('span.progress-counter').text('5');
+            $('html,body').animate({
+                scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+        })
         $('#personality-test.next-button-4').click(function(e){
             e.preventDefault();
             $('#personality-test.next-button-4.saving-button').show()

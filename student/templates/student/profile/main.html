@@ -14,7 +14,7 @@
 
     <div class="container-fluid main-container">
         <div class="row">
-            <main class="col-md-10 mx-md-auto mb-md-5 p-4 pt-2 pt-md-4 mt-3">
+            <main class="col-md-10 mx-md-auto mb-md-5 p-4 pt-2 pt-md-4 mt-3 view-student">
                 <div class="row g-3">
                     <div class="col-12 text-center mb-md-4 mt-4">
                         <h4 class="fw-bold text-center green">Welcome to GreenScreen!</h4>
@@ -25,6 +25,47 @@
                         {% endif %}
                         <h4 class="fw-bold mt-3 d-md-none"><span class="progress-counter">1</span> of 6</h4>
                     </div>
+                    {% if student.is_profile_complete %}
+                    <h6 class="mt-2 color-green ms-auto text-center">You may click below to navigate</h6>
+                    <div class="col-md-12 text-center d-none d-md-flex progress-bar-profile">
+                        <div class="col-md profile-progress-container wrapper-green" id="step-1">
+                            <div class="profile-progress bg-pending bg-green">
+                                <i class='bx bxs-user-detail color-white'></i>
+                            </div>
+                            <p class="text-center my-2 small">Personal Information</p>
+                        </div>
+                        <div class="col-md profile-progress-container wrapper-green" id="step-2">
+                            <div class="profile-progress bg-pending bg-green">
+                                <i class="fa-solid fa-file-circle-check color-white"></i>
+                            </div>
+                            <p class="text-center my-2 small">College Entrance Test</p>
+                        </div>
+                        <div class="col-md profile-progress-container wrapper-green" id="step-3">
+                            <div class="profile-progress bg-pending bg-green">
+                                <i class="fa-solid fa-graduation-cap color-white"></i>
+                            </div>
+                            <p class="text-center my-2 small">Educational Background</p>
+                        </div>
+                        <div class="col-md profile-progress-container wrapper-green" id="step-4">
+                            <div class="profile-progress bg-pending bg-green">
+                                <i class="fa-solid fa-house-chimney-user color-white"></i>
+                            </div>
+                            <p class="text-center my-2 small">Economic Status</p>
+                        </div>
+                        <div class="col-md profile-progress-container wrapper-green" id="step-5">
+                            <div class="profile-progress bg-pending bg-green">
+                                <i class="fa-solid fa-person-circle-check color-white"></i>
+                            </div>
+                            <p class="text-center my-2 small">Personality Test</p>
+                        </div>
+                        <div class="col-md profile-progress-container wrapper-green" id="step-6">
+                            <div class="profile-progress bg-pending bg-green">
+                                <i class="fa-solid fa-chalkboard-user color-white"></i>
+                            </div>
+                            <p class="text-center my-2 small">Study Habits</p>
+                        </div>
+                    </div>
+                    {% else %}
                     <div class="col-md-12 text-center d-none d-md-flex progress-bar-profile">
                         <div class="col-md profile-progress-container wrapper" id="step-1">
                             <div class="profile-progress bg-pending bg-white">
@@ -63,6 +104,7 @@
                             <p class="text-center my-2 small">Study Habits</p>
                         </div>
                     </div>
+                    {% endif %}
 
                     <div id="student-profile" class="mt-0">
                         

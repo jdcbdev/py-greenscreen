@@ -167,6 +167,14 @@
             $('html,body').animate({
                 scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
         });
+        $('.view-student div#step-4.profile-progress-container').click(function(){
+            $('div.profile-screen').hide();
+            $('div#economic-status').show();
+  
+            $('span.progress-counter').text('4');
+            $('html,body').animate({
+                scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
+        })
         $('form#economic-status').submit(function(e){
             e.preventDefault();
             $('.saving-button').show()
