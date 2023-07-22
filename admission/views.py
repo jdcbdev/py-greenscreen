@@ -41,6 +41,7 @@ from student.views import student_send_email
 from ph_geography.models import Region, Province, Municipality, Barangay
 import os
 import pickle
+from django.db.models import Count, Subquery
 
 # Create your views here.
 
@@ -1096,6 +1097,8 @@ def accept_application(request):
                 to_email = list(ContactPoint.objects.filter(student=application.student).values_list('contact_email', flat=True))
                 student_send_email(title, receiver, mail_subject, message, to_email)
                 
+                #send to interviewer
+                
             application.prediction = predict[0]
             application.save() 
         else:
@@ -1110,6 +1113,56 @@ def accept_application(request):
                         <br><br>Thank you for choosing our program."""
             to_email = list(ContactPoint.objects.filter(student=application.student).values_list('contact_email', flat=True))
             student_send_email(title, receiver, mail_subject, message, to_email)
+            
+            #send to interviewer
+        
+        if not auto.automate or not application.prediction:
+            #send to interviewer
+            interviewers = (Faculty.objects
+                .select_related('user')
+                .filter(department=application.program, user__is_active=True, admission_role_id=3)
+                .prefetch_related(
+                    Prefetch(
+                        'user',
+                        queryset=InterviewLogs.objects
+                        .filter(application__school_year=application.school_year)
+                        .select_related('processed_by')
+                    )
+                )
+            )
+            
+            print(interviewers)
+            
+            if interviewers:
+                # Calculate the count of InterviewLogs for each interviewer within the same school year.
+                interviewer_counts = interviewers.annotate(
+                    int_counter=Count('user__interviewlogs', filter=Q(user__interviewlogs__application__school_year=application.school_year))
+                )
+
+                # Get the interviewer with the minimum number of InterviewLogs.
+                assign_to = interviewer_counts.order_by('int_counter', 'user').first()
+                processed_by = assign_to.user
+                
+                if assign_to:
+                    title = f"Interview Assignment#{assign_to.int_counter+1}"
+                    receiver = assign_to.user.first_name
+                    mail_subject = f"Interview Assignment#{assign_to.int_counter+1} - GreenScreen Admission System"
+                    message = f"""A student applicant, {application.student.first_name} {application.student.last_name}, has been scheduled for an interview with you for the <b>{application.program.name}</b> program in the GreenScreen Admission System 
+                                on {slot.interview_date} at {slot.interview_time}. The interview is {slot.setup} at the {slot.venue}.
+                                <br><br>Please review and process the application promptly."""
+                    to_email = assign_to.user.email
+                    student_send_email(title, receiver, mail_subject, message, to_email)
+                
+            else:
+                #send AO reminder no interviewer
+                #send to AO
+                title = f"No Interviewer is Set"
+                receiver = "Admission Officer"
+                mail_subject = f"No Faculty Interviewer Is Set - GreenScreen Admission System"
+                message = f"""A student was scheduled for an interview for the <b>{application.program.name}</b> program in the GreenScreen Admission System, but no interviewer has been assigned. 
+                            <br><br>Please assign an interviewer in the faculty settings."""
+                to_email = list(Faculty.objects.filter(department=application.program, admission_role_id=1).values_list('email', flat=True))
+                student_send_email(title, receiver, mail_subject, message, to_email)
         
         InterviewLogs.objects.create(
             application=application,
