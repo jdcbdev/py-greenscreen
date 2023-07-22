@@ -1567,7 +1567,12 @@ def ranking_application(request):
     students_with_total = []
     for application in applications:
         cet = application.student.collegeentrancetest_set.first()
-        shs = application.student.schoolbackground_set.first()
+        if application.student.student_type == 'new':
+            shs = application.student.schoolbackground_set.first()
+        else:
+            shs = application.student.schoolbackground_set.first()
+            shs.combined_gpa = 0
+            
         admission_application = application
         
         cet_crt = Criteria.objects.filter(program=admission_application.program, school_year=school_year, code='cet').first()
@@ -1741,7 +1746,12 @@ def waiting_application(request):
     students_with_total = []
     for application in applications:
         cet = application.student.collegeentrancetest_set.first()
-        shs = application.student.schoolbackground_set.first()
+        if application.student.student_type == 'new':
+            shs = application.student.schoolbackground_set.first()
+        else:
+            shs = application.student.schoolbackground_set.first()
+            shs.combined_gpa = 0
+            
         admission_application = application
         
         cet_crt = Criteria.objects.filter(program=admission_application.program, school_year=school_year, code='cet').first()
@@ -1867,7 +1877,12 @@ def qualified_application(request):
     students_with_total = []
     for application in applications:
         cet = application.student.collegeentrancetest_set.first()
-        shs = application.student.schoolbackground_set.first()
+        if application.student.student_type == 'new':
+            shs = application.student.schoolbackground_set.first()
+        else:
+            shs = application.student.schoolbackground_set.first()
+            shs.combined_gpa = 0
+            
         admission_application = application
         
         cet_crt = Criteria.objects.filter(program=admission_application.program, school_year=school_year, code='cet').first()
@@ -2939,6 +2954,7 @@ def view_student_profile_progress(request):
             student.is_study_complete
         )
         student.progress = (completion_count / 6) * 100
+        student.progress = round(student.progress, 2)
     
     context = {
         'students': students,

@@ -126,7 +126,11 @@
                         <td>{{ application.student.student_type_name|capfirst }}</td>
                         <td>{{ application.program.code }}</td>
                         <td>{{ application.student.collegeentrancetest_set.first.overall_percentile_rank }}</td>
+                        {% if application.student.student_type == 'new' %}
                         <td>{{ application.student.schoolbackground_set.first.combined_gpa }}</td>
+                        {% else %}
+                        <td>Not Applicable</td>
+                        {% endif %}
                         <td>{{ application.student.contactpoint_set.first.contact_email }}</td>
                         <td>{{ application.student.contactpoint_set.first.contact_number }}</td>
                         <td>{{ application.created_at }}</td>

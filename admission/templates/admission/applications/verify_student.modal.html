@@ -19,7 +19,7 @@
                         </div>
                         <div class="col-6">
                             <label for="gpa_second_semester" class="form-label">SHS GPA<span class="text-muted"></span></label>
-                            <input type="text" disabled="true" class="form-control" id="gpa_second_semester" placeholder="" name="gpa_second_semester" step="any" value="{{ school.combined_gpa|default_if_none:'' }}">
+                            <input type="text" disabled="true" class="form-control" id="gpa_second_semester" placeholder="" name="gpa_second_semester" step="any" value="{% if application.student.student_type == "new" %} {{ school.combined_gpa|default_if_none:'' }} {% else %} Not Applicable {% endif %}">
                         </div>
                         <div class="col-12 col-md-12">
                             <label for="uploaded-photos" class="form-label">Uploaded Photos<span class="text-muted"></span></label>

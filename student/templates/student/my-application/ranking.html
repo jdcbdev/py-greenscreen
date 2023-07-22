@@ -51,13 +51,19 @@
                                 {% endfor %}
                             </ul>
                         <li class="mt-3">CET OAPR: <b>{{cet.overall_percentile_rank}}</b></li>
+                        {% if application.student.student_type == 'new' %}
                         <li>SHS GPA: <b>{{shs.combined_gpa}}</b></li>
+                        {% else %}
+                        <li>SHS GPA: <b>Not Applicable</b></li>
+                        {% endif %}
                         {% if application.prediction == 1 %}
                         <li>Interview: <b>The System automatically scored you 100pts</b></li>
                         {% else %}
                         <li>Interview: <b>{{interview.score}}/100</b></li>
                         {% endif %}
+                        {% if application.student.student_type == 'new' %}
                         <li>Total Score: <b>{{total}}</b></li>
+                        {% endif %}
                     </ul>
                 </div>
                 <h6 class="text-center mt-md-5 mt-4">
