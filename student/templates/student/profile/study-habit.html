@@ -812,6 +812,7 @@
             $('html,body').animate({
                 scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
         });
+        {% if student.is_profile_complete %}
         $('.view-student div#step-6.profile-progress-container').click(function(){
             $('div.profile-screen').hide();
             $('div#study-habits').show();
@@ -828,6 +829,7 @@
             $('html,body').animate({
                 scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
         })
+        {% endif %}
         $('#study-habits.next-button-3').click(function(e){
             e.preventDefault();
             $('#study-habits.next-button-3.saving-button').show()

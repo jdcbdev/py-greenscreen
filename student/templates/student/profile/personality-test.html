@@ -1460,6 +1460,7 @@
             $('html,body').animate({
                 scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
         });
+        {% if student.is_profile_complete %}
         $('.view-student div#step-5.profile-progress-container').click(function(){
             $('div.profile-screen').hide();
             $('div#personality-test').show();
@@ -1476,6 +1477,7 @@
             $('html,body').animate({
                 scrollTop:$('div.profile-screen').offset().top -90}, 'fast');
         })
+        {% endif %}
         $('#personality-test.next-button-4').click(function(e){
             e.preventDefault();
             $('#personality-test.next-button-4.saving-button').show()

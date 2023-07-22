@@ -366,6 +366,7 @@
             $('a#upload_id').hide();
             $('#edit_upload_id').show();
         });
+        {% if student.is_profile_complete %}
         $('.view-student div#step-1.profile-progress-container').click(function(){
             $('div.profile-screen').hide();
             $('div#personal-info').show();
@@ -373,7 +374,8 @@
             $('span.progress-counter').text('1');
             $('html,body').animate({
                 scrollTop:$('div.profile-screen').offset().top -400}, 'fast');
-        })         
+        })
+        {% endif %}      
         $('form#personal-info').submit(function(e){
             e.preventDefault();
             $('.saving-button').show()
