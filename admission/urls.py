@@ -55,4 +55,6 @@ urlpatterns = [
     path('my-profile/update', views.update_user_profile, name='update_user_profile'),
     path('reports/', views.reports, name="reports"),
     path('reports/view/', views.view_report, name="view_report"),
+    path('student/profile-progress/', views.student_profile_progress, name="student_profile_progress"),
+    path('student/profile-progress/view', views.view_student_profile_progress, name="view_student_profile_progress"),
 ]

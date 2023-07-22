@@ -1,0 +1,180 @@
+<div class="row g-2 mb-2 ">
+    <div class="form-group col-12 col-sm-auto flex-sm-grow-1 flex-lg-grow-0 ms-lg-auto">
+        <select name="student_type" id="student_type" class="form-select me-md-2">
+            <option value="">All Type</option>
+            <option value="Freshman">Freshman</option>
+            <option value="Shiftee">Shiftee</option>
+            <option value="Transferee">Transferee</option>
+        </select>
+    </div>
+    <div class="input-group search-keyword col-12 flex-lg-grow-1">
+        <input type="text" name="keyword" id="keyword" placeholder="Search Student" class="form-control">
+        <button class="btn btn-outline-secondary background-color-green" type="button"><i class="fas fa-search white"></i></button>
+    </div>
+</div>
+<table class="table table-hover responsive" id="table-monitoring">
+    <thead>
+        <tr>
+            {% if request.user.is_superuser or faculty_user.admission_role.id == 1 %}
+            <th scope="col">Action</th>
+            {% endif %}
+            <th scope="col">Name</th>
+            <th scope="col">Type</th>
+            <th scope="col">Email Address</th>
+            <th scope="col">Is Google</th>
+            <th scope="col">Sign up Date</th>
+            <th scope="col">Registration Progress</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+        <tr>
+            {% if request.user.is_superuser or faculty_user.admission_role.id == 1 %}
+            <td>
+                <div class="action-button">
+                    <a title="View Student Profile" class="me-2 green view-profile" data="{{ student.id }}" href="{% url 'view_student_profile' student.id %}" target="_blank"><i class="fa-solid fa-eye"></i></a>
+                </div>
+            </td>
+            {% endif %}
+            <td>{{ student.last_name }}, {{ student.first_name }} {{ student.middle_name }}</td>
+            <td>{{ student.student_type_name|capfirst }}</td>
+            <td>{{ student.account.email }}</td>
+            <td>{{ student.is_google }}</td>
+            <td>{{ student.created_at }}</td>
+            <td>
+                <div class="progress">
+                    <div class="progress-bar {% if student.progress == 100 %}bg-success{% else %}bg-danger{% endif %}" role="progressbar" style="width: {{ student.progress }}%" aria-valuenow="{{ student.progress }}" aria-valuemin="0" aria-valuemax="100">{{ student.progress }}%</div>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<!-- Modal -->
+<div class="application-container"></div>
+<script>
+    $(document).ready(function(){
+        dataTable = $("#table-monitoring").DataTable({
+            dom: 'Brtp',
+            responsive: true,
+            fixedHeader: true,
+            pageLength: 10,
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: 'Excel',
+                    className: 'border-white',
+                    exportOptions: {
+                        columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                        header: true,
+                    },
+                    customize: function (xlsx) {
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+        
+                        $('c[r="A1"] t', sheet).text('STUDENT REGISTRATION REPORT');
+                        $('row:first c', sheet).attr('s','47');
+
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF',
+                    className: 'border-white',
+                    download: 'open',
+                    exportOptions: {
+                        columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                        header: true,
+                    },
+                    orientation: 'portrait',
+                    pageSize: 'LEGAL',
+                    customize: function (doc) {
+                        doc.content.splice(0, 1);
+                        var now = new Date();
+                        var jsDate = (now.getMonth() + 1) + '-' + now.getDate() + '-' + now.getFullYear();
+                        doc.pageMargins = [20, 60, 20, 30];
+                        doc.defaultStyle.fontSize = 8;
+                        doc.styles.tableHeader.fontSize = 8;
+                        doc['header'] = function (currentPage, pageCount, pageSize) {
+                            return {
+                                columns: [
+                                    {
+                                        stack: [
+                                            {
+                                                alignment: 'left',
+                                                text: 'Student Registration Report',
+                                                fontSize: 16,
+                                                bold: true,
+                                                margin: [0, 5]
+                                            },
+                                        ],
+                                        width: '*'
+                                    },
+                                    {
+                                        alignment: 'right',
+                                        text: 'Created on: ' + jsDate.toString(),
+                                        width: '*'
+                                    }
+                                ],
+                                margin: 20
+                            };
+                        };
+                        doc['footer'] = function (currentPage, pageCount) {
+                            return {
+                                columns: [
+                                    {
+                                        alignment: 'left',
+                                        text: ['page ', { text: currentPage.toString() }, ' of ', { text: pageCount.toString() }]
+                                    }
+                                ],
+                                margin: 20
+                            };
+                        };
+                        var objLayout = {};
+                        objLayout['hLineWidth'] = function (i) { return .5; };
+                        objLayout['vLineWidth'] = function (i) { return .5; };
+                        objLayout['hLineColor'] = function (i) { return '#aaa'; };
+                        objLayout['vLineColor'] = function (i) { return '#aaa'; };
+                        objLayout['paddingLeft'] = function (i) { return 4; };
+                        objLayout['paddingRight'] = function (i) { return 4; };
+                        doc.content[0].layout = objLayout;
+                    }
+                }
+            ],
+        });
+        dataTable.buttons().container().appendTo($('#MyButtons'));
+
+        var table = dataTable;
+        var filter = createFilter(table, [1,2,3,4,5,6,7,8,9,10, 11]);
+
+        function createFilter(table, columns) {
+            var input = $('input#keyword').on("keyup", function() {
+                table.draw();
+            });
+          
+            $.fn.dataTable.ext.search.push(function(
+                settings,
+                searchData,
+                index,
+                rowData,
+                counter
+            ) {
+                var val = input.val().toLowerCase();
+            
+                for (var i = 0, ien = columns.length; i < ien; i++) {
+                    if (searchData[columns[i]].toLowerCase().indexOf(val) !== -1) {
+                    return true;
+                    }
+                }
+          
+                return false;
+            });
+          
+            return input;
+        }
+        $('select#student_type').on('change', function(e){
+            var status = $(this).val();
+            dataTable.columns([2]).search(status).draw();
+        });
+
+    })
+</script>

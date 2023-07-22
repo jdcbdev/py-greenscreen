@@ -42,6 +42,7 @@ from ph_geography.models import Region, Province, Municipality, Barangay
 import os
 import pickle
 from django.db.models import Count, Subquery
+from allauth.socialaccount.models import SocialAccount
 
 # Create your views here.
 
@@ -2891,4 +2892,57 @@ def view_report(request):
     }
     
     rendered_html = render(request, 'admission/reports/view_report.html', context)
+    return HttpResponse(rendered_html, content_type='text/html')
+
+@login_required(login_url='/admin/sign-in/')
+def student_profile_progress(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
+    page_title = 'Students'
+    page_url = request.build_absolute_uri()
+    page_active = 'view-students'
+    
+    context = {
+        'page_title': page_title,
+        'page_active': page_active,
+        'page_url': page_url,
+    }
+    
+    return render(request, 'admission/student_list.html', context)
+
+@login_required(login_url='/admin/sign-in/')
+@ensure_csrf_cookie
+@require_POST
+def view_student_profile_progress(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        return redirect('home')
+    
+    students = (
+        Student.objects
+        .select_related('account')
+        .prefetch_related(
+            Prefetch('contactpoint_set', queryset=ContactPoint.objects.select_related('student')),
+            Prefetch('account__socialaccount_set', queryset=SocialAccount.objects.select_related('user'))
+        )
+        .order_by('-created_at')
+    )
+
+    for student in students:
+        student.is_google = student.account.email in [sa.user.email for sa in student.account.socialaccount_set.all()]
+        completion_count = (
+            student.is_personal_info_complete +
+            student.is_cet_complete +
+            student.is_shs_complete +
+            student.is_economic_complete +
+            student.is_personality_complete +
+            student.is_study_complete
+        )
+        student.progress = (completion_count / 6) * 100
+    
+    context = {
+        'students': students,
+    }
+    
+    rendered_html = render(request, 'admission/partials/view_student_profile_progress.html', context)
     return HttpResponse(rendered_html, content_type='text/html')

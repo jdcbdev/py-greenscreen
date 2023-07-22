@@ -1,0 +1,45 @@
+{% extends 'admission/admin.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<main class="col-md-9 ms-sm-auto col-lg-9 col-xl-10 p-md-4">
+    <div class="overlay justify-content-center align-items-center col-md-9 ms-sm-auto col-lg-9 col-xl-10">
+        <div class="custom-spinner spinner-border color-green" role="status">
+        </div>
+    </div>
+    <div class="w-100">
+        <h5 class="col-12 fw-bold mb-1 mt-3 mt-md-0">Student Registration</h5>
+        <div class="table-responsive py-3 table-container">
+            
+        </div>
+    </div>
+</main>
+
+<script>
+    function load(){
+        var formData = {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        };
+        $.ajax({
+            type: "POST",
+            url: "{% url 'view_student_profile_progress' %}",
+            data: formData,
+            success: function(result)
+            {
+                $('div.table-responsive').html(result);
+                $('main').removeClass('loading');
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+            }  
+        });
+    }
+    $(document).ready(function(){
+        $('main').addClass('loading');
+        load();
+    });
+</script>
+
+{% endblock content %}
