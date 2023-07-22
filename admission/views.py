@@ -1376,29 +1376,56 @@ def view_student_profile(request, id):
     if request.user.is_authenticated and not request.user.is_staff:
         return redirect('home')
     
-    student = Student.objects.filter(pk=id, is_profile_complete=True).first()
-    
-    if not student:
-        return redirect('view_application')
+    student = get_object_or_404(
+        Student.objects.select_related('account'),
+        pk=id
+    )
     
     if student.birth_date is not None:
         student_birth_date = student.birth_date
         formatted_date = student_birth_date.strftime('%Y-%m-%d')
         student.birth_date = formatted_date
-    contact = ContactPoint.objects.filter(student=student).first()
-    address = PersonalAddress.objects.filter(student=student).first()
-    cet = CollegeEntranceTest.objects.filter(student=student).first()
+    
+    if student.is_personal_info_complete:    
+        contact = ContactPoint.objects.filter(student=student).first()
+        address = PersonalAddress.objects.filter(student=student).first()
+    else:
+        contact = None
+        address = None
+    
+    if student.is_cet_complete:
+        cet = CollegeEntranceTest.objects.filter(student=student).first()
+    else:
+        cet = None
+    
     strands = SHSStrand.objects.all()
     class_positions = ClassRoomOrganization.objects.all()
     ssg = StudentSupremeGovernment.objects.all()
     ranks = ClassRank.objects.all()
     awards = AcademicAwards.objects.all()
-    school = SchoolBackground.objects.filter(student=student).first()
+    
+    if student.is_shs_complete:
+        school = SchoolBackground.objects.filter(student=student).first()
+    else:
+        school = None
+        
     degrees = AcademicDegree.objects.all()
     employment = EmploymentStatus.objects.all()
-    economic = EconomicStatus.objects.filter(student=student).first()
-    pt = PersonalityTest.objects.filter(student=student).first()
-    sh = StudyHabit.objects.filter(student=student).first()
+    
+    if student.is_economic_complete:
+        economic = EconomicStatus.objects.filter(student=student).first()
+    else:
+        economic = None
+        
+    if student.is_personality_complete:
+        pt = PersonalityTest.objects.filter(student=student).first()
+    else:
+        pt = None
+    
+    if student.is_study_complete:
+        sh = StudyHabit.objects.filter(student=student).first()
+    else:
+        sh = None
     
     page_title = 'View Student Profile'
     page_url = request.build_absolute_uri()
