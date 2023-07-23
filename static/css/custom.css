@@ -1247,7 +1247,7 @@ span.table-struggling{
 
 .overlay {
     position: absolute;
-    top: 0;
+    top: 75px;
     right: 0;
     height: 100%;
     background-color: rgba(255, 255, 255, 0.8);
@@ -1256,6 +1256,7 @@ span.table-struggling{
     overflow-x: hidden;
     overflow-y: hidden;
     outline: 0;
+    width: 100%;
 }
 
 .overlay .spinner-border {
@@ -1393,6 +1394,11 @@ form.needs-validation div.text-end .spinner-border{
 }
 
 @media (min-width: 768px) {
+    .overlay {
+        top: 0;
+        width: inherit;
+    }
+
     .privacy h2{
         font-size: 1.8rem;
         font-weight: 600;

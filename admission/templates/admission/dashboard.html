@@ -104,7 +104,7 @@
         </div>
     </div>
     <div class="row">
-        <h5 class="col-12 fw-bold mb-1 mt-3 mt-md-0 color-green">10 Most Recent (Latest) Approved Applications</h5>
+        <h5 class="col-12 fw-bold mb-1 mt-0 color-green">10 Most Recent (Latest) Approved Applications</h5>
         <div class="table-responsive">
             <table class="table table-hover responsive" id="table-dashboard-student">
                 <thead>
@@ -251,7 +251,7 @@
         var statusChart = new Chart(document.getElementById('status-chart-2'), {
             type: 'bar',
             data: {
-            labels: ['Successful (Predicted)', 'Successful (Actual)', 'Struggling (Predicted)', 'Struggling (Actual)'],
+                labels: ['Successful (Predicted)', 'Successful (Actual)', 'Struggling (Predicted)', 'Struggling (Actual)'],
                     datasets: [{
                         label: 'Predicted VS Actual',
                         data: ['{{will_succeed}}', '{{actual_successful}}', '{{will_struggle}}', '{{actual_struggling}}'],
@@ -264,14 +264,14 @@
                 scales: {
                     x: {
                         title: {
-                        display: true,
-                        text: ''
+                            display: true,
+                            text: ''
                         }
                     },
                     y: {
                         title: {
-                        display: true,
-                        text: 'No. of Students'
+                            display: true,
+                            text: 'No. of Students'
                         }
                     }
                 }
