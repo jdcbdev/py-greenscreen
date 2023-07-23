@@ -26,12 +26,14 @@ def home(request):
     elif request.user.is_authenticated and not request.user.is_staff:
         try:
             extra_data = SocialAccount.objects.get(user=request.user).extra_data
-            profile = {
-                'first_name': extra_data['given_name'],
-                'last_name': extra_data['family_name'],
-                'email': extra_data['email'],
-                'picture': extra_data['picture']
-            }
+            if extra_data:
+                profile = {
+                    'first_name': extra_data['given_name'],
+                    'last_name': extra_data['family_name'],
+                    'email': extra_data['email'],
+                    'picture': extra_data['picture']
+                }
+                
             if not check_student_exists(extra_data['email']):
                 # choose type
                 if 'link' in request.session:
@@ -71,6 +73,7 @@ def home(request):
         'page_title': page_title,
         'page_year': current_year,
         'application': application,
+        'student': student,
         'profile': profile,
         'page_url': page_url,
     }

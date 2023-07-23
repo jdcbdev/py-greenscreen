@@ -47,10 +47,10 @@
         {% if user.is_authenticated %}
         <div class="dropdown text-end me-3 d-none d-md-block">
             <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle text-white" data-bs-toggle="dropdown" aria-expanded="false">
-              {% if profile.picture %}
-                  <img src="{{ profile.picture }}" alt="photo" width="32" height="32" class="rounded-circle">
-              {% elif student.profile_photo %}
+              {% if student and student.profile_photo %}
                 <img src="{{ student.profile_photo.url }}" alt="photo" width="32" height="32" class="rounded-circle">
+              {% elif profile and profile.picture %}
+                  <img src="{{ profile.picture }}" alt="photo" width="32" height="32" class="rounded-circle">
               {% else %}
                 <i class="fa-solid fa-circle-user"></i>
               {% endif %}
