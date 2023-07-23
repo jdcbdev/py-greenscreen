@@ -133,7 +133,7 @@
                                 text: 'Excel',
                                 className: 'border-white',
                                 exportOptions: {
-                                    columns: [1, 2, 3, 4, 5, 6],
+                                    columns: [1, 2, 3, 4, 5, 6, 7],
                                     header: true,
                                 },
                                 customize: function (xlsx) {
@@ -155,7 +155,7 @@
                                 className: 'border-white',
                                 download: 'open',
                                 exportOptions: {
-                                    columns: [1, 2, 3, 4, 5, 6],
+                                    columns: [1, 2, 3, 4, 5, 6, 7],
                                     header: true,
                                 },
                                 orientation: 'portrait',
@@ -165,8 +165,8 @@
                                     var now = new Date();
                                     var jsDate = (now.getMonth() + 1) + '-' + now.getDate() + '-' + now.getFullYear();
                                     doc.pageMargins = [20, 60, 20, 30];
-                                    doc.defaultStyle.fontSize = 11;
-                                    doc.styles.tableHeader.fontSize = 11;
+                                    doc.defaultStyle.fontSize = 10;
+                                    doc.styles.tableHeader.fontSize = 10;
                                     doc['header'] = function (currentPage, pageCount, pageSize) {
                                         return {
                                             columns: [
