@@ -18,7 +18,10 @@
         </div>
         <div class="card-profile p-4 mt-3">
             <div class="row">
-                <h5 class="col-12 fw-bold mb-3">Personal Information</h5>
+                <div class="d-flex flex-column flex-md-row justify-content-md-between">
+                    <h5 class="fw-bold mb-3">Personal Information</h5>
+                    <h6 class="mb-3 text-muted">Fields with <span class="required"></span> are required.</h6>
+                </div>
                 <form class="needs-validation" action="" method="get" name="personal-info" id="personal-info" enctype="multipart/form-data">
                     <div class="row g-3">
                         <div class="col-12 col-md-6 d-none">
@@ -26,17 +29,17 @@
                             <input class="upload-photo custom-file-input" type="file" accept="image/*" name="profile_photo" id="profile_photo">
                         </div>
                         <div class="col-sm-6">
-                            <label for="first_name" class="form-label">First Name<span class="text-muted"></span></label>
+                            <label for="first_name" class="form-label">First Name<span class="text-muted required"> </span></label>
                             <input type="text" class="form-control" id="first_name" name="first_name" placeholder="" value="{{ student.first_name|default_if_none:'' }}">
                             <div class="invalid-feedback d-none first_name">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <label for="middle_name" class="form-label">Middle Name<span class="text-muted"></span></label>
-                            <input type="text" class="form-control" id="middle_name" name="middle_name" placeholder="" value="{{ student.middle_name|default_if_none:'' }}">
+                            <input type="text" class="form-control" id="middle_name" name="middle_name" placeholder="Optional" value="{{ student.middle_name|default_if_none:'' }}">
                         </div>
                         <div class="col-sm-6">
-                            <label for="last_name" class="form-label">Last Name<span class="text-muted"></span></label>
+                            <label for="last_name" class="form-label">Last Name<span class="text-muted required"> </span></label>
                             <input type="text" class="form-control" id="last_name" placeholder="" name="last_name" value="{{ student.last_name|default_if_none:'' }}">
                             <div class="invalid-feedback d-none last_name">
                             </div>
@@ -46,7 +49,7 @@
                             <input type="text" class="form-control" id="extension_name" placeholder="Optional (Jr, Sr, I, III)" name="extension_name" value="{{ student.extension_name|default_if_none:'' }}">
                         </div>
                         <div class="col-sm-6">
-                            <label for="sex" class="form-label">Sex<span class="text-muted"></span></label>
+                            <label for="sex" class="form-label">Sex<span class="text-muted required"> </span></label>
                             <select class="form-control form-select" id="sex" placeholder="" name="sex">
                                 <option value="">--Select--</option>
                                 <option value="Male" {% if student.sex == 'Male' %}selected{% endif %}>Male</option>
@@ -56,25 +59,25 @@
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <label for="birth_date" class="form-label">Birth Date<span class="text-muted"> (DD-MM-YYYY)</span></label>
+                            <label for="birth_date" class="form-label">Birth Date<span class="text-muted required"> (DD-MM-YYYY) </span></label>
                             <input type="date" class="form-control" id="birth_date" placeholder="" name="birth_date" value="{{ student.birth_date|default_if_none:'' }}">
                             <div class="invalid-feedback d-none birth_date">
                             </div>
                         </div>
                         <h5 class="col-12 fw-bold my-4 mb-1">Contact Points</h5>
                         <div class="col-sm-6">
-                            <label for="contact_email" class="form-label">School or Personal Email<span class="text-muted"></span></label>
+                            <label for="contact_email" class="form-label">School or Personal Email<span class="text-muted required"> </span></label>
                             <input type="text" class="form-control" id="contact_email" placeholder="" name="contact_email" value="{{ contact.contact_email|default_if_none:'' }}" disabled>
                             <div class="invalid-feedback d-none contact_email">
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <label for="contact_number" class="form-label">Phone Number<span class="text-muted"></span></label>
+                            <label for="contact_number" class="form-label">Phone Number<span class="text-muted required"> </span></label>
                             <input type="text" class="form-control" id="contact_number" placeholder="11-digit mobile number" name="contact_number" value="{{ contact.contact_number|default_if_none:'' }}">
                             <div class="invalid-feedback d-none contact_number">
                             </div>
                         </div>
-                        <h5 class="col-12 fw-bold my-4 mb-1">Home Address</h5>
+                        <h5 class="col-12 fw-bold my-4 mb-1">Local Address</h5>
                         <div class="col-sm-6">
                             <label for="house_no" class="form-label">Building/House No.<span class="text-muted"></span></label>
                             <input type="text" class="form-control" id="house_no" placeholder="Optional" name="house_no" value="{{ address.house_no|default_if_none:'' }}">
@@ -84,7 +87,7 @@
                             <input type="text" class="form-control" id="street_name" placeholder="Optional" name="street_name" value="{{ address.street_name|default_if_none:'' }}">
                         </div>
                         <div class="col-sm-6">
-                            <label for="barangay" class="form-label">Barangay<span class="text-muted"></span></label>
+                            <label for="barangay" class="form-label">Barangay<span class="text-muted required"> </span></label>
                             <select class="form-control form-select" id="barangay" placeholder="" name="barangay">
                                 <option value="">--Select--</option>
                             </select>
@@ -92,7 +95,7 @@
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <label for="city" class="form-label">City/Municipality<span class="text-muted"></span></label>
+                            <label for="city" class="form-label">City/Municipality<span class="text-muted required"> </span></label>
                             <select class="form-control form-select" id="city" placeholder="" name="city">
                                 <option value="">--Select--</option>
                             </select>
@@ -100,7 +103,7 @@
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <label for="province" class="form-label">Province<span class="text-muted"></span></label>
+                            <label for="province" class="form-label">Province<span class="text-muted required"> </span></label>
                             <select class="form-control form-select" id="province" placeholder="" name="province">
                                 <option value="">--Select--</option>
                             </select>
@@ -108,17 +111,30 @@
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <label for="region" class="form-label">Region<span class="text-muted"></span></label>
+                            <label for="region" class="form-label">Region<span class="text-muted required"> </span></label>
                             <select type="text" class="form-control form-select" id="region" placeholder="" name="region">
                                 <option value="">--Select--</option>
                             </select>
                             <div class="invalid-feedback d-none region">
                             </div>
                         </div>
-                        <div class="col-12">
-                            <label for="upload-id" class="form-label">Government or School Issued ID (Accepted files: jpg, jpeg, png)<span class="text-muted"></span></label>
+                        <div class="col-12 m-0">
+                            <hr class="my-4 mx-auto w-100 color-green">
+                        </div>
+                        <div class="col-12 mt-0">
+                            <p class="text-center"><i class="fa-regular fa-address-card text-center mx-auto color-green label"></i></p>
+                            <h5 class="color-green text-center">Verify your identity</h5>
+                            <h6 class="text-center fw-bold">Please take a photo of a valid ID so we’re sure it’s you.</h6>
+                            <ul class="mx-auto guide-valid-id">
+                                <li>Maximum file size is 5MB.</li>
+                                <li>Photos must be in PNG, JPG, or JPEG</li>
+                                <li>Make sure your chosen ID is not blurred or cropped.</li>
+                            </ul>
+                        </div>
+                        <div class="col-12 mt-0">
+                            <label for="upload-id" class="form-label">Government or School Issued ID<span class="text-muted required"> </span></label>
                             <div class="card-profile p-4 justify-content-center upload-container upload-container-id" {% if student.identification_card %} style="background-image: url({{ student.identification_card.url }}); background-color: #5a5a5a" {% endif %}> 
-                                
+                            
                             </div>
                             <div class="invalid-feedback d-none identification_card text-center">
                             </div>

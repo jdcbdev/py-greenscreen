@@ -171,9 +171,9 @@ class PersonalInfoForm(forms.Form):
         if profile_photo.size > max_size:
             raise forms.ValidationError('The file size exceeds the maximum allowed limit of 2MB.')
 
-        allowed_formats = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+        allowed_formats = ['image/jpeg', 'image/jpg', 'image/png']
         if profile_photo.content_type not in allowed_formats:
-            raise forms.ValidationError('The selected file format is not supported. Please choose a JPEG, PNG, or GIF image.')
+            raise forms.ValidationError('The selected file format is not supported. Please choose a JPEG, JPG or PNG.')
 
         return profile_photo
     
@@ -183,13 +183,13 @@ class PersonalInfoForm(forms.Form):
         if not identification_card:
             return identification_card
 
-        max_size = 5 * 1024 * 1024  # 2MB in bytes
+        max_size = 5 * 1024 * 1024  # 5MB in bytes
         if identification_card.size > max_size:
             raise forms.ValidationError('The file size exceeds the maximum allowed limit of 5MB.')
 
-        allowed_formats = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+        allowed_formats = ['image/jpeg', 'image/jpg', 'image/png']
         if identification_card.content_type not in allowed_formats:
-            raise forms.ValidationError('The selected file format is not supported. Please choose a JPEG, PNG, or GIF image.')
+            raise forms.ValidationError('The selected file format is not supported. Please choose a JPEG, JPG or PNG.')
 
         return identification_card
     
@@ -252,7 +252,7 @@ class CollegeEntranceTestForm(forms.ModelForm):
 
         allowed_formats = ['image/jpeg', 'image/jpg', 'image/png']
         if report_of_rating.content_type not in allowed_formats:
-            raise forms.ValidationError('The selected file format is not supported. Please choose a JPEG or PNG.')
+            raise forms.ValidationError('The selected file format is not supported. Please choose a JPEG, JPG or PNG.')
 
         return report_of_rating
 
@@ -358,21 +358,25 @@ class SchoolBackgroundForm(forms.Form):
         if not photo_grade:
             return photo_grade
 
-        max_size = 5 * 1024 * 1024  # 2MB in bytes
+        max_size = 5 * 1024 * 1024  # 5MB in bytes
         if photo_grade.size > max_size:
             raise forms.ValidationError('The file size exceeds the maximum allowed limit of 5MB.')
 
         allowed_formats = ['image/jpeg', 'image/jpg', 'image/png']
         if photo_grade.content_type not in allowed_formats:
-            raise forms.ValidationError('The selected file format is not supported. Please choose a JPEG, or PNG.')
+            raise forms.ValidationError('The selected file format is not supported. Please choose a JPEG, JPG or PNG.')
 
         return photo_grade
     
     def clean_gpa_first_semester(self):
         gpa_first_semester = self.cleaned_data.get('gpa_first_semester')
+        student_type_name = self.cleaned_data.get('student_type_name')
+        
+        if student_type_name == 'freshman' and not gpa_first_semester:
+            raise forms.ValidationError('This field is required.')
 
-        if gpa_first_semester is not None and (gpa_first_semester < 0 or gpa_first_semester > 100):
-            raise forms.ValidationError('GPA for the first semester must be between 0 and 100.')
+        if gpa_first_semester is not None and (gpa_first_semester < 75 or gpa_first_semester > 100):
+            raise forms.ValidationError('GPA for the first semester must be between 75 and 100.')
 
         return gpa_first_semester
 
@@ -380,7 +384,7 @@ class SchoolBackgroundForm(forms.Form):
         gpa_second_semester = self.cleaned_data.get('gpa_second_semester')
 
         if gpa_second_semester is not None and (gpa_second_semester < 0 or gpa_second_semester > 100):
-            raise forms.ValidationError('GPA for the second semester must be between 0 and 100.')
+            raise forms.ValidationError('GPA for the second semester must be between 75 and 100.')
 
         return gpa_second_semester
     

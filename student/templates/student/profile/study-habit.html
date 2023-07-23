@@ -648,6 +648,8 @@
         $('#study-habits.back-button-1').click(function(e){
             $('div.profile-screen').hide();
             $('div#personality-test').show();
+            
+            {% if not student.is_profile_complete %}
             $('#step-6').removeClass('wrapper-green');
             $('#step-6').addClass('wrapper');
             $('#step-6 div').removeClass('bg-pending');
@@ -660,6 +662,7 @@
             $('#step-5 div').addClass('bg-white');
             $('#step-5 div i').removeClass('color-white');
             $('#step-5 div i').addClass('color-green');
+            {% endif %}
   
             $('span.progress-counter').text('5');
             $('html,body').animate({

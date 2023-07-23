@@ -1127,6 +1127,8 @@
         $('#personality-test.back-button-1').click(function(e){
             $('div.profile-screen').hide();
             $('div#economic-status').show();
+            
+            {% if not student.is_profile_complete %}
             $('#step-5').removeClass('wrapper-green');
             $('#step-5').addClass('wrapper');
             $('#step-5 div').removeClass('bg-pending');
@@ -1139,6 +1141,7 @@
             $('#step-4 div').addClass('bg-white');
             $('#step-4 div i').removeClass('color-white');
             $('#step-4 div i').addClass('color-green');
+            {% endif %}
   
             $('span.progress-counter').text('4');
             $('html,body').animate({

@@ -2982,6 +2982,11 @@ def view_student_profile_progress(request):
         )
         student.progress = (completion_count / 6) * 100
         student.progress = round(student.progress, 2)
+        app = AdmissionApplication.objects.filter(student=student).count()
+        if app > 0:
+            student.has_app = True
+        else:
+            student.has_app = False
     
     context = {
         'students': students,

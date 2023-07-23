@@ -1348,6 +1348,26 @@ form.needs-validation div.text-end .spinner-border{
     display: none;
 }
 
+span.required::after{
+    content: "*";
+    display: inline-block;
+    color: #e1251b;
+    font-weight: 700;
+    box-sizing: border-box;
+}
+
+.guide-valid-id{
+    width: fit-content;
+}
+
+.guide-valid-id li{
+    font-size: 0.9rem;
+}
+
+i.label{
+    font-size: 3rem;
+}
+
 @media (min-width: 340px) {
     form.needs-validation div.text-end .spinner-border{
         display: inline-block;
@@ -1397,6 +1417,10 @@ form.needs-validation div.text-end .spinner-border{
     .overlay {
         top: 0;
         width: inherit;
+    }
+
+    i.label{
+        font-size: 4rem;
     }
 
     .privacy h2{

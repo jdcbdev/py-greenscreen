@@ -25,6 +25,7 @@
             <th scope="col">Is Google</th>
             <th scope="col">Sign up Date</th>
             <th scope="col">Registration Progress</th>
+            <th scope="col">With Application</th>
         </tr>
     </thead>
     <tbody>
@@ -47,6 +48,7 @@
                     <div class="progress-bar {% if student.progress == 100 %}bg-success{% else %}bg-danger{% endif %}" role="progressbar" style="width: {{ student.progress }}%" aria-valuenow="{{ student.progress }}" aria-valuemin="0" aria-valuemax="100">{{ student.progress }}%</div>
                 </div>
             </td>
+            <td>{{ student.has_app }}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -66,7 +68,7 @@
                     text: 'Excel',
                     className: 'border-white',
                     exportOptions: {
-                        columns: [1, 2, 3, 4, 5, 6],
+                        columns: [1, 2, 3, 4, 5, 6, 7],
                         header: true,
                     },
                     customize: function (xlsx) {
@@ -83,7 +85,7 @@
                     className: 'border-white',
                     download: 'open',
                     exportOptions: {
-                        columns: [1, 2, 3, 4, 5, 6],
+                        columns: [1, 2, 3, 4, 5, 6, 7],
                         header: true,
                     },
                     orientation: 'portrait',
@@ -93,8 +95,8 @@
                         var now = new Date();
                         var jsDate = (now.getMonth() + 1) + '-' + now.getDate() + '-' + now.getFullYear();
                         doc.pageMargins = [20, 60, 20, 30];
-                        doc.defaultStyle.fontSize = 10;
-                        doc.styles.tableHeader.fontSize = 10;
+                        doc.defaultStyle.fontSize = 9;
+                        doc.styles.tableHeader.fontSize = 9;
                         doc['header'] = function (currentPage, pageCount, pageSize) {
                             return {
                                 columns: [

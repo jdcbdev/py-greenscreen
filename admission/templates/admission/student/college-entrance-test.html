@@ -4,59 +4,75 @@
     <div class="mt-3 mt-md-0">
         <div class="card-profile p-4 mt-3">
             <div class="row">
-                <h5 class="col-12 fw-bold mb-3">College Entrance Test (CET) Rating</h5>
+                <div class="d-flex flex-column flex-md-row justify-content-md-between">
+                    <h5 class="fw-bold mb-3">College Entrance Test (CET) Rating</h5>
+                    <h6 class="mb-3 text-muted">Fields with <span class="required"></span> are required.</h6>
+                </div>
                 <form class="needs-validation" method="get" name="cet" id="cet" enctype="multipart/form-data">
                     <div class="row g-3">
                         <div class="col-sm-6">
-                            <label for="application_number" class="form-label">CET Application Number<span class="text-muted"></span></label>
+                            <label for="application_number" class="form-label">CET Application Number<span class="text-muted required"> </span></label>
                             <input type="text" class="form-control" id="application_number" placeholder="" name="application_number" value="{{ cet.application_number|default_if_none:'' }}">
                             <div class="invalid-feedback d-none application_number">
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <label for="rating_period" class="form-label">Period of Rating<span class="text-muted"></span></label>
+                            <label for="rating_period" class="form-label">Period of Rating<span class="text-muted required"> </span></label>
                             <input type="text" class="form-control" id="rating_period" placeholder="Ex: January-February 2022" name="rating_period" value="{{ cet.rating_period|default_if_none:'' }}">
                             <div class="invalid-feedback d-none rating_period">
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <label for="overall_percentile_rank" class="form-label">Overall Percentile Rank (OAPR)<span class="text-muted"></span></label>
+                            <label for="overall_percentile_rank" class="form-label">Overall Percentile Rank (OAPR)<span class="text-muted required"> </span></label>
                             <input type="text" class="form-control" id="overall_percentile_rank" placeholder="" name="overall_percentile_rank" value="{{ cet.overall_percentile_rank|default_if_none:'' }}">
                             <div class="invalid-feedback d-none overall_percentile_rank">
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <label for="english_proficiency_skills" class="form-label">English Proficiency Skills<span class="text-muted"></span></label>
+                            <label for="english_proficiency_skills" class="form-label">English Proficiency Skills<span class="text-muted required"> </span></label>
                             <input type="text" class="form-control" id="english_proficiency_skills" placeholder="" name="english_proficiency_skills" value="{{ cet.english_proficiency_skills|default_if_none:'' }}">
                             <div class="invalid-feedback d-none english_proficiency_skills">
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <label for="reading_comprehension_skills" class="form-label">Reading Comprehension Skills<span class="text-muted"></span></label>
+                            <label for="reading_comprehension_skills" class="form-label">Reading Comprehension Skills<span class="text-muted required"> </span></label>
                             <input type="text" class="form-control" id="reading_comprehension_skills" placeholder="" name="reading_comprehension_skills" value="{{ cet.reading_comprehension_skills|default_if_none:'' }}">
                             <div class="invalid-feedback d-none reading_comprehension_skills">
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <label for="science_process_skills" class="form-label">Science Process Skills<span class="text-muted"></span></label>
+                            <label for="science_process_skills" class="form-label">Science Process Skills<span class="text-muted required"> </span></label>
                             <input type="text" class="form-control" id="science_process_skills" placeholder="" name="science_process_skills" value="{{ cet.science_process_skills|default_if_none:'' }}">
                             <div class="invalid-feedback d-none science_process_skills">
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <label for="quantitative_skills" class="form-label">Quantitative Skills<span class="text-muted"></span></label>
+                            <label for="quantitative_skills" class="form-label">Quantitative Skills<span class="text-muted required"> </span></label>
                             <input type="text" class="form-control" id="quantitative_skills" placeholder="" name="quantitative_skills" value="{{ cet.quantitative_skills|default_if_none:'' }}">
                             <div class="invalid-feedback d-none quantitative_skills">
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <label for="abstract_thinking_skills" class="form-label">Abstract Thinking Skills<span class="text-muted"></span></label>
+                            <label for="abstract_thinking_skills" class="form-label">Abstract Thinking Skills<span class="text-muted required"> </span></label>
                             <input type="text" class="form-control" id="abstract_thinking_skills" placeholder="" name="abstract_thinking_skills" value="{{ cet.abstract_thinking_skills|default_if_none:'' }}">
                             <div class="invalid-feedback d-none abstract_thinking_skills">
                             </div>
                         </div>
+                        <div class="col-12 m-0">
+                        <hr class="my-4 mx-auto w-100 color-green">
+                        </div>
+                        <div class="col-12 mt-0">
+                            <p class="text-center"><i class="fa-solid fa-upload label color-green"></i></i></p>
+                            <h5 class="color-green text-center">Upload your CET Report of Rating</h5>
+                            <h6 class="text-center fw-bold">Please take a photo of your CET Report of Rating.</h6>
+                            <ul class="mx-auto guide-valid-id">
+                                <li>Maximum file size is 5MB.</li>
+                                <li>Photos must be in PNG, JPG, or JPEG</li>
+                                <li>Make sure your CET Report of Rating is not blurred or cropped.</li>
+                            </ul>
+                        </div>
                         <div class="col-12">
-                            <label for="upload-cet" class="form-label">Photo of CET Report of Rating (Accepted files: jpg, jpeg, png)<span class="text-muted"></span></label>
+                            <label for="upload-cet" class="form-label">Photo of CET Report of Rating<span class="text-muted required"> </span></label>
                             <div class="card-profile p-4 justify-content-center upload-container upload-container-cet" {% if cet.report_of_rating %} style="background-image: url({{ cet.report_of_rating.url }}); background-color: #5a5a5a" {% endif %}> 
                             </div>
                             <div class="invalid-feedback d-none report_of_rating text-center">
