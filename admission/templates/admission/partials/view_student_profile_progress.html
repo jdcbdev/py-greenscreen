@@ -37,7 +37,7 @@
                 </div>
             </td>
             {% endif %}
-            <td>{{ student.last_name }}, {{ student.first_name }} {{ student.middle_name }}</td>
+            <td>{{ student.last_name|title }}, {{ student.first_name|title }} {{ student.middle_name|title }}</td>
             <td>{{ student.student_type_name|capfirst }}</td>
             <td>{{ student.account.email }}</td>
             <td>{{ student.is_google }}</td>

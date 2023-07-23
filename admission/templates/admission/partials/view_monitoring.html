@@ -65,7 +65,7 @@
                 </div>
             </td>
             {% endif %}
-            <td>{{ application.student.last_name }}, {{ application.student.first_name }} {{ application.student.middle_name }}</td>
+            <td>{{ application.student.last_name|title }}, {{ application.student.first_name|title }} {{ application.student.middle_name|title }}</td>
             <td>{{ application.student.student_type_name|capfirst }}</td>
             <td>{{ application.program.code }}</td>
             <td>{{ application.school_year.concat_year }}</td>

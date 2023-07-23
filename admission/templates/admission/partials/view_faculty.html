@@ -57,7 +57,7 @@
                 {% elif faculty_user.admission_role.id == 1 %}
                 <th></th>
                 {% endif %}
-                <td>{{ faculty.last_name }}, {{ faculty.first_name }}</td>
+                <td>{{ faculty.last_name|title }}, {{ faculty.first_name|title }}</td>
                 <td>{{ faculty.email }}</td>
                 <td>{{ faculty.academic_rank.name }}</td>
                 <td>{{ faculty.department.department_name }}</td>
