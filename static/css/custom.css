@@ -455,6 +455,10 @@ table#table-monitoring tr td{
     vertical-align: middle;
 }
 
+table#table-students tr td{
+    vertical-align: middle;
+}
+
 .faculty h4{
     font-size: 1.3rem !important;
 }

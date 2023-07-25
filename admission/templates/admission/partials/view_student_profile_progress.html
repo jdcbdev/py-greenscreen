@@ -13,7 +13,7 @@
         <button class="btn btn-outline-secondary background-color-green" type="button"><i class="fas fa-search white"></i></button>
     </div>
 </div>
-<table class="table table-hover responsive" id="table-monitoring">
+<table class="table table-hover responsive" id="table-students">
     <thead>
         <tr>
             {% if request.user.is_superuser or faculty_user.admission_role.id == 1 %}
@@ -57,7 +57,7 @@
 <div class="application-container"></div>
 <script>
     $(document).ready(function(){
-        dataTable = $("#table-monitoring").DataTable({
+        dataTable = $("#table-students").DataTable({
             dom: 'Brtp',
             responsive: true,
             fixedHeader: true,
@@ -147,7 +147,7 @@
         dataTable.buttons().container().appendTo($('#MyButtons'));
 
         var table = dataTable;
-        var filter = createFilter(table, [1,2,3,4,5,6]);
+        var filter = createFilter(table, [1,2,3,4,5,6,7]);
 
         function createFilter(table, columns) {
             var input = $('input#keyword').on("keyup", function() {
