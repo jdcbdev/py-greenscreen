@@ -1249,6 +1249,14 @@ span.table-struggling{
     align-items: center;
 }
 
+.student-login{
+    height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+    z-index: 2;
+    position: relative;
+}
+
 .overlay {
     position: absolute;
     top: 75px;
