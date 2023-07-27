@@ -118,9 +118,9 @@ def forgot_password(request, reset=None):
                         uid = urlsafe_base64_encode(force_bytes(associated_user.pk))
                         token = reset_password_token.make_token(associated_user)
                         protocol = 'https' if request.is_secure() else 'http'
-
+                        full_name = f"{associated_user.first_name.title()} {associated_user.last_name.title()}"
                         html_message  = mark_safe(render_to_string("email_admin_forgot_password.html", {
-                            'user': associated_user.first_name,
+                            'user': full_name,
                             'domain': domain,
                             'uid': uid,
                             'token': token,
@@ -746,8 +746,9 @@ def add_faculty(request):
         
         domain = get_current_site(request).domain
         protocol = 'https' if request.is_secure() else 'http'
-        
-        send_faculty_email(user.first_name, email, password, domain, protocol)
+        full_name = f"{user.first_name.title()} {user.last_name.title()}"
+        user_role = faculty.admission_role.name.title()
+        send_faculty_email(full_name, email, password, domain, protocol, user_role)
         
     errors = form.errors.as_json()
     return JsonResponse(errors, safe=False)
@@ -761,16 +762,17 @@ def generate_strong_password():
         return generate_strong_password()
     return password
 
-def send_faculty_email(first_name, to_email, password, domain, protocol):
+def send_faculty_email(full_name, to_email, password, domain, protocol, user_role):
     
     mail_subject = "New Faculty Account - GreenScreen Admission System"
 
     html_message  = mark_safe(render_to_string("email_add_faculty.html", {
-        'user': first_name,
+        'user': full_name,
         'domain': domain,
         'email': to_email,
         'password': password,
-        "protocol": protocol
+        "protocol": protocol,
+        'user_role': user_role,
     }))
     
     from_email = settings.DEFAULT_FROM_EMAIL
@@ -1076,7 +1078,7 @@ def accept_application(request):
                 
                 #send to student
                 title = f"{application.program.code.upper()} Application Status - Ranking"
-                receiver = application.student.first_name
+                receiver = f"{application.student.first_name.title()} {application.student.last_name.title()}"
                 mail_subject = f"{application.program.code.upper()} Application Status (Ranking) - GreenScreen Admission System"
                 domain = get_current_site(request).domain
                 application_url = reverse('my_application')
@@ -1088,7 +1090,7 @@ def accept_application(request):
             else:
                 #send to student
                 title = f"{application.program.code.upper()} Application Status - Scheduled for Interview"
-                receiver = application.student.first_name
+                receiver = f"{application.student.first_name.title()} {application.student.last_name.title()}"
                 mail_subject = f"{application.program.code.upper()} Application Status (Scheduled for Interview) - GreenScreen Admission System"
                 domain = get_current_site(request).domain
                 application_url = reverse('my_application')
@@ -1105,7 +1107,7 @@ def accept_application(request):
         else:
             #send to student
             title = f"{application.program.code.upper()} Application Status - Scheduled for Interview"
-            receiver = application.student.first_name
+            receiver = f"{application.student.first_name.title()} {application.student.last_name.title()}"
             mail_subject = f"{application.program.code.upper()} Application Status (Scheduled for Interview) - GreenScreen Admission System"
             domain = get_current_site(request).domain
             application_url = reverse('my_application')
@@ -1146,9 +1148,10 @@ def accept_application(request):
                 
                 if assign_to:
                     title = f"Interview Assignment#{assign_to.int_counter+1}"
-                    receiver = assign_to.user.first_name
+                    receiver = f"{assign_to.user.first_name} {assign_to.user.last_name}"
+                    from_student = f"{application.student.first_name.title()} {application.student.last_name.title()}"
                     mail_subject = f"Interview Assignment#{assign_to.int_counter+1} - GreenScreen Admission System"
-                    message = f"""A student applicant, {application.student.first_name} {application.student.last_name}, has been scheduled for an interview with you for the <b>{application.program.name}</b> program in the GreenScreen Admission System 
+                    message = f"""A student applicant, {from_student}, has been scheduled for an interview with you for the <b>{application.program.name}</b> program in the GreenScreen Admission System 
                                 on {slot.interview_date} at {slot.interview_time}. The interview is {slot.setup} at the {slot.venue}.
                                 <br><br>Please review and process the application promptly."""
                     to_email = assign_to.user.email
@@ -1203,7 +1206,7 @@ def return_application(request):
             
             #send to student
             title = f"{application.program.code.upper()} Application Status - Returned"
-            receiver = application.student.first_name
+            receiver = f"{application.student.first_name.title()} {application.student.last_name.title()}"
             mail_subject = f"{application.program.code.upper()} Application Status (Returned) - GreenScreen Admission System"
             domain = get_current_site(request).domain
             application_url = reverse('my_application')
@@ -1505,7 +1508,7 @@ def rate_interview(request):
                 
                 #send to student
                 title = f"{application.program.code.upper()} Application Status - Ranking"
-                receiver = application.student.first_name
+                receiver = f"{application.student.first_name.title()} {application.student.last_name.title()}"
                 mail_subject = f"{application.program.code.upper()} Application Status (Ranking) - GreenScreen Admission System"
                 domain = get_current_site(request).domain
                 application_url = reverse('my_application')
@@ -1680,7 +1683,7 @@ def process_application(request):
             if status == "declined":
                 last_msg = "We wish you good luck on your academic journey."
             title = f"{application.program.code.upper()} Application Status - {status.capitalize()}"
-            receiver = application.student.first_name
+            receiver = f"{application.student.first_name.title()} {application.student.last_name.title()}"
             mail_subject = f"{application.program.code.upper()} Application Status ({status.capitalize()}) - GreenScreen Admission System"
             domain = get_current_site(request).domain
             application_url = reverse('my_application')
@@ -1986,7 +1989,7 @@ def withdraw_application(request):
             
             #send to student
             title = f"{application.program.code.upper()} Application Status - Withdrawn"
-            receiver = application.student.first_name
+            receiver = f"{application.student.first_name.title()} {application.student.last_name.title()}"
             mail_subject = f"{application.program.code.upper()} Application Status (Withdrawn) - GreenScreen Admission System"
             domain = get_current_site(request).domain
             application_url = reverse('my_application')
@@ -2024,7 +2027,7 @@ def decline_application(request):
             
             #send to student
             title = f"{application.program.code.upper()} Application Status - Declined"
-            receiver = application.student.first_name
+            receiver = f"{application.student.first_name.title()} {application.student.last_name.title()}"
             mail_subject = f"{application.program.code.upper()} Application Status (Declined) - GreenScreen Admission System"
             domain = get_current_site(request).domain
             application_url = reverse('my_application')

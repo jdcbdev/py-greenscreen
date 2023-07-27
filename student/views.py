@@ -276,9 +276,9 @@ def forgot_password(request, reset=None):
                         uid = urlsafe_base64_encode(force_bytes(associated_user.pk))
                         token = reset_password_token.make_token(associated_user)
                         protocol = 'https' if request.is_secure() else 'http'
-
+                        full_name = f"{associated_user.first_name.title()} {associated_user.last_name.title()}"
                         html_message  = mark_safe(render_to_string("email_forgot_password.html", {
-                            'user': associated_user.first_name,
+                            'user': full_name,
                             'domain': domain,
                             'uid': uid,
                             'token': token,
@@ -442,9 +442,9 @@ def activate_email(request, user, to_email):
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = account_activation_token.make_token(user)
     protocol = 'https' if request.is_secure() else 'http'
-
+    full_name = f"{user.first_name.title()} {user.last_name.title()}"
     html_message  = mark_safe(render_to_string("email_activate_account.html", {
-        'user': user.first_name,
+        'user': full_name,
         'domain': domain,
         'uid': uid,
         'token': token,
@@ -1007,7 +1007,8 @@ def send_application(request):
     
     #send to student
     title = f"New {program.code.upper()} Application"
-    receiver = student.first_name
+    receiver = f"{student.first_name.title()} {student.last_name.title()}"
+    from_student = f"{student.first_name.title()} {student.last_name.title()}"
     mail_subject = f"New {program.code.upper()} Application - GreenScreen Admission System"
     domain = get_current_site(request).domain
     application_url = reverse('my_application')
@@ -1021,7 +1022,7 @@ def send_application(request):
     #send to AO
     receiver = "Admission Officer"
     mail_subject = f"New {program.code.upper()} Application - GreenScreen Admission System"
-    message = f"""We have received a new application for the <b>{program.name}</b> program in the GreenScreen Admission System. 
+    message = f"""We have received a new application for the <b>{program.name}</b> program from {from_student} in the GreenScreen Admission System. 
                 <br><br>Please review and process the application promptly."""
     to_email = list(Faculty.objects.filter(department=program, admission_role_id=1).values_list('email', flat=True))
     student_send_email(title, receiver, mail_subject, message, to_email)
@@ -1100,7 +1101,8 @@ def cancel_application(request):
         
         #send to student
         title = f"{application.program.code.upper()} Application Status - Cancelled"
-        receiver = application.student.first_name
+        receiver = f"{application.student.first_name.title()} {application.student.last_name.title()}"
+        from_student = f"{application.student.first_name.title()} {application.student.last_name.title()}"
         mail_subject = f"{application.program.code.upper()} Application Status (Cancelled) - GreenScreen Admission System"
         domain = get_current_site(request).domain
         application_url = reverse('my_application')
@@ -1113,7 +1115,7 @@ def cancel_application(request):
         #send to AO
         receiver = "Admission Officer"
         mail_subject = f"{application.program.code.upper()} Application Status (Cancelled) - GreenScreen Admission System"
-        message = f"""Applicant <b>{application.student.first_name} {application.student.last_name}</b> of 
+        message = f"""Applicant <b>{from_student}</b> of 
                     <b>{application.program.name}</b> program has cancelled their application in the GreenScreen Admission System. 
                     """
         to_email = list(Faculty.objects.filter(department=application.program, admission_role_id=1).values_list('email', flat=True))
@@ -1145,7 +1147,8 @@ def withdraw_application(request):
             
             #send to student
             title = f"{application.program.code.upper()} Application Status - Withdrawn"
-            receiver = application.student.first_name
+            receiver = f"{application.student.first_name.title()} {application.student.last_name.title()}"
+            from_student = f"{application.student.first_name.title()} {application.student.last_name.title()}"
             mail_subject = f"{application.program.code.upper()} Application Status (Withdrawn) - GreenScreen Admission System"
             domain = get_current_site(request).domain
             application_url = reverse('my_application')
@@ -1158,7 +1161,7 @@ def withdraw_application(request):
             #send to AO
             receiver = "Admission Officer"
             mail_subject = f"{application.program.code.upper()} Application Status (Withdrawn) - GreenScreen Admission System"
-            message = f"""Applicant <b>{application.student.first_name} {application.student.last_name}</b> of 
+            message = f"""Applicant <b>{from_student}</b> of 
                         <b>{application.program.name}</b> program has withdrawn their application in the GreenScreen Admission System. 
                         """
             to_email = list(Faculty.objects.filter(department=application.program, admission_role_id=1).values_list('email', flat=True))

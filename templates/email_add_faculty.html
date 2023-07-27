@@ -48,21 +48,34 @@
         .signature {
             margin-top: 30px;
             text-align: left;
-            font-size: 14px;
         }
         
         .footer {
             text-align: left;
             margin-top: 30px;
         }
+
+        h2{
+            background-color: #107869;
+            padding: 30px;
+            color: white;
+        }
+
+        div div{
+            padding: 0 30px;
+        }
+
+        .color-green{
+            color: #107869;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <h2>New Faculty Registration</h2>
         <div class="message">
-            <h2>New Faculty Registration</h2>
             <p>Hello {{ user }},</p>
-            <p>A new faculty account has been created for you. Your login details are as follows:</p>
+            <p>A new faculty account has been created for you as <b>{{user_role}}</b>. Your login details are as follows:</p>
             <p><b>Username: </b>{{ email }}<br><b>Password: </b>{{password}}</p>
             <p>
                 <a href="{{ domain }}{% url 'login' %}" class="cta-button">Sign in here</a>
@@ -73,7 +86,7 @@
         
         <div class="signature">
             <p>Best Regards,</p>
-            <p>The GreenScreen Team</p>
+            <p class="color-green">The GreenScreen Team</p>
         </div>
     </div>
 </body>

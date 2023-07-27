@@ -48,7 +48,6 @@
         .signature {
             margin-top: 30px;
             text-align: left;
-            font-size: 14px;
         }
         
         .footer {
@@ -56,23 +55,31 @@
             margin-top: 30px;
         }
 
+        h2{
+            background-color: #107869;
+            padding: 30px;
+            color: white;
+        }
+
+        div div{
+            padding: 0 30px;
+        }
+
         .color-green{
-            color: #107869 !important;
-            text-decoration: none;
-            font-weight: 600;
+            color: #107869;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <h2>{{ title }}</h2>
         <div class="message">
-            <h2>{{ title }}</h2>
             <p>Hello {{ receiver }},</p>
             <p>{{ message }}</p>
         </div>
         <div class="signature">
             <p>Best Regards,</p>
-            <p>The GreenScreen Team</p>
+            <p class="color-green">The GreenScreen Team</p>
         </div>
     </div>
 </body>
