@@ -201,28 +201,5 @@
             var status = $(this).val();
             dataTable.columns([3]).search(status).draw();
         });
-        $('.verify-application').click(function(){
-            var formData = {
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-                application_id: $(this).attr('data'),
-                program_id: $(this).attr('id'),
-            };
-            $.ajax({
-                type: "POST",
-                url: "{% url 'view_verify_student_modal' %}",
-                data: formData,
-                success: function(result)
-                {
-                    $('div.application-container').html(result);
-                    $('#verify-student-modal').modal({
-                        backdrop: 'static',
-                        keyboard: false
-                    }).modal('show');
-                },
-                error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                    alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-                }  
-            });
-        });
     })
 </script>
