@@ -27,7 +27,7 @@
                     <h5 class="card-title card-title-total">Approved Applications</h5>
                     <p class="card-text card-text-number"><span class="status-qualified p-2">{{ qualified_counter }}</span></p>
                     <p class="mb-0 mt-auto">
-                        <a class="view-all" href="{% url 'view_application' %}">View All</a>
+                        <a class="view-all" href="{% url 'view_application' 'approved' %}">View All</a>
                     </p>
                 </div>
             </div>
@@ -38,7 +38,7 @@
                     <h5 class="card-title card-title-total">Declined Applications</h5>
                     <p class="card-text card-text-number"><span class="status-declined p-2">{{ declined_counter }}</span></p>
                     <p class="mb-0">
-                        <a class="view-all" href="{% url 'view_application' %}">View All</a>
+                        <a class="view-all" href="{% url 'view_application' 'declined' %}">View All</a>
                     </p>
                 </div>
             </div>
@@ -49,7 +49,7 @@
                     <h5 class="card-title card-title-total">Total Applications</h5>
                     <p class="card-text card-text-number"><span class="status-withdrawn p-2">{{ all_counter }}</span></p>
                     <p class="mb-0 mt-auto">
-                        <a class="view-all" href="{% url 'view_application' %}">View All</a>
+                        <a class="view-all" href="{% url 'view_application' 'all' %}">View All</a>
                     </p>
                 </div>
             </div>
@@ -62,7 +62,7 @@
                     <h5 class="card-title card-title-total">Total Predictions<span class="text-muted ms-1" data-bs-toggle="tooltip" title="Predictions of Approved Students"><i class="fa fa-info-circle"></i></span></h5>
                     <canvas id="status-chart-1"></canvas>
                     <p class="mb-0 mt-auto">
-                        <a class="view-all" href="{% url 'reports' %}">View Report</a>
+                        <a class="view-all" href="{% url 'reports' 'filter' %}">View Report</a>
                     </p>
                 </div>
             </div>
@@ -73,7 +73,7 @@
                     <h5 class="card-title card-title-total">Prediction VS Actual<span class="text-muted ms-1" data-bs-toggle="tooltip" title="Comparison of Prediction VS Actual of Approved Students"><i class="fa fa-info-circle"></i></span></h5>
                     <canvas id="status-chart-2"></canvas>
                     <p class="mb-0 mt-auto">
-                        <a class="view-all" href="{% url 'reports' %}">View Report</a>
+                        <a class="view-all" href="{% url 'reports' 'filter' %}">View Report</a>
                     </p>
                 </div>
             </div>
@@ -86,7 +86,7 @@
                     <h5 class="card-title card-title-total">CET OAPR<span class="text-muted ms-1" data-bs-toggle="tooltip" title="CET OAPR of Approved Students"><i class="fa fa-info-circle"></i></span></h5>
                     <canvas id="myChart"></canvas>
                     <p class="mb-0 mt-auto">
-                        <a class="view-all" href="{% url 'reports' %}">View Report</a>
+                        <a class="view-all" href="{% url 'reports' 'filter' %}">View Report</a>
                     </p>
                 </div>
             </div>
@@ -97,7 +97,7 @@
                     <h5 class="card-title card-title-total">SHS GPA<span class="text-muted ms-1" data-bs-toggle="tooltip" title="SHS GPA of Approved Students"><i class="fa fa-info-circle"></i></span></h5>
                     <canvas id="status-chart-3"></canvas>
                     <p class="mb-0 mt-auto">
-                        <a class="view-all" href="{% url 'reports' %}">View Report</a>
+                        <a class="view-all" href="{% url 'reports' 'filter' %}">View Report</a>
                     </p>
                 </div>
             </div>

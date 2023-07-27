@@ -692,5 +692,9 @@
             }
             dataTable.columns([15]).search(value).draw();
         });
+
+        {% if filter == 'filter' %}
+            $('#admission_status').val('Qualified').trigger('change');
+        {% endif %} 
     });
 </script>

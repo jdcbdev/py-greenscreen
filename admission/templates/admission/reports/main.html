@@ -16,6 +16,9 @@
     function load(){
         var formData = {
             csrfmiddlewaretoken: '{{ csrf_token }}',
+            {% if filter == 'filter' %}
+            filter: '{{filter}}'
+            {% endif %}
         };
         $.ajax({
             type: "POST",

@@ -868,7 +868,7 @@ def delete_faculty(request):
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 @login_required(login_url='/admin/sign-in/')
-def view_application(request):
+def view_application(request, filter=None):
     if request.user.is_authenticated and not request.user.is_staff:
         return redirect('home')
     
@@ -907,6 +907,7 @@ def view_application(request):
         'withdrawn_counter': withdrawn_counter,
         'faculty_user': faculty_user,
         'page_url': page_url,
+        'filter': filter,
     }
     
     return render(request, 'admission/application.html', context)
@@ -2740,7 +2741,7 @@ def update_user_profile(request):
     return JsonResponse(errors, safe=False)
 
 @login_required(login_url='/admin/sign-in/')
-def reports(request):
+def reports(request, filter=None):
     if request.user.is_authenticated and not request.user.is_staff:
         return redirect('home')
     
@@ -2752,6 +2753,7 @@ def reports(request):
         'page_title': page_title,
         'page_active': page_active,
         'page_url': page_url,
+        'filter': filter,
     }
     
     return render(request, 'admission/reports/main.html', context)
@@ -2925,6 +2927,7 @@ def view_report(request):
         application.is_none = is_none
         application.is_successful = is_successful
     
+    filter_value = request.POST.get('filter')
     context = {
         'school_year': school_year,
         'active_year': active_year,
@@ -2934,6 +2937,7 @@ def view_report(request):
         'faculties': faculties,
         'strands': strands,
         'date_today': date_today,
+        'filter': filter_value,
     }
     
     rendered_html = render(request, 'admission/reports/view_report.html', context)

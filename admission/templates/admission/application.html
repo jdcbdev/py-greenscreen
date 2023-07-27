@@ -334,6 +334,13 @@
             load('all');
         });
 
+        {% if filter == 'approved' %}
+            $('#li-qualified').trigger('click');
+        {% elif filter == 'declined' %}
+            $('#li-all').trigger('click');
+        {% elif filter == 'all' %}
+            $('#li-all').trigger('click');
+        {% endif %}
     });
 </script>
 
