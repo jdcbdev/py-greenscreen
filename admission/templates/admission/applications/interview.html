@@ -205,28 +205,5 @@
             var status = $(this).val();
             dataTable.columns([2]).search(status).draw();
         });
-
-        $('.rate-interview').click(function(){
-            var formData = {
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-                application_id: $(this).attr('data'),
-            };
-            $.ajax({
-                type: "POST",
-                url: "{% url 'view_rate_interview_modal' %}",
-                data: formData,
-                success: function(result)
-                {
-                    $('div.application-container').html(result);
-                    $('#modal-rate-interview').modal({
-                        backdrop: 'static',
-                        keyboard: false
-                    }).modal('show');
-                },
-                error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                    alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-                }  
-            });
-        });
     })
 </script>

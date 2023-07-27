@@ -108,6 +108,28 @@
                 success: function(result)
                 {
                     $('div.table-responsive').html(result);
+                    $('.rate-interview').click(function(){
+                        var formData = {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            application_id: $(this).attr('data'),
+                        };
+                        $.ajax({
+                            type: "POST",
+                            url: "{% url 'view_rate_interview_modal' %}",
+                            data: formData,
+                            success: function(result)
+                            {
+                                $('div.application-container').html(result);
+                                $('#modal-rate-interview').modal({
+                                    backdrop: 'static',
+                                    keyboard: false
+                                }).modal('show');
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                                alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+                            }  
+                        });
+                    });
                     $('main').removeClass('loading');
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) { 
@@ -125,6 +147,29 @@
                 success: function(result)
                 {
                     $('div.table-responsive').html(result);
+                    $('.process-application').click(function(){
+                        var formData = {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            application_id: $(this).attr('data'),
+                            program_id: $(this).attr('id'),
+                        };
+                        $.ajax({
+                            type: "POST",
+                            url: "{% url 'view_process_student_modal' %}",
+                            data: formData,
+                            success: function(result)
+                            {
+                                $('div.application-container').html(result);
+                                $('#process-student-modal').modal({
+                                    backdrop: 'static',
+                                    keyboard: false
+                                }).modal('show');
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                                alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+                            }  
+                        });
+                    });
                     $('main').removeClass('loading');
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) { 
@@ -142,6 +187,29 @@
                 success: function(result)
                 {
                     $('div.table-responsive').html(result);
+                    $('.withdraw-application').click(function(){
+                        var formData = {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            application_id: $(this).attr('data'),
+                            program_id: $(this).attr('id'),
+                        };
+                        $.ajax({
+                            type: "POST",
+                            url: "{% url 'view_withdraw_modal' %}",
+                            data: formData,
+                            success: function(result)
+                            {
+                                $('div.application-container').html(result);
+                                $('#withdraw-student-modal').modal({
+                                    backdrop: 'static',
+                                    keyboard: false
+                                }).modal('show');
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                                alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+                            }  
+                        });
+                    });
                     $('main').removeClass('loading');
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) { 
@@ -176,6 +244,29 @@
                 success: function(result)
                 {
                     $('div.table-responsive').html(result);
+                    $('.process-application').click(function(){
+                        var formData = {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            application_id: $(this).attr('data'),
+                            program_id: $(this).attr('id'),
+                        };
+                        $.ajax({
+                            type: "POST",
+                            url: "{% url 'view_process_waitingstudent_modal' %}",
+                            data: formData,
+                            success: function(result)
+                            {
+                                $('div.application-container').html(result);
+                                $('#process-waitingstudent-modal').modal({
+                                    backdrop: 'static',
+                                    keyboard: false
+                                }).modal('show');
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                                alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+                            }  
+                        });
+                    });
                     $('main').removeClass('loading');
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) { 
