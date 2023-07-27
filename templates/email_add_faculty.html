@@ -14,35 +14,21 @@
         .container {
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .logo {
-            max-width: 150px;
         }
         
         .message {
+            padding-top: 5px !important;
             margin-bottom: 30px;
         }
         
         .cta-button {
             display: inline-block;
-            padding: 12px 24px;
-            font-size: 18px;
+            padding: 12px 20px;
+            font-size: 16px;
             text-decoration: none;
             background-color: #107869;
             color: #fff !important;
             border-radius: 4px;
-        }
-        
-        .note {
-            color: #888;
-            margin-top: 20px;
         }
         
         .signature {
@@ -53,26 +39,29 @@
         .footer {
             text-align: left;
             margin-top: 30px;
+            color: #888;
         }
 
-        h2{
+        .title{
             background-color: #107869;
-            padding: 30px;
+            padding: 24px 20px;
             color: white;
-        }
-
-        div div{
-            padding: 0 30px;
+            margin-top: 0;
         }
 
         .color-green{
             color: #107869;
+            font-weight: 700;
+        }
+
+        .message, .signature, .footer{
+            padding: 0 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>New Faculty Registration</h2>
+        <h2 class="title">New Faculty Registration</h2>
         <div class="message">
             <p>Hello {{ user }},</p>
             <p>A new faculty account has been created for you as <b>{{user_role}}</b>. Your login details are as follows:</p>
