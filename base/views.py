@@ -28,10 +28,10 @@ def home(request):
             extra_data = SocialAccount.objects.get(user=request.user).extra_data
             if extra_data:
                 profile = {
-                    'first_name': extra_data['given_name'],
-                    'last_name': extra_data['family_name'],
-                    'email': extra_data['email'],
-                    'picture': extra_data['picture']
+                    'first_name': extra_data.get('given_name', ''),
+                    'last_name': extra_data.get('family_name', ''),
+                    'email': extra_data.get('email', ''),
+                    'picture': extra_data.get('picture', '')
                 }
                 
             if not check_student_exists(extra_data['email']):
