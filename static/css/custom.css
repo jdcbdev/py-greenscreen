@@ -1423,6 +1423,9 @@ i.label{
         border: 1px solid lightgray;
         border-radius: 20px;
     }
+    .p-2-rem{
+        padding: 2rem !important;
+    }
 }
 
 @media (min-width: 768px) {

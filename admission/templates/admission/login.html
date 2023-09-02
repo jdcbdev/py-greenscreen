@@ -6,7 +6,7 @@
 
     <main class="pb-md-4 admin-login">
         <div class="container-fluid d-flex align-items-md-center justify-content-md-center">
-            <div class="container-fluid sign-in p-sm-5">
+            <div class="container-fluid sign-in p-2-rem">
                 {% if success_message %}
                     <div class="alert alert-{{ success_message.level }} alert-dismissible fade show" role="alert">
                         {{ success_message.message }}
@@ -22,7 +22,7 @@
                     <div class="col-md mt-3">
                         <form class="needs-validation" action="{% url 'login' %}" method="post">
                             {% csrf_token %}
-                            <div class="row g-3">
+                            <div class="row g-2">
                                 <div class="col-12">
                                     <label for="email" class="form-label">Email Address<span class="text-muted"></span></label>
                                     <input type="text" class="form-control {% if form.email.errors %}is-invalid{% endif %}" id="email" name="email" placeholder="" value="{{ form.email.value|default_if_none:'' }}" required>

@@ -6,7 +6,7 @@
 
 <main class="py-md-4">
     <div class="container-fluid d-flex align-items-md-center justify-content-md-center">
-        <div class="container-fluid sign-up p-sm-5">
+        <div class="container-fluid sign-up p-2-rem">
             {% if success_message %}
                 <div class="alert alert-{{ success_message.level }} alert-dismissible fade show" role="alert">
                     {{ success_message.message }}
@@ -35,7 +35,7 @@
                     </div>
                     <form class="needs-validation" method="POST" action="{% url 'signup-old' %}">
                         {% csrf_token %}
-                        <div class="row g-3">
+                        <div class="row g-2">
                             <div class="col-sm-6">
                                 <label for="firstName" class="form-label">First Name</label>
                                 <input type="text" class="form-control {% if form.first_name.errors %}is-invalid{% endif %}" id="firstName" name="first_name" placeholder="" value="{{ form.first_name.value|default_if_none:'' }}" required>
