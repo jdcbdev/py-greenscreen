@@ -10,15 +10,11 @@
     </div>
     <div class="form-group col-12 col-sm-auto flex-sm-grow-1 flex-lg-grow-0">
         <select name="faculty_role" id="faculty_role" class="form-select me-md-2">
-            <option value="">All Faculty</option>
-            {% for role in roles %}
-                <option value="{{ role.name }}">{{ role.name }}</option>
-            {% endfor %}
         </select>
     </div>
     <div class="input-group search-keyword col-12 flex-lg-grow-1">
-        <input type="text" name="keyword" id="keyword" placeholder="Search Faculty" class="form-control">
-        <button class="btn btn-outline-secondary background-color-green" type="button"><i class="fas fa-search white"></i></button>
+        <input type="text" name="keyword" id="keyword" placeholder="Search Staff" class="form-control">
+        <button class="btn btn-outline-secondary background-color-green" type="button"><i class="fa fa-search color-white"></i></button>
     </div>
 </div>
 <table class="table table-hover responsive" id="table-faculty">
